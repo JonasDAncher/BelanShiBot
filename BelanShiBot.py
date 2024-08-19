@@ -19,8 +19,9 @@ client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 class RoleButtons(ui.View):
-    def __init__(self, tank, healer, dps):
+    def __init__(self, user, tank, healer, dps):
       super().__init__()
+      self.user = user
       self.tank = tank
       self.healer = healer
       self.dps = dps
@@ -30,23 +31,36 @@ class RoleButtons(ui.View):
       tank_button = ui.Button(emoji='🛡', disabled=self.tank)
       healer_button = ui.Button(emoji='💚', disabled=self.healer)
       dps_button = ui.Button(emoji='⚔️', disabled=self.dps <= 0)
+      cancel_button = ui.Button(emoji='❌')
 
       async def tankbutton(interaction: discord.Interaction):
-        await interaction.response.send_message("Test buttons galore", ephemeral=True)
+        await interaction.response.send_message("You've pressed the tank button!", ephemeral=True)
 
       async def healerbutton(interaction: discord.Interaction):
-        await interaction.response.send_message("Test buttons galore", ephemeral=True)
+        await interaction.response.send_message("You've pressed the healer button!", ephemeral=True)
 
       async def dpsbutton(interaction: discord.Interaction):
-        await interaction.response.send_message("Test buttons galore", ephemeral=True)
+        await interaction.response.send_message("You've pressed the DPS button!", ephemeral=True)
+
+      async def cancelbutton(interaction: discord.Interaction):
+        if not interaction.user == self.user:
+          await interaction.message.delete()
+          await interaction.response.send_message(content="Run cancelled!", ephemeral=True)
+          return
+        else:
+          await interaction.response.send_message(content="You cannot cancel a run you did not start!", ephemeral=True)
+        return
+        # await interaction.response.send_message("You've pressed the Cancel button!", ephemeral=True)
 
       tank_button.callback = tankbutton
       healer_button.callback = healerbutton
       dps_button.callback = dpsbutton
+      cancel_button.callback = cancelbutton
 
       self.add_item(tank_button)
       self.add_item(healer_button)
       self.add_item(dps_button)
+      self.add_item(cancel_button)
 
 
 @tree.command(guild=discord.Object(id=TEST_ID))
@@ -87,7 +101,6 @@ async def key(
     embed_var = discord.Embed(title=f"{interaction.user.nick if not 'None' else interaction.user.name} want to run a {dungeon_name} +{key_level}", description="Desc", color= 0x00ff00 if 0<=key_level<5 else 0xffff00 if 5<=key_level<=7 else 0xff0000)
     embed_var.add_field(name="TANK", value=f"{'~~🛡 Tank open~~ SPOT TAKEN' if tank or None else '🛡 Tank open'}", inline=False)
     embed_var.add_field(name="HEALER", value=f"{'~~💚 Healer open~~ SPOT TAKEN' if healer or None else '💚 Healer open'}", inline=False)
-    # embed_var.add_field(name="DPS", value=f"{'~~⚔️ Missing 0 x DPS~~ FULL' if dps<1 else f'⚔️ Missing {dps} x DPS'}", inline=False)
     embed_var.add_field(name="DPS", value=format_dps(dps), inline=False)
     content_var = (f"{interaction.user.mention} want to run a {dungeon_name} +{key_level}!"
                    f"\nThey need "
@@ -97,7 +110,7 @@ async def key(
                     f"{'nothing...?' if tank and healer and dps==0 else ''}")
     print(embed_var.fields)
 
-    await interaction.response.send_message(content=content_var, embed=embed_var, view=RoleButtons(tank, healer, dps))
+    msg = await interaction.response.send_message(content=content_var, embed=embed_var, view=RoleButtons(interaction.user, tank, healer, dps))
 
 @client.event
 async def on_reaction_add(reaction, user):
