@@ -125,12 +125,9 @@ class RoleButtons(ui.View):
         return
 
       async def confirmbutton(interaction: discord.Interaction):
-        print("1")
         if interaction.user == self.user:
-          print("2")
           for child in self.children:
             if type(child) == ui.Button and not (child.label == "CONFIRM" or child.label == "CANCEL"):
-              print("3")
               child.disabled = True
           await interaction.response.send_message(content="Run confirmed!\nRole buttons deactivated", ephemeral=True, delete_after=DELETE_TIME)
           self.remove_item(confirm_button)
@@ -138,7 +135,6 @@ class RoleButtons(ui.View):
           await interaction.message.edit(view=self)
           return
         else:
-          print("4")
           await interaction.response.send_message(content="You cannot confirm a run you did not start!", ephemeral=True, delete_after=DELETE_TIME)
         return
 
