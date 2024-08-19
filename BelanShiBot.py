@@ -28,17 +28,24 @@ async def send_message(message: Message, user_message: str) -> None:
     user_message = user_message[1:]
 
   try:
-    embed_var = discord.Embed(title="Title", description="Desc", color=0x00ff00)
-    embed_var.add_field(name="Field1", value="hi", inline=False)
-    embed_var.add_field(name="Field2", value="hi2", inline=False)
+    embed_var = discord.Embed(title=f"interaction.user want to run a dungeon_name +key_level", description="Desc",
+                              color=0x00ff00)
+    embed_var.add_field(name="TANK", value=f"tank or False", inline=False)
+    embed_var.add_field(name="HEALER", value=f"healer or False", inline=False)
+    embed_var.add_field(name="DPS", value=f"Missing dps or 3 DPS", inline=False)
     await message.channel.send(embed=embed_var)
   except Exception as e:
     print(e)
 
-@tree.command(name='group', guild=discord.Object(id=TEST_ID))
+@tree.command(guild=discord.Object(id=TEST_ID))
+async def hello(interaction: discord.Interaction):
+    """Says hello!"""
+    await interaction.response.send_message(f'Hi, {interaction.user.mention}')
+
 # @app_commands.rename(dungeon_name='dungeon-name', key_level='key-level', tank='tank', healer='healer', dps='missing-dps')
+@tree.command(guild=discord.Object(id=TEST_ID))
 async def group(
-    interaction,
+    interaction: discord.Interaction,
     dungeon_name: str,
     key_level: int,
     tank: Optional[bool],
@@ -51,16 +58,20 @@ async def group(
   :param healer: Have healer?
   :param dps: How many dps is missing?
   """
-  embed_var = discord.Embed(title=f'{interaction.user} want to run a {dungeon_name} +{key_level}', description="Desc", color=0x00ff00)
-  embed_var.add_field(name="TANK", value=f'{tank or False}', inline=False)
-  embed_var.add_field(name="HEALER", value=f'{healer or False}', inline=False)
-  embed_var.add_field(name="DPS", value=f'Missing {dps or 3} DPS', inline=False)
-  await interaction.response.send_message(embed=embed_var)
+  print(f"{interaction.user.name} ({interaction.user.id}) used /group with parameters: dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}")
+  embed_var = discord.Embed(title=f"{interaction.user.nick if not 'None' else interaction.user.name} want to run a {dungeon_name} +{key_level}", description="Desc", color= 0x00ff00 if 0<key_level<4 else 0xffff00 if 4<key_level<6 else 0xff0000)
+  embed_var.add_field(name="TANK", value=f"{'~~🛡 Tank open~~ SPOT TAKEN' if not tank or None else '🛡 Tank open'}", inline=False)
+  embed_var.add_field(name="HEALER", value=f"{'~~💚 Healer open~~ SPOT TAKEN' if not healer or None else '💚 Healer open'}", inline=False)
+  embed_var.add_field(name="DPS", value=f"⚔️ Missing {dps or 3} x DPS", inline=False)
+  await interaction.response.send_message(content=f"{interaction.user.mention} want to run a {dungeon_name} +{key_level}!"
+                                                  f"\nThey need {'<@&805437880821612604> ' if tank else ''}"
+                                                  f"{'<@&1275027330045055048> ' if healer else ''}"
+                                                  f"{dps} x {'<@&757298292789870672>' if not dps == None else ''}", embed=embed_var)
 
 @client.event
 async def on_ready() -> None:
   await tree.sync(guild=discord.Object(id=TEST_ID))
-  print(f'{client.user} succesfully logged in with ID: {client.user.id}')
+  print(f'{client.user} successfully logged in with ID: {client.user.id}')
 
 @client.event
 async def on_message(message: Message) -> None:
