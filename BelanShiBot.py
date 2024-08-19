@@ -1,3 +1,4 @@
+from datetime import datetime
 from pickle import FALSE
 from tkinter.ttk import Label
 from typing import Final, Optional
@@ -140,13 +141,14 @@ def format_dps(dps_players = []):
     return f"⚔️ # 1: *Open*\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
   return None
 
-async def format_embed(interaction, dungeon_name, key_level, tank, healer, dps, dps_players, tank_player = None, healer_player = None):
-  embed_var = discord.Embed(title=f"{interaction.user.nick if not 'None' else interaction.user.name} want to run a {dungeon_name} +{key_level}", description="Desc", color=0x00ff00 if 0 <= key_level < 5 else 0xffff00 if 5 <= key_level <= 7 else 0xff0000)
-  embed_var.add_field(name="TANK", value=f"{f'🛡 *Reserved*' if tank == 0 else f'{tank_player}' if not tank_player is None else '🛡 Tank open'}", inline=False)
-  embed_var.add_field(name="HEALER", value=f"{f'💚 *Reserved*' if healer == 0 else f'{healer_player}' if not healer_player is None else '💚 Healer open'}", inline=False)
+async def format_embed(interaction, dungeon_name, key_level, tank, healer, dps, time, dps_players, tank_player = None, healer_player = None):
+  embed_var = discord.Embed(title=f"{interaction.user.nick if not 'None' else interaction.user.name} want to run a {dungeon_name} +{key_level}{' at '+time if not time is None else ''}!",
+                            description="Desc", color=0x00ff00 if 0 <= key_level < 5 else 0xffff00 if 5 <= key_level <= 7 else 0xff0000)
+  embed_var.add_field(name="TANK", value=f"{'🛡 *Reserved*' if tank == 0 else {tank_player} if not tank_player is None else '🛡 Tank open'}", inline=False)
+  embed_var.add_field(name="HEALER", value=f"{'💚 *Reserved*' if healer == 0 else {healer_player} if not healer_player is None else '💚 Healer open'}", inline=False)
   embed_var.add_field(name="DPS", value=format_dps(dps_players), inline=False)
 
-  content_var = (f"{interaction.user.mention} want to run a {dungeon_name} +{key_level}!"
+  content_var = (f"{interaction.user.mention} want to run a {dungeon_name} +{key_level}{' at '+time if not time is None else ''}!"
                  f"\nThey need "
                  f"{'<@&805437880821612604> ' if not tank else ''}"
                  f"{'<@&1275027330045055048> ' if not healer else ''}"
@@ -163,13 +165,15 @@ async def key(
     key_level: int,
     tank: Optional[int] = 1,
     healer: Optional[int] = 1,
-    dps: Optional[int] = 3):
+    dps: Optional[int] = 3,
+    time: Optional[str] = None):
   """Creates a group people can join
   :param dungeon_name: Name of the dungeon
   :param key_level: Level of the key
   :param tank: Missing tank?
   :param healer: Missing healer?
   :param dps: How many dps is missing?
+  :param time: At a specific time?
   """
   print(f"{interaction.user.name} ({interaction.user.id}) used /key with parameters: dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}")
   if dps<=-1:
@@ -182,7 +186,7 @@ async def key(
     players = [tank_player,heal_player,dps_players]
     print(players)
 
-    content_var, embed_var = await format_embed(interaction, dungeon_name, key_level, tank, healer, dps, dps_players)
+    content_var, embed_var = await format_embed(interaction, dungeon_name, key_level, tank, healer, dps, time, dps_players)
     await interaction.response.send_message(content=content_var, embed=embed_var, view=RoleButtons(interaction.user, players))
 
 @client.event
