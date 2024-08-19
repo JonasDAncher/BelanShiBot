@@ -5,12 +5,13 @@ import os
 
 import discord
 from dotenv import load_dotenv
-from discord import Intents, Client, Message, app_commands, ui, Interaction
+from discord import Intents, Client, Message, app_commands, ui, Interaction, Embed
 
 load_dotenv()
 TOKEN: Final[str] = os.getenv('DISCORD_TOKEN')
 GUILD_ID: Final[int] = 368116240276914176 # Belan Shi Discord ID
 TEST_ID: Final[int] = 489890364090744892 # Test Server Discord ID
+VERBOSE: Final[bool] = False
 
 intents = Intents.default()
 intents.message_content = True
@@ -19,36 +20,102 @@ client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 class RoleButtons(ui.View):
-    def __init__(self, user, tank, healer, dps):
+    def __init__(self, user, players):
       super().__init__()
       self.user = user
-      self.tank = tank
-      self.healer = healer
-      self.dps = dps
+      self.players = players
       self.add_buttons()
 
     def add_buttons(self):
-      tank_button = ui.Button(emoji='🛡', disabled=self.tank)
-      healer_button = ui.Button(emoji='💚', disabled=self.healer)
-      dps_button = ui.Button(emoji='⚔️', disabled=self.dps <= 0)
-      cancel_button = ui.Button(emoji='❌')
+      tank_button = ui.Button(label="TANK", emoji='🛡', disabled=len(self.players[0]) > 0)
+      healer_button = ui.Button(label="HEALER", emoji='💚', disabled=len(self.players[1]) > 0)
+      dps_button = ui.Button(label="DPS", emoji='⚔️', disabled=len(self.players[2]) == 3)
+      cancel_button = ui.Button(label="CANCEL", emoji='❌')
 
       async def tankbutton(interaction: discord.Interaction):
-        await interaction.response.send_message("You've pressed the tank button!", ephemeral=True)
+        if interaction.user in self.players[1] or interaction.user in self.players[2]:
+          await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True, delete_after=3)
+          return
+        if not len(self.players[0]) == 0:
+          if interaction.user == self.players[0][0]:
+            self.players[0].pop()
+            embed_dict = interaction.message.embeds[0].to_dict()
+            for field in embed_dict["fields"]:
+              if field["name"] == "TANK":
+                field["value"] = f"🛡 Tank open"
+            await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+            await interaction.response.send_message("You've removed yourself as tank!", ephemeral=True, delete_after=3)
+            return
+          else:
+            await interaction.response.send_message("Tank spot taken, sorry.", ephemeral=True, delete_after=3)
+            return
+        else:
+          await interaction.response.send_message("You've marked you want to join as tank!", ephemeral=True, delete_after=3)
+          self.players[0].append(interaction.user)
+          embed_dict = interaction.message.embeds[0].to_dict()
+          for field in embed_dict["fields"]:
+            if field["name"] == "TANK":
+              field["value"] = f"🛡 {self.players[0][0]}"
+          await interaction.message.edit(embed=Embed.from_dict(embed_dict))
 
       async def healerbutton(interaction: discord.Interaction):
-        await interaction.response.send_message("You've pressed the healer button!", ephemeral=True)
+        if interaction.user in self.players[0] or interaction.user in self.players[2]:
+          await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True, delete_after=3)
+          return
+        if not len(self.players[1]) == 0:
+          if interaction.user == self.players[1][0]:
+            self.players[1].pop()
+            embed_dict = interaction.message.embeds[0].to_dict()
+            for field in embed_dict["fields"]:
+              if field["name"] == "HEALER":
+                field["value"] = f"💚 Healer open"
+            await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+            await interaction.response.send_message("You've removed yourself as healer!", ephemeral=True, delete_after=3)
+            return
+          else:
+            await interaction.response.send_message("healer spot taken, sorry.", ephemeral=True, delete_after=3)
+            return
+        else:
+          await interaction.response.send_message("You've marked you want to join as healer!", ephemeral=True, delete_after=3)
+          self.players[1].append(interaction.user)
+          embed_dict = interaction.message.embeds[0].to_dict()
+          for field in embed_dict["fields"]:
+            if field["name"] == "HEALER":
+              field["value"] = f"💚 {self.players[1][0]}"
+          await interaction.message.edit(embed=Embed.from_dict(embed_dict))
 
       async def dpsbutton(interaction: discord.Interaction):
-        await interaction.response.send_message("You've pressed the DPS button!", ephemeral=True)
+        print(self.players)
+        if interaction.user in self.players[0] or interaction.user in self.players[1]:
+          await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True, delete_after=3)
+          return
+        if interaction.user in self.players[2]:
+            self.players[2].remove(interaction.user)
+            embed_dict = interaction.message.embeds[0].to_dict()
+            for field in embed_dict["fields"]:
+              if field["name"] == "DPS":
+                field["value"] = format_dps(self.players[2])
+            await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+            await interaction.response.send_message("You've removed yourself as DPS!", ephemeral=True, delete_after=3)
+            return
+        if len(self.players[2]) == 3:
+          await interaction.response.send_message("DPS spots taken, sorry.", ephemeral=True, delete_after=3)
+          return
+        await interaction.response.send_message("You've marked you want to join as DPS!", ephemeral=True, delete_after=3)
+        self.players[2].append(interaction.user)
+        embed_dict = interaction.message.embeds[0].to_dict()
+        for field in embed_dict["fields"]:
+          if field["name"] == "DPS":
+            field["value"] = format_dps(self.players[2])
+        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
 
       async def cancelbutton(interaction: discord.Interaction):
-        if not interaction.user == self.user:
+        if interaction.user == self.user:
           await interaction.message.delete()
-          await interaction.response.send_message(content="Run cancelled!", ephemeral=True)
+          await interaction.response.send_message(content="Run cancelled!", ephemeral=True, delete_after=3)
           return
         else:
-          await interaction.response.send_message(content="You cannot cancel a run you did not start!", ephemeral=True)
+          await interaction.response.send_message(content="You cannot cancel a run you did not start!", ephemeral=True, delete_after=3)
         return
         # await interaction.response.send_message("You've pressed the Cancel button!", ephemeral=True)
 
@@ -62,20 +129,31 @@ class RoleButtons(ui.View):
       self.add_item(dps_button)
       self.add_item(cancel_button)
 
-
-@tree.command(guild=discord.Object(id=TEST_ID))
-async def hello(interaction: discord.Interaction):
-    """Says hello!"""
-    await interaction.response.send_message(f'Hi, {interaction.user.mention}')
-
-def format_dps(dps: int):
-  if dps == 1:
-    return f"⚔️ # 1: ***Unknown***\n⚔️ # 2: ***Unknown***\n⚔️ # 3: *Open*\n"
-  elif dps == 2:
-    return f"⚔️ # 1: ***Unknown***\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
-  elif dps == 3:
+def format_dps(dps_players = []):
+  if len(dps_players) == 3:
+    return f"⚔️ # 1: {dps_players[0]}\n⚔️ # 2: {dps_players[1]}\n⚔️ # 3: {dps_players[2]}\n"
+  elif len(dps_players) == 2:
+    return f"⚔️ # 1: {dps_players[0]}\n⚔️ # 2: {dps_players[1]}\n⚔️ # 3: *Open*\n"
+  elif len(dps_players) == 1:
+    return f"⚔️ # 1: {dps_players[0]}\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
+  elif len(dps_players) == 0:
     return f"⚔️ # 1: *Open*\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
   return None
+
+async def format_embed(interaction, dungeon_name, key_level, tank, healer, dps, dps_players, tank_player = None, healer_player = None):
+  embed_var = discord.Embed(title=f"{interaction.user.nick if not 'None' else interaction.user.name} want to run a {dungeon_name} +{key_level}", description="Desc", color=0x00ff00 if 0 <= key_level < 5 else 0xffff00 if 5 <= key_level <= 7 else 0xff0000)
+  embed_var.add_field(name="TANK", value=f"{f'🛡 *Reserved*' if tank == 0 else f'{tank_player}' if not tank_player is None else '🛡 Tank open'}", inline=False)
+  embed_var.add_field(name="HEALER", value=f"{f'💚 *Reserved*' if healer == 0 else f'{healer_player}' if not healer_player is None else '💚 Healer open'}", inline=False)
+  embed_var.add_field(name="DPS", value=format_dps(dps_players), inline=False)
+
+  content_var = (f"{interaction.user.mention} want to run a {dungeon_name} +{key_level}!"
+                 f"\nThey need "
+                 f"{'<@&805437880821612604> ' if not tank else ''}"
+                 f"{'<@&1275027330045055048> ' if not healer else ''}"
+                 f"{str(dps) + ' x ' + '<@&757298292789870672>' if dps == None or dps > 0 else ''}"
+                 f"{'nothing...?' if tank and healer and dps == 0 else ''}")
+
+  return content_var, embed_var
 
 @tree.command(guild=discord.Object(id=TEST_ID))
 @app_commands.rename(dungeon_name='dungeon-name', key_level='key-level', tank='tank', healer='healer', dps='missing-dps')
@@ -83,34 +161,29 @@ async def key(
     interaction: discord.Interaction,
     dungeon_name: str,
     key_level: int,
-    tank: Optional[bool],
-    healer: Optional[bool],
+    tank: Optional[int] = 1,
+    healer: Optional[int] = 1,
     dps: Optional[int] = 3):
   """Creates a group people can join
   :param dungeon_name: Name of the dungeon
   :param key_level: Level of the key
-  :param tank: Have tank?
-  :param healer: Have healer?
+  :param tank: Missing tank?
+  :param healer: Missing healer?
   :param dps: How many dps is missing?
   """
-  print(f"{interaction.user.name} ({interaction.user.id}) used /group with parameters: dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}")
+  print(f"{interaction.user.name} ({interaction.user.id}) used /key with parameters: dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}")
   if dps<=-1:
     await interaction.response.send_message(content="Illegal argument: `dps` must be a positive integer", ephemeral=True)
     return
   else:
-    embed_var = discord.Embed(title=f"{interaction.user.nick if not 'None' else interaction.user.name} want to run a {dungeon_name} +{key_level}", description="Desc", color= 0x00ff00 if 0<=key_level<5 else 0xffff00 if 5<=key_level<=7 else 0xff0000)
-    embed_var.add_field(name="TANK", value=f"{'~~🛡 Tank open~~ SPOT TAKEN' if tank or None else '🛡 Tank open'}", inline=False)
-    embed_var.add_field(name="HEALER", value=f"{'~~💚 Healer open~~ SPOT TAKEN' if healer or None else '💚 Healer open'}", inline=False)
-    embed_var.add_field(name="DPS", value=format_dps(dps), inline=False)
-    content_var = (f"{interaction.user.mention} want to run a {dungeon_name} +{key_level}!"
-                   f"\nThey need "
-                    f"{'<@&805437880821612604> ' if not tank else ''}"
-                    f"{'<@&1275027330045055048> ' if not healer else ''}"
-                    f"{str(dps)+' x '+'<@&757298292789870672>' if dps==None or dps>0 else ''}"
-                    f"{'nothing...?' if tank and healer and dps==0 else ''}")
-    print(embed_var.fields)
+    tank_player = ["*Reserved*"] * (1 - tank)
+    heal_player = ["*Reserved*"] * (1 - healer)
+    dps_players = ["*Reserved*"] * (3 - dps)
+    players = [tank_player,heal_player,dps_players]
+    print(players)
 
-    msg = await interaction.response.send_message(content=content_var, embed=embed_var, view=RoleButtons(interaction.user, tank, healer, dps))
+    content_var, embed_var = await format_embed(interaction, dungeon_name, key_level, tank, healer, dps, dps_players)
+    await interaction.response.send_message(content=content_var, embed=embed_var, view=RoleButtons(interaction.user, players))
 
 @client.event
 async def on_reaction_add(reaction, user):
