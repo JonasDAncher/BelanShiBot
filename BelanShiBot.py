@@ -293,8 +293,8 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
   content_var = (
     f"{interaction.user.mention} want to run a {dungeon_name} +{key_level}{' at ' + time if not time is None else ''}!"
     f"\nThey need "
-    f"{'<@&805438949341659137> ' if not tank else ''}"
-    f"{'<@&805439339302748200> ' if not healer else ''}"
+    f"{'<@&805438949341659137> ' if tank else ''}"
+    f"{'<@&805439339302748200> ' if healer else ''}"
     f"{str(dps) + ' x ' + '<@&805439297309245531>' if dps == None or dps > 0 else ''}"
     # f"{'<@&805437880821612604> ' if not tank else ''}"
     # f"{'<@&1275027330045055048> ' if not healer else ''}"
