@@ -38,7 +38,7 @@ class RoleButtons(ui.View):
                                                 delete_after=DELETE_TIME)
         return
       if not len(self.players[0]) == 0:
-        if interaction.user == self.players[0][0]:
+        if interaction.user.nick == self.players[0][0]:
           self.players[0].remove(interaction.user.nick)
           embed_dict = interaction.message.embeds[0].to_dict()
           for field in embed_dict["fields"]:
@@ -75,7 +75,7 @@ class RoleButtons(ui.View):
                                                 delete_after=DELETE_TIME)
         return
       if not len(self.players[1]) == 0:
-        if interaction.user == self.players[1][0]:
+        if interaction.user.nick == self.players[1][0]:
           self.players[1].remove(interaction.user.nick)
           embed_dict = interaction.message.embeds[0].to_dict()
           for field in embed_dict["fields"]:
