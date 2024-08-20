@@ -33,7 +33,7 @@ class RoleButtons(ui.View):
     async def tankbutton(interaction: discord.Interaction):
       """Creates the functionality of the tank button"""
 
-      if interaction.user in self.players[1] or interaction.user in self.players[2]:
+      if interaction.user.nick in self.players[1] or interaction.user.nick in self.players[2]:
         await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         return
