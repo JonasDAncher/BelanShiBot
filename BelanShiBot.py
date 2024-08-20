@@ -54,7 +54,7 @@ class RoleButtons(ui.View):
       else:
         await interaction.response.send_message("You've marked you want to join as tank!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        self.players[0].append(interaction.user)
+        self.players[0].append(interaction.user.nick)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TANK":
@@ -91,7 +91,7 @@ class RoleButtons(ui.View):
       else:
         await interaction.response.send_message("You've marked you want to join as healer!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        self.players[1].append(interaction.user)
+        self.players[1].append(interaction.user.nick)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "HEALER":
@@ -127,7 +127,7 @@ class RoleButtons(ui.View):
         return
       await interaction.response.send_message("You've marked you want to join as DPS!", ephemeral=True,
                                               delete_after=DELETE_TIME)
-      self.players[2].append(interaction.user)
+      self.players[2].append(interaction.user.nick)
       embed_dict = interaction.message.embeds[0].to_dict()
       for field in embed_dict["fields"]:
         if field["name"] == "DPS":
