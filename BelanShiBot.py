@@ -112,7 +112,7 @@ class RoleButtons(ui.View):
         await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         return
-      if interaction.user in self.players[2]:
+      if interaction.user.nick in self.players[2]:
         self.players[2].remove(interaction.user.nick)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
