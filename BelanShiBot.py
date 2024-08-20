@@ -7,7 +7,7 @@ from discord import Intents, Client, Message, app_commands, ui, Interaction, Emb
 
 load_dotenv()
 TOKEN: Final[str] = os.getenv('DISCORD_TOKEN')  # Discord bot token, SECRET
-GUILD_ID: Final[int] = 368116240276914176  # Belan Shi Discord ID
+# TEST_ID: Final[int] = 368116240276914176  # Belan Shi Discord ID
 TEST_ID: Final[int] = 489890364090744892  # Test Server Discord ID
 DELETE_TIME: Final[int] = 10  # How long after sending an ephemeral message is deleted automatically.
 
@@ -215,7 +215,8 @@ class RoleButtons(ui.View):
     # self.add_item(unconfirm_button) # Notably not added to the view, as that is part of the confirm button functionality
 
 
-@tree.command(guild=discord.Object(id=TEST_ID))
+# @tree.command(guild=discord.Object(id=TEST_ID)) # Adds command to test server
+@tree.command()                                 # Adds command globally
 @app_commands.rename(dungeon_name='dungeon-name', key_level='key-level', tank='tank', healer='healer',
                      dps='missing-dps')
 async def key(
@@ -303,7 +304,10 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
 # ---------- Bot setup ----------
 @client.event
 async def on_ready() -> None:
-  await tree.sync(guild=discord.Object(id=TEST_ID))
+  # tree.clear_commands(guild=None) # Should clear all phantom commands globally
+  # await tree.sync()
+  # await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
+  await tree.sync()                                 # Syncs command tree globally
   print(f'{client.user} successfully logged in with ID: {client.user.id}')
 
 
