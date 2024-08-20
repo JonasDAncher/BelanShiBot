@@ -70,7 +70,7 @@ class RoleButtons(ui.View):
     async def healerbutton(interaction: discord.Interaction):
       """Creates the functionality of the healer button"""
 
-      if interaction.user in self.players[0] or interaction.user in self.players[2]:
+      if interaction.user.nick in self.players[0] or interaction.user.nick in self.players[2]:
         await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         return
@@ -108,7 +108,7 @@ class RoleButtons(ui.View):
       """Creates the functionality of the DPS button"""
 
       print(self.players)
-      if interaction.user in self.players[0] or interaction.user in self.players[1]:
+      if interaction.user.nick in self.players[0] or interaction.user.nick in self.players[1]:
         await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         return
