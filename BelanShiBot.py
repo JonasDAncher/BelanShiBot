@@ -298,7 +298,7 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
   embed_var.add_field(name="DPS", value=format_dps(dps_players), inline=False)
 
   content_var = (
-    f"{interaction.user.mention} want to run a {dungeon_name} +{key_level}{' at ' + time if not time is None else ''}!"
+    f"{interaction.user.mention} wants to run a {dungeon_name} +{key_level}{' at ' + time if not time is None else ''}!"
     f"\nThey need "
     f"{'<@&805438949341659137> ' if tank else ''}"
     f"{'<@&805439339302748200> ' if healer else ''}"
