@@ -47,7 +47,7 @@ class RoleButtons(ui.View):
           await interaction.message.edit(embed=Embed.from_dict(embed_dict))
           await interaction.response.send_message("You've removed yourself as tank!", ephemeral=True,
                                                   delete_after=DELETE_TIME)
-          print(f"{interaction.user.nick} un-joined run {self.id} as tank")
+          print(f"KEY: {self.id} - {interaction.user.nick} un-joined as TANK")
           return
         else:
           await interaction.response.send_message("Tank spot taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
@@ -55,7 +55,7 @@ class RoleButtons(ui.View):
       else:
         await interaction.response.send_message("You've marked you want to join as tank!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        print(f"{interaction.user.nick} joined run {self.id} as tank")
+        print(f"KEY: {self.id} - {interaction.user.nick} joined as TANK")
         self.players[0].append(interaction.user.nick)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
@@ -86,7 +86,7 @@ class RoleButtons(ui.View):
           await interaction.message.edit(embed=Embed.from_dict(embed_dict))
           await interaction.response.send_message("You've removed yourself as healer!", ephemeral=True,
                                                   delete_after=DELETE_TIME)
-          print(f"{interaction.user.nick} un-joined run {self.id} as healer")
+          print(f"KEY: {self.id} - {interaction.user.nick} un-joined as HEALER")
           return
         else:
           await interaction.response.send_message("healer spot taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
@@ -94,7 +94,7 @@ class RoleButtons(ui.View):
       else:
         await interaction.response.send_message("You've marked you want to join as healer!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        print(f"{interaction.user.nick} joined run {self.id} as healer")
+        print(f"KEY: {self.id} - {interaction.user.nick} joined as HEALER")
         self.players[1].append(interaction.user.nick)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
@@ -111,7 +111,6 @@ class RoleButtons(ui.View):
     async def dpsbutton(interaction: discord.Interaction):
       """Creates the functionality of the DPS button"""
 
-      print(self.players)
       if interaction.user.nick in self.players[0] or interaction.user.nick in self.players[1]:
         await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
@@ -125,14 +124,14 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've removed yourself as DPS!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        print(f"{interaction.user.nick} un-joined run {self.id} as DPS")
+        print(f"KEY: {self.id} - {interaction.user.nick} un-joined as DPS")
         return
       if len(self.players[2]) == 3:
         await interaction.response.send_message("DPS spots taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
         return
       await interaction.response.send_message("You've marked you want to join as DPS!", ephemeral=True,
                                               delete_after=DELETE_TIME)
-      print(f"{interaction.user.nick} joined run {self.id} as DPS")
+      print(f"KEY: {self.id} - {interaction.user.nick} joined as DPS")
       self.players[2].append(interaction.user.nick)
       embed_dict = interaction.message.embeds[0].to_dict()
       for field in embed_dict["fields"]:
@@ -152,7 +151,7 @@ class RoleButtons(ui.View):
       if interaction.user == self.user:
         await interaction.message.delete()
         await interaction.response.send_message(content="Run cancelled!", ephemeral=True, delete_after=DELETE_TIME)
-        print(f"{self.user} cancelled their run {self.id}\n")
+        print(f"KEY: {self.id} - {interaction.user.nick} cancelled the key.")
         # TODO Should also delete any run confirmed messages.
         return
       else:
@@ -187,7 +186,7 @@ class RoleButtons(ui.View):
         self.remove_item(confirm_button)
         self.add_item(unconfirm_button) # Currently disabled re-enables buttons that start as disabled due to reserved
         await interaction.message.edit(view=self)
-        print(f"{self.user} confirmed their run {self.id}\n")
+        print(f"KEY: {self.id} - {interaction.user.nick} confirmed the key.")
         return
       else:
         await interaction.response.send_message(content="You cannot confirm a run you did not start!", ephemeral=True,
@@ -210,7 +209,7 @@ class RoleButtons(ui.View):
             child.disabled = False
         await interaction.response.send_message(content="Run un-confirmed!\nRole buttons activated.", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        print(f"{self.user} un-confirmed their run {self.id}\n")
+        print(f"KEY: {self.id} - {interaction.user.nick} un-confirmed the key.")
         self.remove_item(unconfirm_button)
         self.add_item(confirm_button)
         await interaction.message.edit(view=self)
@@ -244,10 +243,9 @@ async def key(
   :param dps: How many dps is missing?
   :param time: At a specific time?
   """
-  print(
-    f"{interaction.user.nick} ({interaction.user.id}) used /key with parameters:\n"
+  print(f"NEW KEY: {interaction.user.nick} created a new key with parameters:\n"
     f"  dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n"
-    f"-------")  # Primitive logging
+    f"-------") # Primitive logging
 
   if dps <= -1:  # Disallow negative number of DPS players
     await interaction.response.send_message(content="Illegal argument: `dps` must be a positive integer",
