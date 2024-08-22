@@ -3,7 +3,7 @@ import os
 
 import discord
 from dotenv import load_dotenv
-from discord import Intents, Client, Message, app_commands, ui, Interaction, Embed, SelectOption
+from discord import Intents, Client, Message, app_commands, ui, Interaction, Embed, SelectOption, TextStyle
 
 load_dotenv()
 TOKEN: Final[str] = os.getenv('DISCORD_TOKEN')  # Discord bot token, SECRET
@@ -340,86 +340,63 @@ class RoleDropdown(ui.Select):
   async def callback(self, interaction: Interaction):
     await interaction.response.send_message(self.values[0])
 
-class ApplicationForm(ui.View):
+class ApplicationButton(ui.View):
+  def __init__(self):
+    super().__init__()
+
+class ApplicationForm(ui.Modal):
   def __init__(self, user):
     super().__init__()
     self.user = user
 
-  def application_message(self):
-    # Player information
-    name = ui.TextInput(label='Your Name', placeholder='Enter your name here...', required=False)
-    age = ui.TextInput(label='Your Age', placeholder='Enter your age here...', required=False)
-    country = ui.TextInput(label='Your Countr', placeholder='Enter your country here...', required=False)
+  async def submit_button(self, interaction: Interaction):
+    if not interaction.user == self.user:
+      await interaction.response.send_message("Only the applicant can submit the application...", ephemeral=True)
+    else:
+      await interaction.response.send_message(
+                                              "Application submitted!\n"
+                                              "An officer will contact you as soon as possible.\n"
+                                              "Thank you for applying!",
+                                              ephemeral=True
+      )
+      await interaction.message.reply("MISSING IMPLEMENTATION") # TODO implement the formatting of the full application.
 
-    # Character information
-    char_name = ui.TextInput(label='Character Name', placeholder='Enter your main character\'s name...')
-    char_class = ClassDropdown()
-    char_mainspec = ui.TextInput(label='Main Spec', placeholder='Enter you main spec...')
-    char_offspec = ui.TextInput(label='Off Spec', placeholder='Enter you off spec...')
+  # ---------- TextInputs ----------
+  # Currently, modals only support 5 TextInputs per modal, meaning
+  # the application would have to be done in 4-5 different modals.
+  # This probably isn't the most user-friendly, and I'm parking
+  # this feature for now.
 
-    # How did you find us?
-    find_us = ui.TextInput(label='How did you find Belan Shi guild?', placeholder='guildsofwow.com, forums, referral, etc...')
+  # Player information
+  name = ui.TextInput(label='*OPTIONAL* Your Name', placeholder='Enter your name here...', required=False)
+  age = ui.TextInput(label='*OPTIONAL* Your Age', placeholder='Enter your age here...', required=False)
+  country = ui.TextInput(label='*OPTIONAL* Your Country', placeholder='Enter your country here...', required=False)
 
-    # Guild rules
-    guild_rules = ui.TextInput(label='Have you read our guild rules and which of the rules appeal to you the most?')
+  # Character information
+  char_name = ui.TextInput(label='Character Name', placeholder='Enter your main character\'s name...')
+  # char_class = ClassDropdown()
+  char_class = ui.TextInput(label='Character Class', placeholder='Enter your main character\'s class...')
+  char_mainspec = ui.TextInput(label='Main Spec', placeholder='Enter your main spec...')
+  char_offspec = ui.TextInput(label='Off Spec', placeholder='Enter your off spec...')
 
-    # Expectations of joining
-    expectations = ui.TextInput(label='What are you expectations when joining this guild?')
+  # How did you find us?
+  find_us = ui.TextInput(label='How did you find Belan Shi guild?', placeholder='guildsofwow.com, forums, referral, etc...')
 
-    # Attendance of guild activities
-    attend_activities = ui.TextInput(label='Are you able to attend the guild activities such as raids and mythic plus, as per our current schedule?')
+  # Guild rules
+  guild_rules = ui.TextInput(label='Have you read our guild rules and which of the rules appeal to you the most?')
 
-    # Past notable achievements
-    notable_achievements = ui.TextInput(label='From your past WoW ventures, what is your most notable achievement?')
+  # Expectations of joining
+  expectations = ui.TextInput(label='What are you expectations when joining this guild?', style=TextStyle.long)
 
-    # Anything else to add
-    additional = ui.TextInput(label='Anything else to add?', placeholder='We appreciate a good bee joke...', required=False)
+  # Attendance of guild activities
+  attend_activities = ui.TextInput(label='Are you able to attend the guild activities such as raids and mythic plus, as per our current schedule?')
 
-    # ---------- Submit application button ----------
-    submit_application_button = ui.Button(label='Submit', emoji='📬')
+  # Past notable achievements
+  notable_achievements = ui.TextInput(label='From your past WoW ventures, what is your most notable achievement?', style=TextStyle.long)
 
-    async def submit_button(self, interaction: Interaction):
-      if not interaction.user == self.user:
-        await interaction.response.send_message("Only the applicant can submit the application...", ephemeral=True)
-      else:
-        await interaction.response.send_message(
-                                                "Application submitted!\n"
-                                                "An officer will contact you as soon as possible.\n"
-                                                "Thank you for applying!",
-                                                ephemeral=True
-        )
-        await interaction.message.reply("MISSING IMPLEMENTATION") # TODO implement the formatting of the full application.
+  # Anything else to add
+  additional = ui.TextInput(label='Anything else to add?', placeholder='We appreciate a good bee joke...', required=False, style=TextStyle.long)
 
-    submit_application_button.callback = submit_button
-
-    # ---------- Cancel application button ----------
-    cancel_button = ui.Button(label='Cancel', emoji='❌')
-
-    async def cancel(self, interaction: Interaction):
-      if not interaction.user == self.user:
-        await interaction.response.send_message("Only the applicant can cancel the application...", ephemeral=True)
-      else:
-        await interaction.message.delete()
-        await interaction.response.send_message("Application form cancelled!", ephemeral=True, delete_after=30)
-
-    cancel_button.callback = cancel
-
-    # ---------- Creating the application form format ----------
-    self.add_item(name)
-    self.add_item(age)
-    self.add_item(country)
-    self.add_item(char_name)
-    self.add_item(char_class)
-    self.add_item(char_mainspec)
-    self.add_item(char_offspec)
-    self.add_item(find_us)
-    self.add_item(guild_rules)
-    self.add_item(expectations)
-    self.add_item(attend_activities)
-    self.add_item(notable_achievements)
-    self.add_item(additional)
-    self.add_item(submit_application_button)
-    self.add_item(cancel_button)
 
 @tree.command(guild=discord.Object(id=TEST_ID))
 async def apply() -> None:
