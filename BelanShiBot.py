@@ -19,7 +19,7 @@ tree = app_commands.CommandTree(client)
 
 class RoleButtons(ui.View):
   def __init__(self, user, players):
-    super().__init__()
+    super().__init__(timeout=None)
     self.user = user
     self.players = players
     self.add_buttons()
@@ -184,7 +184,7 @@ class RoleButtons(ui.View):
                                                  f"\n⚔️ # 2: {self.players[2][1] if 1 < len(self.players[2]) else '*Open*'}"
                                                  f"\n⚔️ # 3: {self.players[2][2] if 2 < len(self.players[2]) else '*Open*'}")
         self.remove_item(confirm_button)
-        self.add_item(unconfirm_button) # Currently disabled re-enables buttons that start as disabled due to reserved
+        self.add_item(unconfirm_button) # TODO re-enables buttons that start as disabled due to reserved, needs to not
         await interaction.message.edit(view=self)
         print(f"KEY: {self.id} - {interaction.user.nick} confirmed the key.")
         return
