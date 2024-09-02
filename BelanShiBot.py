@@ -29,18 +29,18 @@ class RoleButtons(ui.View):
     """Creates the clickable role, confirm and cancel buttons."""
 
     # ---------- Tank button ----------
-    tank_button = ui.Button(label="TANK", emoji='🛡', disabled=len(self.players[0]) > 0)  # Creates the button object
+    tank_button = ui.Button(label="TANK", emoji='🛡', disabled=len(self.players[0]) > 0, custom_id='tank_button')  # Creates the button object
 
     async def tankbutton(interaction: discord.Interaction):
       """Creates the functionality of the tank button"""
 
-      if interaction.user.nick in self.players[1] or interaction.user.nick in self.players[2]:
+      if interaction.user in self.players[1] or interaction.user in self.players[2]:
         await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         return
       if not len(self.players[0]) == 0:
-        if interaction.user.nick == self.players[0][0]:
-          self.players[0].remove(interaction.user.nick)
+        if interaction.user == self.players[0][0]:
+          self.players[0].remove(interaction.user)
           embed_dict = interaction.message.embeds[0].to_dict()
           for field in embed_dict["fields"]:
             if field["name"] == "TANK":
@@ -48,7 +48,8 @@ class RoleButtons(ui.View):
           await interaction.message.edit(embed=Embed.from_dict(embed_dict))
           await interaction.response.send_message("You've removed yourself as tank!", ephemeral=True,
                                                   delete_after=DELETE_TIME)
-          print(f"{datetime.datetime.now()} - KEY: {self.id} - {interaction.user.nick} un-joined as TANK")
+          username = interaction.user.nick if not None else interaction.user.name
+          print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-joined as TANK")
           return
         else:
           await interaction.response.send_message("Tank spot taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
@@ -56,30 +57,32 @@ class RoleButtons(ui.View):
       else:
         await interaction.response.send_message("You've marked you want to join as tank!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {interaction.user.nick} joined as TANK")
-        self.players[0].append(interaction.user.nick)
+        username = interaction.user.nick if not None else interaction.user.name
+        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} joined as TANK")
+        self.players[0].append(interaction.user)
+        print(self.players)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TANK":
-            field["value"] = f"🛡 {self.players[0][0]}"
+            field["value"] = f"🛡 {self.players[0][0].nick}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
 
     tank_button.callback = tankbutton  # Add functionality to the button object.
     self.add_item(tank_button)  # Add the button to the view.
 
     # ---------- Healer button ----------
-    healer_button = ui.Button(label="HEALER", emoji='💚', disabled=len(self.players[1]) > 0)  # Creates the button object
+    healer_button = ui.Button(label="HEALER", emoji='💚', disabled=len(self.players[1]) > 0, custom_id='healer_button')  # Creates the button object
 
     async def healerbutton(interaction: discord.Interaction):
       """Creates the functionality of the healer button"""
 
-      if interaction.user.nick in self.players[0] or interaction.user.nick in self.players[2]:
+      if interaction.user in self.players[0] or interaction.user in self.players[2]:
         await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         return
       if not len(self.players[1]) == 0:
-        if interaction.user.nick == self.players[1][0]:
-          self.players[1].remove(interaction.user.nick)
+        if interaction.user == self.players[1][0]:
+          self.players[1].remove(interaction.user)
           embed_dict = interaction.message.embeds[0].to_dict()
           for field in embed_dict["fields"]:
             if field["name"] == "HEALER":
@@ -87,7 +90,8 @@ class RoleButtons(ui.View):
           await interaction.message.edit(embed=Embed.from_dict(embed_dict))
           await interaction.response.send_message("You've removed yourself as healer!", ephemeral=True,
                                                   delete_after=DELETE_TIME)
-          print(f"{datetime.datetime.now()} - KEY: {self.id} - {interaction.user.nick} un-joined as HEALER")
+          username = interaction.user.nick if not 'None' else interaction.user.name
+          print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-joined as HEALER")
           return
         else:
           await interaction.response.send_message("healer spot taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
@@ -95,29 +99,30 @@ class RoleButtons(ui.View):
       else:
         await interaction.response.send_message("You've marked you want to join as healer!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {interaction.user.nick} joined as HEALER")
-        self.players[1].append(interaction.user.nick)
+        username = interaction.user.nick if not 'None' else interaction.user.name
+        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} joined as HEALER")
+        self.players[1].append(interaction.user)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "HEALER":
-            field["value"] = f"💚 {self.players[1][0]}"
+            field["value"] = f"💚 {self.players[1][0].nick}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
 
     healer_button.callback = healerbutton  # Add functionality to the button object.
     self.add_item(healer_button)  # Add the button to the view.
 
     # ---------- DPS button ----------
-    dps_button = ui.Button(label="DPS", emoji='⚔️', disabled=len(self.players[2]) == 3)  # Creates the button object
+    dps_button = ui.Button(label="DPS", emoji='⚔️', disabled=len(self.players[2]) == 3, custom_id='dps_button')  # Creates the button object
 
     async def dpsbutton(interaction: discord.Interaction):
       """Creates the functionality of the DPS button"""
 
-      if interaction.user.nick in self.players[0] or interaction.user.nick in self.players[1]:
+      if interaction.user in self.players[0] or interaction.user in self.players[1]:
         await interaction.response.send_message("You cannot be more than one role in a run!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         return
-      if interaction.user.nick in self.players[2]:
-        self.players[2].remove(interaction.user.nick)
+      if interaction.user in self.players[2]:
+        self.players[2].remove(interaction.user)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "DPS":
@@ -125,15 +130,17 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've removed yourself as DPS!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {interaction.user.nick} un-joined as DPS")
+        username = interaction.user.nick if not 'None' else interaction.user.name
+        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-joined as DPS")
         return
       if len(self.players[2]) == 3:
         await interaction.response.send_message("DPS spots taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
         return
       await interaction.response.send_message("You've marked you want to join as DPS!", ephemeral=True,
                                               delete_after=DELETE_TIME)
-      print(f"{datetime.datetime.now()} - KEY: {self.id} - {interaction.user.nick} joined as DPS")
-      self.players[2].append(interaction.user.nick)
+      username = interaction.user.nick if not 'None' else interaction.user.name
+      print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} joined as DPS")
+      self.players[2].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
       for field in embed_dict["fields"]:
         if field["name"] == "DPS":
@@ -144,7 +151,7 @@ class RoleButtons(ui.View):
     self.add_item(dps_button)  # Add the button to the view.
 
     # ---------- Cancel button ----------
-    cancel_button = ui.Button(label="CANCEL", emoji='❌')  # Creates the button object
+    cancel_button = ui.Button(label="CANCEL", emoji='❌', custom_id='cancel_button')  # Creates the button object
 
     async def cancelbutton(interaction: discord.Interaction):
       """Creates the functionality of the cancel button"""
@@ -152,7 +159,8 @@ class RoleButtons(ui.View):
       if interaction.user == self.user:
         await interaction.message.delete()
         await interaction.response.send_message(content="Run cancelled!", ephemeral=True, delete_after=DELETE_TIME)
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {interaction.user.nick} cancelled the key.")
+        username = interaction.user.nick if not None else interaction.user.name
+        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} cancelled the key.")
         # TODO Should also delete any run confirmed messages.
         return
       else:
@@ -164,7 +172,7 @@ class RoleButtons(ui.View):
     self.add_item(cancel_button)  # Add the button to the view.
 
     # ---------- Confirm button ----------
-    confirm_button = ui.Button(label="CONFIRM", emoji='✅')  # Creates the button object
+    confirm_button = ui.Button(label="CONFIRM", emoji='✅', custom_id='confirm_button')  # Creates the button object
 
     async def confirmbutton(interaction: discord.Interaction):
       """Creates the functionality of the confirm button"""
@@ -187,7 +195,8 @@ class RoleButtons(ui.View):
         self.remove_item(confirm_button)
         self.add_item(unconfirm_button) # TODO re-enables buttons that start as disabled due to reserved, needs to not
         await interaction.message.edit(view=self)
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {interaction.user.nick} confirmed the key.")
+        username = interaction.user.nick if not None else interaction.user.name
+        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} confirmed the key.")
         return
       else:
         await interaction.response.send_message(content="You cannot confirm a run you did not start!", ephemeral=True,
@@ -198,7 +207,7 @@ class RoleButtons(ui.View):
     self.add_item(confirm_button)  # Add the button to the view.
 
     # ---------- Unconfirm button ----------
-    unconfirm_button = ui.Button(label="UN-CONFIRM", emoji='↩️')  # Creates the button object
+    unconfirm_button = ui.Button(label="UN-CONFIRM", emoji='↩️', custom_id='unconfirm_button')  # Creates the button object
 
     async def unconfirmbutton(interaction: discord.Interaction):
       """Creates the functionality of the unconfirm button"""
@@ -210,7 +219,8 @@ class RoleButtons(ui.View):
             child.disabled = False
         await interaction.response.send_message(content="Run un-confirmed!\nRole buttons activated.", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {interaction.user.nick} un-confirmed the key.")
+        username = interaction.user.nick if not None else interaction.user.name
+        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-confirmed the key.")
         self.remove_item(unconfirm_button)
         self.add_item(confirm_button)
         await interaction.message.edit(view=self)
@@ -272,11 +282,17 @@ def format_dps(dps_players=None):
   if dps_players is None:
     dps_players = []
   if len(dps_players) == 3:
-    return f"⚔️ # 1: {dps_players[0]}\n⚔️ # 2: {dps_players[1]}\n⚔️ # 3: {dps_players[2]}\n"
+    dps1 = dps_players[0].nick if not isinstance(dps_players[0],str) else dps_players[0]
+    dps2 = dps_players[1].nick if not isinstance(dps_players[1],str) else dps_players[1]
+    dps3 = dps_players[2].nick if not isinstance(dps_players[2],str) else dps_players[2]
+    return f"⚔️ # 1: {dps1}\n⚔️ # 2: {dps2}\n⚔️ # 3: {dps3}\n"
   elif len(dps_players) == 2:
-    return f"⚔️ # 1: {dps_players[0]}\n⚔️ # 2: {dps_players[1]}\n⚔️ # 3: *Open*\n"
+    dps1 = dps_players[0].nick if not isinstance(dps_players[0],str) else dps_players[0]
+    dps2 = dps_players[1].nick if not isinstance(dps_players[1],str) else dps_players[1]
+    return f"⚔️ # 1: {dps1}\n⚔️ # 2: {dps2}\n⚔️ # 3: *Open*\n"
   elif len(dps_players) == 1:
-    return f"⚔️ # 1: {dps_players[0]}\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
+    dps1 = dps_players[0].nick if not isinstance(dps_players[0],str) else dps_players[0]
+    return f"⚔️ # 1: {dps1}\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
   elif len(dps_players) == 0:
     return f"⚔️ # 1: *Open*\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
   return None
@@ -289,12 +305,12 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
   """
   embed_var = discord.Embed(
     title=f"{interaction.user.nick if not 'None' else interaction.user.name} want to run a {dungeon_name} +{key_level}{' at ' + time if not time is None else ''}!",
-    description="Desc", color=0x00ff00 if 0 <= key_level < 5 else 0xffff00 if 5 <= key_level <= 7 else 0xff0000)
+    description="Are you ready for a teambuilding exercise?", color=0x00ff00 if 0 <= key_level < 5 else 0xffff00 if 5 <= key_level <= 7 else 0xff0000)
   embed_var.add_field(name="TANK",
-                      value=f"{'🛡 *Reserved*' if tank == 0 else {tank_player} if not tank_player is None else '🛡 Tank open'}",
+                      value=f"{'🛡 *Reserved*' if tank == 0 else {tank_player.nick} if not tank_player is None else '🛡 Tank open'}",
                       inline=False)
   embed_var.add_field(name="HEALER",
-                      value=f"{'💚 *Reserved*' if healer == 0 else {healer_player} if not healer_player is None else '💚 Healer open'}",
+                      value=f"{'💚 *Reserved*' if healer == 0 else {healer_player.nick} if not healer_player is None else '💚 Healer open'}",
                       inline=False)
   embed_var.add_field(name="DPS", value=format_dps(dps_players), inline=False)
 
@@ -307,7 +323,11 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
     # f"{'<@&805437880821612604> ' if not tank else ''}"
     # f"{'<@&1275027330045055048> ' if not healer else ''}"
     # f"{str(dps) + ' x ' + '<@&757298292789870672>' if dps == None or dps > 0 else ''}"
-    f"{'nothing...?' if tank and healer and dps == 0 else ''}")
+    f"{'nothing...?' if (not tank and not healer and not dps) else ''}")
+  print(dps)
+  print(not tank and healer and dps)
+  print(True if (not tank and not healer and not dps) else False)
+  print(healer)
 
   return content_var, embed_var
 
@@ -316,7 +336,6 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
 @client.event
 async def on_ready() -> None:
   # tree.clear_commands(guild=None) # Should clear all phantom commands globally
-  # await tree.sync()
   # await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
   await tree.sync()                                 # Syncs command tree globally
   print(f'{datetime.datetime.now()} - {client.user} successfully logged in with ID: {client.user.id}')
