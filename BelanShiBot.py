@@ -60,7 +60,6 @@ class RoleButtons(ui.View):
         username = interaction.user.nick if not None else interaction.user.name
         print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} joined as TANK")
         self.players[0].append(interaction.user)
-        print(self.players)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TANK":
@@ -324,11 +323,6 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
     # f"{'<@&1275027330045055048> ' if not healer else ''}"
     # f"{str(dps) + ' x ' + '<@&757298292789870672>' if dps == None or dps > 0 else ''}"
     f"{'nothing...?' if (not tank and not healer and not dps) else ''}")
-  print(dps)
-  print(not tank and healer and dps)
-  print(True if (not tank and not healer and not dps) else False)
-  print(healer)
-
   return content_var, embed_var
 
 
