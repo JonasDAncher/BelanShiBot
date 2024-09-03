@@ -63,7 +63,7 @@ class RoleButtons(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TANK":
-            field["value"] = f"🛡 {self.players[0][0].nick}"
+            field["value"] = f"❌ {self.players[0][0].nick}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
 
     tank_button.callback = tankbutton  # Add functionality to the button object.
@@ -104,7 +104,7 @@ class RoleButtons(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "HEALER":
-            field["value"] = f"💚 {self.players[1][0].nick}"
+            field["value"] = f"❌ {self.players[1][0].nick}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
 
     healer_button.callback = healerbutton  # Add functionality to the button object.
@@ -284,14 +284,14 @@ def format_dps(dps_players=None):
     dps1 = dps_players[0].nick if not isinstance(dps_players[0],str) else dps_players[0]
     dps2 = dps_players[1].nick if not isinstance(dps_players[1],str) else dps_players[1]
     dps3 = dps_players[2].nick if not isinstance(dps_players[2],str) else dps_players[2]
-    return f"⚔️ # 1: {dps1}\n⚔️ # 2: {dps2}\n⚔️ # 3: {dps3}\n"
+    return f"❌ # 1: {dps1}\n❌ # 2: {dps2}\n❌ # 3: {dps3}\n"
   elif len(dps_players) == 2:
     dps1 = dps_players[0].nick if not isinstance(dps_players[0],str) else dps_players[0]
     dps2 = dps_players[1].nick if not isinstance(dps_players[1],str) else dps_players[1]
-    return f"⚔️ # 1: {dps1}\n⚔️ # 2: {dps2}\n⚔️ # 3: *Open*\n"
+    return f"❌ # 1: {dps1}\n❌ # 2: {dps2}\n⚔️ # 3: *Open*\n"
   elif len(dps_players) == 1:
     dps1 = dps_players[0].nick if not isinstance(dps_players[0],str) else dps_players[0]
-    return f"⚔️ # 1: {dps1}\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
+    return f"❌ # 1: {dps1}\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
   elif len(dps_players) == 0:
     return f"⚔️ # 1: *Open*\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
   return None
@@ -306,10 +306,10 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
     title=f"{interaction.user.nick if not 'None' else interaction.user.name} want to run a {dungeon_name} +{key_level}{' at ' + time if not time is None else ''}!",
     description="Are you ready for a teambuilding exercise?", color=0x00ff00 if 0 <= key_level < 5 else 0xffff00 if 5 <= key_level <= 7 else 0xff0000)
   embed_var.add_field(name="TANK",
-                      value=f"{'🛡 *Reserved*' if tank == 0 else {tank_player.nick} if not tank_player is None else '🛡 Tank open'}",
+                      value=f"{'❌ *Reserved*' if tank == 0 else {tank_player.nick} if not tank_player is None else '🛡 Tank open'}",
                       inline=False)
   embed_var.add_field(name="HEALER",
-                      value=f"{'💚 *Reserved*' if healer == 0 else {healer_player.nick} if not healer_player is None else '💚 Healer open'}",
+                      value=f"{'❌ *Reserved*' if healer == 0 else {healer_player.nick} if not healer_player is None else '💚 Healer open'}",
                       inline=False)
   embed_var.add_field(name="DPS", value=format_dps(dps_players), inline=False)
 
