@@ -312,16 +312,15 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
                       value=f"{'❌ *Reserved*' if healer == 0 else {healer_player.nick} if not healer_player is None else '💚 Healer open'}",
                       inline=False)
   embed_var.add_field(name="DPS", value=format_dps(dps_players), inline=False)
-
+  tank_role = discord.utils.get(interaction.guild.roles, name = 'Tank')
+  healer_role = discord.utils.get(interaction.guild.roles, name = 'Healer')
+  dps_role = discord.utils.get(interaction.guild.roles, name = 'DPS')
   content_var = (
     f"{interaction.user.mention} wants to run a {dungeon_name} +{key_level}{' at ' + time if not time is None else ''}!"
     f"\nThey need "
-    f"{'<@&805438949341659137> ' if tank else ''}"
-    f"{'<@&805439339302748200> ' if healer else ''}"
-    f"{str(dps) + ' x ' + '<@&805439297309245531>' if dps == None or dps > 0 else ''}"
-    # f"{'<@&805437880821612604> ' if not tank else ''}"
-    # f"{'<@&1275027330045055048> ' if not healer else ''}"
-    # f"{str(dps) + ' x ' + '<@&757298292789870672>' if dps == None or dps > 0 else ''}"
+    f"{tank_role.mention if tank else ''}"
+    f"{healer_role.mention if healer else ''}"
+    f"{str(dps) + ' x ' + dps_role.mention if dps is None or dps > 0 else ''}"
     f"{'nothing...?' if (not tank and not healer and not dps) else ''}")
   return content_var, embed_var
 
