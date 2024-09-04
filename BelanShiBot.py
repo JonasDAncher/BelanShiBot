@@ -14,6 +14,7 @@ DELETE_TIME: Final[int] = 10  # How long after sending an ephemeral message is d
 
 intents = Intents.default()
 intents.message_content = True  # Allow the bot to see message content
+intents.members = True  # Allow the bot to see message content
 client = Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
@@ -318,9 +319,9 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
   content_var = (
     f"{interaction.user.mention} wants to run a {dungeon_name} +{key_level}{' at ' + time if not time is None else ''}!"
     f"\nThey need "
-    f"{tank_role.mention if tank else ''}"
-    f"{healer_role.mention if healer else ''}"
-    f"{str(dps) + ' x ' + dps_role.mention if dps is None or dps > 0 else ''}"
+    f"{tank_role.mention+' ' if tank else ''}"
+    f"{healer_role.mention+' ' if healer else ''}"
+    f"{str(dps) + ' x ' + dps_role.mention+' ' if dps is None or dps > 0 else ''}"
     f"{'nothing...?' if (not tank and not healer and not dps) else ''}")
   return content_var, embed_var
 
