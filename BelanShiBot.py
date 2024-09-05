@@ -172,21 +172,21 @@ class RoleButtons(ui.View):
     self.add_item(cancel_button)  # Add the button to the view.
 
     # ---------- Confirm button ----------
-    confirm_button = ui.Button(label="CONFIRM", emoji='✅', custom_id='confirm_button')  # Creates the button object
+    confirm_button = ui.Button(label="LOCK RUN", emoji='✅', custom_id='confirm_button')  # Creates the button object
 
     async def confirmbutton(interaction: discord.Interaction):
       """Creates the functionality of the confirm button"""
 
       if interaction.user == self.user:
         for child in self.children:
-          if type(child) == ui.Button and not (child.label == "CONFIRM" or child.label == "CANCEL"):
+          if type(child) == ui.Button and not (child.label == "LOCK RUN" or child.label == "CANCEL"):
             child.disabled = True
         # await interaction.response.send_message(content="Run confirmed!\nRole buttons deactivated", ephemeral=True,
         #                                         delete_after=DELETE_TIME)
         # ^^^^^^ disabled: using vvvvvv instead.
         # Sends a group composition message on run confirmed. However, need a good solution for 'unconfirming' a
         # confirmed run, as this message should then be deleted. TODO Delete old message, if run is un-confirmed
-        await interaction.response.send_message(content=f"Run confirmed!"
+        await interaction.response.send_message(content=f"Run locked!"
                                                  f"\n🛡: {self.players[0][0] if 0 < len(self.players[0]) else '*Open*'}"
                                                  f"\n💚: {self.players[1][0] if 0 < len(self.players[1]) else '*Open*'}"
                                                  f"\n⚔️ # 1: {self.players[2][0] if 0 < len(self.players[2]) else '*Open*'}"
@@ -196,10 +196,10 @@ class RoleButtons(ui.View):
         self.add_item(unconfirm_button) # TODO re-enables buttons that start as disabled due to reserved, needs to not
         await interaction.message.edit(view=self)
         username = interaction.user.nick if not None else interaction.user.name
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} confirmed the key.")
+        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} locked the key.")
         return
       else:
-        await interaction.response.send_message(content="You cannot confirm a run you did not start!", ephemeral=True,
+        await interaction.response.send_message(content="You cannot lock a run you did not start!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
       return
 
@@ -207,7 +207,7 @@ class RoleButtons(ui.View):
     self.add_item(confirm_button)  # Add the button to the view.
 
     # ---------- Unconfirm button ----------
-    unconfirm_button = ui.Button(label="UN-CONFIRM", emoji='↩️', custom_id='unconfirm_button')  # Creates the button object
+    unconfirm_button = ui.Button(label="UN-LOCK", emoji='↩️', custom_id='unconfirm_button')  # Creates the button object
 
     async def unconfirmbutton(interaction: discord.Interaction):
       """Creates the functionality of the unconfirm button"""
@@ -217,16 +217,16 @@ class RoleButtons(ui.View):
           if type(child) == ui.Button and not (
               child.label == "CONFIRM" or child.label == "CANCEL" or child.label == "UN-CONFIRM"):
             child.disabled = False
-        await interaction.response.send_message(content="Run un-confirmed!\nRole buttons activated.", ephemeral=True,
+        await interaction.response.send_message(content="Run un-locked!\nRole buttons activated.", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         username = interaction.user.nick if not None else interaction.user.name
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-confirmed the key.")
+        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-locked the key.")
         self.remove_item(unconfirm_button)
         self.add_item(confirm_button)
         await interaction.message.edit(view=self)
         return
       else:
-        await interaction.response.send_message(content="You cannot un-confirm a run you did not start!",
+        await interaction.response.send_message(content="You cannot un-lock a run you did not start!",
                                                 ephemeral=True, delete_after=DELETE_TIME)
       return
 
