@@ -64,7 +64,7 @@ class RoleButtons(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TANK":
-            field["value"] = f"❌ {self.players[0][0].nick}"
+            field["value"] = f"❌ {self.players[0][0].nick if not None else '*Reserved*'}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
 
     tank_button.callback = tankbutton  # Add functionality to the button object.
@@ -105,7 +105,7 @@ class RoleButtons(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "HEALER":
-            field["value"] = f"❌ {self.players[1][0].nick}"
+            field["value"] = f"❌ {self.players[1][0].nick if not None else '*Reserved*'}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
 
     healer_button.callback = healerbutton  # Add functionality to the button object.
