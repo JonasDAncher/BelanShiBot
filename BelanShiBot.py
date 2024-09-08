@@ -187,11 +187,11 @@ class RoleButtons(ui.View):
         # Sends a group composition message on run confirmed. However, need a good solution for 'unconfirming' a
         # confirmed run, as this message should then be deleted. TODO Delete old message, if run is un-confirmed
         await interaction.response.send_message(content=f"Run locked!"
-                                                 f"\n🛡: {self.players[0][0] if 0 < len(self.players[0]) else '*Open*'}"
-                                                 f"\n💚: {self.players[1][0] if 0 < len(self.players[1]) else '*Open*'}"
-                                                 f"\n⚔️ # 1: {self.players[2][0] if 0 < len(self.players[2]) else '*Open*'}"
-                                                 f"\n⚔️ # 2: {self.players[2][1] if 1 < len(self.players[2]) else '*Open*'}"
-                                                 f"\n⚔️ # 3: {self.players[2][2] if 2 < len(self.players[2]) else '*Open*'}")
+                                                 f"\n🛡: {self.players[0][0].mention if 0 < len(self.players[0]) else '*Open*'}"
+                                                 f"\n💚: {self.players[1][0].mention if 0 < len(self.players[1]) else '*Open*'}"
+                                                 f"\n⚔️ # 1: {self.players[2][0].mention if 0 < len(self.players[2]) else '*Open*'}"
+                                                 f"\n⚔️ # 2: {self.players[2][1].mention if 1 < len(self.players[2]) else '*Open*'}"
+                                                 f"\n⚔️ # 3: {self.players[2][2].mention if 2 < len(self.players[2]) else '*Open*'}")
         self.remove_item(confirm_button)
         self.add_item(unconfirm_button) # TODO re-enables buttons that start as disabled due to reserved, needs to not
         await interaction.message.edit(view=self)
