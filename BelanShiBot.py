@@ -36,7 +36,24 @@ class RoleButtons(ui.View):
     async def tankbutton(interaction: discord.Interaction):
       """Creates the functionality of the tank button"""
 
-      if interaction.user in self.players[1]: # If user is already signed up as healer
+      if len(self.players[0]) > 0:
+        if not interaction.user == self.players[0][0]: # If tank spot is already taken
+          await interaction.response.send_message("Tank spot taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
+          return
+        if interaction.user == self.players[0][0]: # If user is the signed tank
+          self.players[0].remove(interaction.user)
+          embed_dict = interaction.message.embeds[0].to_dict()
+          for field in embed_dict["fields"]:
+            if field["name"] == "TANK":
+              field["value"] = f"🛡 Tank open"
+          await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+          await interaction.response.send_message("You've removed yourself as tank!", ephemeral=True,
+                                                  delete_after=DELETE_TIME)
+          username = interaction.user.nick if not None else interaction.user.name
+          print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-joined as TANK")
+          return
+
+      if len(self.players[1]) > 0 and interaction.user in self.players[1]: # If user is already signed up as healer
         self.players[1].remove(interaction.user)
         self.players[0].append(interaction.user)
         embed_dict = interaction.message.embeds[0].to_dict()
@@ -49,7 +66,7 @@ class RoleButtons(ui.View):
         print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} swapped from HEALER to TANK")
         return
 
-      elif interaction.user in self.players[2]: # If the user is already signed up as dps
+      if len(self.players[2]) > 0 and interaction.user in self.players[2]: # If the user is already signed up as dps
         self.players[2].remove(interaction.user)
         self.players[0].append(interaction.user)
         embed_dict = interaction.message.embeds[0].to_dict()
@@ -62,32 +79,16 @@ class RoleButtons(ui.View):
         print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} swapped from DPS to TANK")
         return
 
-      if not len(self.players[0]) == 0:
-        if interaction.user == self.players[0][0]:
-          self.players[0].remove(interaction.user)
-          embed_dict = interaction.message.embeds[0].to_dict()
-          for field in embed_dict["fields"]:
-            if field["name"] == "TANK":
-              field["value"] = f"🛡 Tank open"
-          await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-          await interaction.response.send_message("You've removed yourself as tank!", ephemeral=True,
-                                                  delete_after=DELETE_TIME)
-          username = interaction.user.nick if not None else interaction.user.name
-          print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-joined as TANK")
-          return
-        else:
-          await interaction.response.send_message("Tank spot taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
-          return
-      else:
-        await interaction.response.send_message("You've marked you want to join as tank!", ephemeral=True, delete_after=DELETE_TIME)
-        username = interaction.user.nick if not None else interaction.user.name
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} joined as TANK")
-        self.players[0].append(interaction.user)
-        embed_dict = interaction.message.embeds[0].to_dict()
-        for field in embed_dict["fields"]:
-          if field["name"] == "TANK":
-            field["value"] = f"❌ {self.players[0][0].nick if not None else '*Reserved*'}"
-        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+      # If the tank spot is open
+      username = interaction.user.nick if not None else interaction.user.name
+      print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} joined as TANK")
+      self.players[0].append(interaction.user)
+      embed_dict = interaction.message.embeds[0].to_dict()
+      for field in embed_dict["fields"]:
+        if field["name"] == "TANK":
+          field["value"] = f"❌ {self.players[0][0].nick if not None else '*Reserved*'}"
+      await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+      await interaction.response.send_message("You've marked you want to join as tank!", ephemeral=True, delete_after=DELETE_TIME)
 
     tank_button.callback = tankbutton  # Add functionality to the button object.
     self.add_item(tank_button)  # Add the button to the view.
@@ -98,7 +99,24 @@ class RoleButtons(ui.View):
     async def healerbutton(interaction: discord.Interaction):
       """Creates the functionality of the healer button"""
 
-      if interaction.user in self.players[0]:  # If user is already signed up as tank
+      if len(self.players[1]) > 0:
+        if not interaction.user == self.players[1][0]: # If healer spot is already taken
+          await interaction.response.send_message("Healer spot taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
+          return
+        if interaction.user == self.players[1][0]: # If the user is the signed healer
+          self.players[1].remove(interaction.user)
+          embed_dict = interaction.message.embeds[0].to_dict()
+          for field in embed_dict["fields"]:
+            if field["name"] == "HEALER":
+              field["value"] = f"💚 Healer open"
+          await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+          await interaction.response.send_message("You've removed yourself as healer!", ephemeral=True,
+                                                  delete_after=DELETE_TIME)
+          username = interaction.user.nick if not 'None' else interaction.user.name
+          print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-joined as HEALER")
+          return
+
+      if len(self.players[0]) > 0 and interaction.user in self.players[0]:  # If user is already signed up as tank
         self.players[0].remove(interaction.user)
         self.players[1].append(interaction.user)
         embed_dict = interaction.message.embeds[0].to_dict()
@@ -111,7 +129,7 @@ class RoleButtons(ui.View):
         print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} swapped from TANK to HEALER")
         return
 
-      elif interaction.user in self.players[2]:  # If the user is already signed up as dps
+      if len(self.players[2]) > 0 and interaction.user in self.players[2]:  # If the user is already signed up as dps
         self.players[2].remove(interaction.user)
         self.players[1].append(interaction.user)
         embed_dict = interaction.message.embeds[0].to_dict()
@@ -124,33 +142,16 @@ class RoleButtons(ui.View):
         print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} swapped from DPS to HEALER")
         return
 
-      if not len(self.players[1]) == 0:
-        if interaction.user == self.players[1][0]:
-          self.players[1].remove(interaction.user)
-          embed_dict = interaction.message.embeds[0].to_dict()
-          for field in embed_dict["fields"]:
-            if field["name"] == "HEALER":
-              field["value"] = f"💚 Healer open"
-          await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-          await interaction.response.send_message("You've removed yourself as healer!", ephemeral=True,
-                                                  delete_after=DELETE_TIME)
-          username = interaction.user.nick if not 'None' else interaction.user.name
-          print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-joined as HEALER")
-          return
-        else:
-          await interaction.response.send_message("healer spot taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
-          return
-      else:
-        await interaction.response.send_message("You've marked you want to join as healer!", ephemeral=True,
-                                                delete_after=DELETE_TIME)
-        username = interaction.user.nick if not 'None' else interaction.user.name
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} joined as HEALER")
-        self.players[1].append(interaction.user)
-        embed_dict = interaction.message.embeds[0].to_dict()
-        for field in embed_dict["fields"]:
-          if field["name"] == "HEALER":
-            field["value"] = f"❌ {self.players[1][0].nick if not None else '*Reserved*'}"
-        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+      # If the healer spot is open
+      username = interaction.user.nick if not 'None' else interaction.user.name
+      print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} joined as HEALER")
+      self.players[1].append(interaction.user)
+      embed_dict = interaction.message.embeds[0].to_dict()
+      for field in embed_dict["fields"]:
+        if field["name"] == "HEALER":
+          field["value"] = f"❌ {self.players[1][0].nick if not None else '*Reserved*'}"
+      await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+      await interaction.response.send_message("You've marked you want to join as healer!", ephemeral=True, delete_after=DELETE_TIME)
 
     healer_button.callback = healerbutton  # Add functionality to the button object.
     self.add_item(healer_button)  # Add the button to the view.
@@ -161,7 +162,24 @@ class RoleButtons(ui.View):
     async def dpsbutton(interaction: discord.Interaction):
       """Creates the functionality of the DPS button"""
 
-      if interaction.user in self.players[0]:  # If user is already signed up as tank
+      if len(self.players[2]) == 3 and not interaction.user in self.players[2]: # If dps spots are already taken
+        await interaction.response.send_message("DPS spots taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
+        return
+
+      if len(self.players[2]) > 0 and interaction.user in self.players[2]: # If the user is signed as dps
+        self.players[2].remove(interaction.user)
+        embed_dict = interaction.message.embeds[0].to_dict()
+        for field in embed_dict["fields"]:
+          if field["name"] == "DPS":
+            field["value"] = format_dps(self.players[2])
+        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+        await interaction.response.send_message("You've removed yourself as DPS!", ephemeral=True,
+                                                delete_after=DELETE_TIME)
+        username = interaction.user.nick if not 'None' else interaction.user.name
+        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-joined as DPS")
+        return
+
+      if len(self.players[0]) > 0 and interaction.user in self.players[0]:  # If user is already signed up as tank
         self.players[0].remove(interaction.user)
         self.players[2].append(interaction.user)
         embed_dict = interaction.message.embeds[0].to_dict()
@@ -174,7 +192,7 @@ class RoleButtons(ui.View):
         print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} swapped from TANK to DPS")
         return
 
-      elif interaction.user in self.players[1]:  # If the user is already signed up as healer
+      if len(self.players[1]) > 0 and interaction.user in self.players[1]:  # If the user is already signed up as healer
         self.players[1].remove(interaction.user)
         self.players[2].append(interaction.user)
         embed_dict = interaction.message.embeds[0].to_dict()
@@ -187,21 +205,7 @@ class RoleButtons(ui.View):
         print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} swapped from HEALER to DPS")
         return
 
-      if interaction.user in self.players[2]:
-        self.players[2].remove(interaction.user)
-        embed_dict = interaction.message.embeds[0].to_dict()
-        for field in embed_dict["fields"]:
-          if field["name"] == "DPS":
-            field["value"] = format_dps(self.players[2])
-        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        await interaction.response.send_message("You've removed yourself as DPS!", ephemeral=True,
-                                                delete_after=DELETE_TIME)
-        username = interaction.user.nick if not 'None' else interaction.user.name
-        print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} un-joined as DPS")
-        return
-      if len(self.players[2]) == 3:
-        await interaction.response.send_message("DPS spots taken, sorry.", ephemeral=True, delete_after=DELETE_TIME)
-        return
+      # If a dps spot is open
       await interaction.response.send_message("You've marked you want to join as DPS!", ephemeral=True,
                                               delete_after=DELETE_TIME)
       username = interaction.user.nick if not 'None' else interaction.user.name
