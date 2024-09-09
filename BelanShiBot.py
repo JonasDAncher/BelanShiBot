@@ -1,4 +1,5 @@
 import datetime
+import random
 from typing import Final, Optional
 import os
 
@@ -297,6 +298,26 @@ def format_dps(dps_players=None):
     return f"⚔️ # 1: *Open*\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
   return None
 
+def random_desc():
+  descs = [
+    "Are you ready for a team building exercise?",
+    "Time to beat the record death count!",
+    "It'll be fiiiiine.",
+    "Got the glue ready?",
+    "Where are you oompa loompas going?",
+    "Watch out for the ledges.",
+    "That's not what she said!",
+    "It's like a group full of dad jokes.",
+    "Remember to buy shoes!",
+    "Did you know, visibility in lava is very bad.",
+    "Remember to moisturize!",
+    "Found a breedable gnome yet?",
+    "It's gonna be a kind of magic!",
+    "Spears.",
+    "You can see trees with eyes.",
+    "Your mom's a hoe."
+  ]
+  return random.choice(descs)
 
 async def format_message(interaction, dungeon_name, key_level, tank, healer, dps, time, dps_players, tank_player=None,
                          healer_player=None):
@@ -305,7 +326,7 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
   """
   embed_var = discord.Embed(
     title=f"{interaction.user.nick if not 'None' else interaction.user.name} want to run a {dungeon_name} +{key_level}{' at ' + time if not time is None else ''}!",
-    description="Are you ready for a teambuilding exercise?", color=0x00ff00 if 0 <= key_level < 5 else 0xffff00 if 5 <= key_level <= 7 else 0xff0000)
+    description=random_desc(), color=0x00ff00 if 0 <= key_level < 5 else 0xffff00 if 5 <= key_level <= 7 else 0xff0000)
   embed_var.add_field(name="TANK",
                       value=f"{'❌ *Reserved*' if tank == 0 else {tank_player.nick} if not tank_player is None else '🛡 Tank open'}",
                       inline=False)
