@@ -294,7 +294,6 @@ class RoleButtons(ui.View):
 
     async def unconfirmbutton(interaction: discord.Interaction):
       """Creates the functionality of the unconfirm button"""
-      print(len(self.players[2]) - self.players[2].count("*Reserved*"))
       if interaction.user == self.user:
         for child in self.children:
           if type(child) == ui.Button and not (child.label == "CONFIRM" or child.label == "CANCEL" or child.label == "UN-CONFIRM"):
