@@ -257,20 +257,26 @@ class RoleButtons(ui.View):
         # Sends a group composition message on run confirmed. However, need a good solution for 'unconfirming' a
         # confirmed run, as this message should then be deleted. TODO Delete old message, if run is un-confirmed
 
-        tank = self.players[0][0].mention if not type(self.players[0][0]) == str else '*Reserved*'
-        healer = self.players[0][0].mention if not type(self.players[1][0]) == str else '*Reserved*'
-        dps1 = self.players[0][0].mention if not type(self.players[2][0]) == str else '*Reserved*'
-        dps2 = self.players[0][0].mention if not type(self.players[2][1]) == str else '*Reserved*'
-        dps3 = self.players[0][0].mention if not type(self.players[2][2]) == str else '*Reserved*'
+        tank = '*Open*'
+        healer = '*Open*'
+        dps1 = '*Open*'
+        dps2 = '*Open*'
+        dps3 = '*Open*'
+
+        if len(self.players[0]) > 0: tank = self.players[0][0].mention if not type(self.players[0][0]) == str else '*Reserved*'
+        if len(self.players[1]) > 0: healer = self.players[1][0].mention if not type(self.players[1][0]) == str else '*Reserved*'
+        if len(self.players[2]) > 0: dps1 = self.players[2][0].mention if not type(self.players[2][0]) == str else '*Reserved*'
+        if len(self.players[2]) > 1: dps2 = self.players[2][1].mention if not type(self.players[2][1]) == str else '*Reserved*'
+        if len(self.players[2]) > 2: dps3 = self.players[2][2].mention if not type(self.players[2][2]) == str else '*Reserved*'
 
         await interaction.response.send_message(content=f"Run locked!"
-                                                 f"\n🛡: {tank if 0 < len(self.players[0]) else '*Open*'}"
-                                                 f"\n💚: {healer if 0 < len(self.players[1]) else '*Open*'}"
-                                                 f"\n⚔️ # 1: {dps1 if 0 < len(self.players[2]) else '*Open*'}"
-                                                 f"\n⚔️ # 2: {dps2 if 1 < len(self.players[2]) else '*Open*'}"
-                                                 f"\n⚔️ # 3: {dps3 if 2 < len(self.players[2]) else '*Open*'}")
+                                                 f"\n🛡: {tank}"
+                                                 f"\n💚: {healer}"
+                                                 f"\n⚔️ # 1: {dps1}"
+                                                 f"\n⚔️ # 2: {dps2}"
+                                                 f"\n⚔️ # 3: {dps3}")
         self.remove_item(confirm_button)
-        self.add_item(unconfirm_button) # TODO re-enables buttons that start as disabled due to reserved, needs to not
+        self.add_item(unconfirm_button)
         await interaction.message.edit(view=self)
         username = interaction.user.nick if not None else interaction.user.name
         print(f"{datetime.datetime.now()} - KEY: {self.id} - {username} locked the key.")
@@ -288,12 +294,13 @@ class RoleButtons(ui.View):
 
     async def unconfirmbutton(interaction: discord.Interaction):
       """Creates the functionality of the unconfirm button"""
-
+      print(len(self.players[2]) - self.players[2].count("*Reserved*"))
       if interaction.user == self.user:
         for child in self.children:
-          if type(child) == ui.Button and not (
-              child.label == "CONFIRM" or child.label == "CANCEL" or child.label == "UN-CONFIRM"):
-            child.disabled = False
+          if type(child) == ui.Button and not (child.label == "CONFIRM" or child.label == "CANCEL" or child.label == "UN-CONFIRM"):
+            if child.label == "TANK" and not "*Reserved*" in self.players[0]: child.disabled = False
+            if child.label == "HEALER" and not "*Reserved*" in self.players[1]: child.disabled = False
+            if child.label == "DPS" and (len(self.players[2]) - self.players[2].count("*Reserved*")) < 3: child.disabled = False
         await interaction.response.send_message(content="Run un-locked!\nRole buttons activated.", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         username = interaction.user.nick if not None else interaction.user.name
