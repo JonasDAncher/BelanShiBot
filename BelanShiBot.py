@@ -256,12 +256,19 @@ class RoleButtons(ui.View):
         # ^^^^^^ disabled: using vvvvvv instead.
         # Sends a group composition message on run confirmed. However, need a good solution for 'unconfirming' a
         # confirmed run, as this message should then be deleted. TODO Delete old message, if run is un-confirmed
+
+        tank = self.players[0][0].mention if not type(self.players[0][0]) == str else '*Reserved*'
+        healer = self.players[0][0].mention if not type(self.players[1][0]) == str else '*Reserved*'
+        dps1 = self.players[0][0].mention if not type(self.players[2][0]) == str else '*Reserved*'
+        dps2 = self.players[0][0].mention if not type(self.players[2][1]) == str else '*Reserved*'
+        dps3 = self.players[0][0].mention if not type(self.players[2][2]) == str else '*Reserved*'
+
         await interaction.response.send_message(content=f"Run locked!"
-                                                 f"\n🛡: {self.players[0][0].mention if 0 < len(self.players[0]) else '*Open*'}"
-                                                 f"\n💚: {self.players[1][0].mention if 0 < len(self.players[1]) else '*Open*'}"
-                                                 f"\n⚔️ # 1: {self.players[2][0].mention if 0 < len(self.players[2]) else '*Open*'}"
-                                                 f"\n⚔️ # 2: {self.players[2][1].mention if 1 < len(self.players[2]) else '*Open*'}"
-                                                 f"\n⚔️ # 3: {self.players[2][2].mention if 2 < len(self.players[2]) else '*Open*'}")
+                                                 f"\n🛡: {tank if 0 < len(self.players[0]) else '*Open*'}"
+                                                 f"\n💚: {healer if 0 < len(self.players[1]) else '*Open*'}"
+                                                 f"\n⚔️ # 1: {dps1 if 0 < len(self.players[2]) else '*Open*'}"
+                                                 f"\n⚔️ # 2: {dps2 if 1 < len(self.players[2]) else '*Open*'}"
+                                                 f"\n⚔️ # 3: {dps3 if 2 < len(self.players[2]) else '*Open*'}")
         self.remove_item(confirm_button)
         self.add_item(unconfirm_button) # TODO re-enables buttons that start as disabled due to reserved, needs to not
         await interaction.message.edit(view=self)
