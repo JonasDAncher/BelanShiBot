@@ -331,7 +331,7 @@ async def key(
     time: Optional[str] = None):
   """Creates a group people can join using ui buttons
   :param dungeon_name: Name of the dungeon
-  :param key_level: Level of the key
+  :param key_level: Level of the key - >99 means any key level
   :param tank: Missing tank?
   :param healer: Missing healer?
   :param dps: How many dps is missing?
@@ -420,7 +420,7 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
   healer_role = discord.utils.get(interaction.guild.roles, name = 'Healer')
   dps_role = discord.utils.get(interaction.guild.roles, name = 'DPS')
   content_var = (
-    f"{interaction.user.mention} wants to run a {dungeon_name} +{key_level}{' at ' + time if not time is None else ''}!"
+    f"{interaction.user.mention} wants to run a {dungeon_name} +{key_level if key_level<99 else '*any*'}{' at ' + time if not time is None else ''}!"
     f"\nThey need "
     f"{tank_role.mention+' ' if tank else ''}"
     f"{healer_role.mention+' ' if healer else ''}"
