@@ -337,12 +337,19 @@ async def key(
   :param dps: How many dps is missing?
   :param time: At a specific time?
   """
+  if interaction.guild_id == 489890364090744892 and interaction.channel.id != 786705743336046593:
+    await interaction.response.send_message(content="Wrong channel, Gala...", ephemeral=True, delete_after=DELETE_TIME)
+    return
+  if interaction.guild_id == 368116240276914176 and interaction.channel.id != 374937731744268289:
+    await interaction.response.send_message(content="Wrong channel, Maya...", ephemeral=True, delete_after=DELETE_TIME)
+    return
+
   print(f"{datetime.datetime.now()} - NEW KEY: {interaction.user.nick} created a new key with parameters:\n"
     f"  dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n"
     f"-------") # Primitive logging
 
   if dps <= -1:  # Disallow negative number of DPS players
-    await interaction.response.send_message(content="Illegal argument: `dps` must be a positive integer",
+    await interaction.response.send_message(content="Illegal argument: `dps` must be a non-negative integer",
                                             ephemeral=True)
     return
   else:
