@@ -440,6 +440,7 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
 # ---------- Bot setup ----------
 @bot.event
 async def on_guild_join(self, guild):
+    print(f'Checking if roles must be added to newly joined guild: {guild.name}')
     if discord.utils.get(guild.roles, name = 'Tank') == None: 
       print(f'Creating missing role Tank on server {guild.name}')
       await guild.create_role(name='Tank')
