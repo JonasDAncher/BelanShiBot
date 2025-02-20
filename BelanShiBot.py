@@ -338,6 +338,17 @@ async def key(
   :param dps: How many dps is missing?
   :param time: At a specific time?
   """
+  print(f'Checking if roles must be added to newly joined guild: {interaction.guild.name}')
+  if discord.utils.get(interaction.guild.roles, name = 'Tank') == None: 
+    print(f'Creating missing role Tank on server {interaction.guild.name}')
+    await interaction.guild.create_role(name='Tank')
+  if discord.utils.get(interaction.guild.roles, name = 'Healer') == None: 
+    print(f'Creating missing role Healer on server {interaction.guild.name}')
+    await interaction.guild.create_role(name='Healer')
+  if discord.utils.get(interaction.guild.roles, name = 'DPS') == None: 
+    print(f'Creating missing role DPS on server {interaction.guild.name}')
+    await interaction.guild.create_role(name='DPS')
+
   if interaction.guild_id == 489890364090744892 and interaction.channel.id != 786705743336046593:
     await interaction.response.send_message(content="Wrong channel, Gala...", ephemeral=True, delete_after=DELETE_TIME)
     return
