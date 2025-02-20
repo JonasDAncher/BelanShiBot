@@ -16,6 +16,7 @@ DELETE_TIME: Final[int] = 10  # How long after sending an ephemeral message is d
 intents = Intents.default()
 intents.message_content = True  # Allow the bot to see message content
 intents.members = True  # Allow the bot to see message content
+intents.guilds = True
 client = Client(intents=intents, allowed_mentions = discord.AllowedMentions(roles=True, users=True))
 tree = app_commands.CommandTree(client)
 

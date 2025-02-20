@@ -1,0 +1,8 @@
+.idea/.gitignore
+.idea/Belan Shi Bot.iml
+.idea/misc.xml
+.idea/modules.xml
+.env
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
+__pycache__/responses.cpython-310.pyc
