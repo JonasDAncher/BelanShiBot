@@ -16,7 +16,7 @@ DELETE_TIME: Final[int] = 10  # How long after sending an ephemeral message is d
 intents = Intents.default()
 intents.message_content = True  # Allow the bot to see message content
 intents.members = True  # Allow the bot to see message content
-intents.guilds = True # Allow the bot to create necessary roles on join
+#intents.guilds = True # Allow the bot to create necessary roles on join
 client = Client(intents=intents, allowed_mentions = discord.AllowedMentions(roles=True, users=True))
 tree = app_commands.CommandTree(client)
 
@@ -440,22 +440,16 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
 # ---------- Bot setup ----------
 @client.event
 async def on_guild_join(guild):
-    print('JOINED SERVER')
-    if guild.system_channel:
-        await guild.system_channel.send("Test")
-
-# @client.event
-# async def on_guild_join(guild):
-#   print(f'Checking if roles must be added to newly joined guild: {guild.name}')
-#   if discord.utils.get(guild.roles, name = 'Tank') == None: 
-#     print(f'Creating missing role Tank on server {guild.name}')
-#     await guild.create_role(name='Tank')
-#   if discord.utils.get(guild.roles, name = 'Healer') == None: 
-#     print(f'Creating missing role Healer on server {guild.name}')
-#     await guild.create_role(name='Healer')
-#   if discord.utils.get(guild.roles, name = 'DPS') == None: 
-#     print(f'Creating missing role DPS on server {guild.name}')
-#     await guild.create_role(name='DPS')
+  print(f'Checking if roles must be added to newly joined guild: {guild.name}')
+  if discord.utils.get(guild.roles, name = 'Tank') == None: 
+    print(f'Creating missing role Tank on server {guild.name}')
+    await guild.create_role(name='Tank')
+  if discord.utils.get(guild.roles, name = 'Healer') == None: 
+    print(f'Creating missing role Healer on server {guild.name}')
+    await guild.create_role(name='Healer')
+  if discord.utils.get(guild.roles, name = 'DPS') == None: 
+    print(f'Creating missing role DPS on server {guild.name}')
+    await guild.create_role(name='DPS')
       
 
 @client.event
@@ -472,42 +466,3 @@ def main() -> None:
 
 if __name__ == '__main__':
   main()
-
-# ---------------- OLD STUFF ----------------
-
-# @client.event
-# async def on_message(message: Message) -> None:
-#   if message.author == client.user:
-#     return
-#
-#   username = str(message.author)
-#   user_message = str(message.content)
-#   channel = str(message.channel)
-#
-#   print(f'[{channel}] {username}: {user_message}')
-#   await send_message(message, user_message)
-
-# async def send_message(message: Message, user_message: str) -> None:
-#   if not user_message:
-#     print('Bad message, empty, missing intents')
-#     return
-#
-#   if is_private := user_message[0] == '?':
-#     user_message = user_message[1:]
-#
-#   try:
-#     await message.channel.send(content=f"You wrote: {user_message}")
-#   except Exception as e:
-#     print(e)
-
-# @tree.command(guild=discord.Object(id=TEST_ID))
-# async def testbutton(interaction: discord.Interaction):
-#   view_var = RoleButtons(True,True,2)
-#   await interaction.response.send_message(view=view_var)
-#
-# @client.event
-# async def on_reaction_add(reaction, user):
-#   message = reaction.message
-#   channel = discord.utils.get(message.guild.channels, name="general")
-#   if message.channel.id == channel.id:
-#         print(f"User {user} reacted with {reaction} to message ID: {reaction.message.id}")
