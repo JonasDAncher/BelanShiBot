@@ -356,7 +356,7 @@ async def key(
     return
 
   log(f"NEW KEY: {interaction.user.nick} created a new key with parameters:\n"
-    f"                        dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n") # Primitive logging
+    f"                                dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n") # Primitive logging
 
   if dps <= -1:  # Disallow negative number of DPS players
     await interaction.response.send_message(content="Illegal argument: `dps` must be a non-negative integer",
