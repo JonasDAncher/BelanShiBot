@@ -2,6 +2,7 @@ import datetime
 import random
 from typing import Final, Optional
 import os
+import logging
 
 import discord
 from dotenv import load_dotenv
@@ -518,7 +519,7 @@ async def on_guild_remove(guild):
 async def on_guild_role_delete(role):
   if role.name == 'Tank' or role.name == 'Healer' or role.name == 'DPS':
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print(f'{time} - {role.guild.name} deleted the {role.name}. Recreating it, informing server.')
+    print(f'{time} - {role.guild.name} deleted the {role.name} role. Recreating it, informing server.')
     await role.guild.create_role(name=role.name)
       
 @client.event
@@ -527,10 +528,17 @@ async def on_ready() -> None:
   # await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
   await tree.sync()                                 # Syncs command tree globally
   time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  logging.info(f'{client.user} successfully logged in with ID: {client.user.id}')
   print(f'{time} - {client.user} successfully logged in with ID: {client.user.id}')
 
 
 def main() -> None:
+  logging.basicConfig(
+    format="{asctime} - {levelname} - {message}",
+    style="{",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.DEBUG,
+  )
   client.run(token=TOKEN)
 
 
