@@ -355,7 +355,7 @@ async def key(
     await interaction.response.send_message(content="Wrong channel, Maya...", ephemeral=True, delete_after=DELETE_TIME)
     return
 
-  log(f"NEW KEY: {interaction.user.nick} created a new key with parameters:\n"
+  log(f"NEW KEY on server {interaction.guild.name}: {interaction.user.nick} created a new key with parameters:\n"
     f"                                dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n") # Primitive logging
 
   if dps <= -1:  # Disallow negative number of DPS players
