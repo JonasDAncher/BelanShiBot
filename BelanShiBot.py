@@ -528,7 +528,8 @@ async def on_ready() -> None:
   # await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
   await tree.sync()                                 # Syncs command tree globally
   time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-  logging.info(f'{client.user} successfully logged in with ID: {client.user.id}')
+  log_message = f'{client.user} successfully logged in with ID: {client.user.id}'
+  logging.info(f'{log_message}')
   print(f'{time} - {client.user} successfully logged in with ID: {client.user.id}')
 
 
