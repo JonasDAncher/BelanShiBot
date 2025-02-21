@@ -51,7 +51,7 @@ class RoleButtons(ui.View):
           await interaction.message.edit(embed=Embed.from_dict(embed_dict))
           await interaction.response.send_message("You've removed yourself as tank!", ephemeral=True,
                                                   delete_after=DELETE_TIME)
-          username = interaction.user.nick if not None else interaction.user.name
+          username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
           log(f'KEY: {self.id} - {username} un-joined as TANK')
           return
 
@@ -64,7 +64,7 @@ class RoleButtons(ui.View):
           if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to tank!", ephemeral=True, delete_after=DELETE_TIME)
-        username = interaction.user.nick if not 'None' else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from HEALER to TANK')
         return
 
@@ -77,12 +77,12 @@ class RoleButtons(ui.View):
           if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've swapped role to tank!", ephemeral=True, delete_after=DELETE_TIME)
-        username = interaction.user.nick if not 'None' else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from DPS to TANK')
         return
 
       # If the tank spot is open
-      username = interaction.user.nick if not 'None' else interaction.user.name
+      username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
       log(f'KEY: {self.id} - {username} joined as TANK')
       self.players[0].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
@@ -114,7 +114,7 @@ class RoleButtons(ui.View):
           await interaction.message.edit(embed=Embed.from_dict(embed_dict))
           await interaction.response.send_message("You've removed yourself as healer!", ephemeral=True,
                                                   delete_after=DELETE_TIME)
-          username = interaction.user.nick if not 'None' else interaction.user.name
+          username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
           log(f'KEY: {self.id} - {username} un-joined as HEALER')
           return
 
@@ -127,7 +127,7 @@ class RoleButtons(ui.View):
           if field["name"] == "HEALER": field["value"] = f"❌ {self.players[1][0].nick if not self.players[1][0].nick==None else self.players[1][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to healer!", ephemeral=True, delete_after=DELETE_TIME)
-        username = interaction.user.nick if not 'None' else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from TANK to HEALER')
         return
 
@@ -140,12 +140,12 @@ class RoleButtons(ui.View):
           if field["name"] == "HEALER": field["value"] = f"❌ {self.players[1][0].nick if not self.players[1][0].nick==None else self.players[1][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've swapped role to healer!", ephemeral=True, delete_after=DELETE_TIME)
-        username = interaction.user.nick if not 'None' else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from DPS to HEALER')
         return
 
       # If the healer spot is open
-      username = interaction.user.nick if not 'None' else interaction.user.name
+      username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
       log(f'KEY: {self.id} - {username} joined as HEALER')
       self.players[1].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
@@ -177,7 +177,7 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've removed yourself as DPS!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        username = interaction.user.nick if not 'None' else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} un-joined as DPS')
         return
 
@@ -190,7 +190,7 @@ class RoleButtons(ui.View):
           if field["name"] == "DPS": field["value"] = format_dps(self.players[2])
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to DPS!", ephemeral=True, delete_after=DELETE_TIME)
-        username = interaction.user.nick if not 'None' else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from TANK to DPS')
         return
 
@@ -203,14 +203,14 @@ class RoleButtons(ui.View):
           if field["name"] == "DPS": field["value"] = format_dps(self.players[2])
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've swapped role to DPS!", ephemeral=True, delete_after=DELETE_TIME)
-        username = interaction.user.nick if not 'None' else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from HEALER to DPS')
         return
 
       # If a dps spot is open
       await interaction.response.send_message("You've marked you want to join as DPS!", ephemeral=True,
                                               delete_after=DELETE_TIME)
-      username = interaction.user.nick if not 'None' else interaction.user.name
+      username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
       log(f'KEY: {self.id} - {username} joined as DPS')
       self.players[2].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
@@ -231,7 +231,7 @@ class RoleButtons(ui.View):
       if interaction.user == self.user:
         await interaction.message.delete()
         await interaction.response.send_message(content="Run cancelled!", ephemeral=True, delete_after=DELETE_TIME)
-        username = interaction.user.nick if not None else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} cancelled the key.')
         # TODO Should also delete any run confirmed messages.
         return
@@ -281,7 +281,7 @@ class RoleButtons(ui.View):
         self.remove_item(confirm_button)
         self.add_item(unconfirm_button)
         await interaction.message.edit(view=self)
-        username = interaction.user.nick if not None else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         
         log(f'KEY: {self.id} - {username} locked the key.')
         return
@@ -306,7 +306,7 @@ class RoleButtons(ui.View):
             if child.label == "DPS" and (len(self.players[2]) - self.players[2].count("*Reserved*")) < 3: child.disabled = False
         await interaction.response.send_message(content="Run un-locked!\nRole buttons activated.", ephemeral=True,
                                                 delete_after=DELETE_TIME)
-        username = interaction.user.nick if not None else interaction.user.name
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} un-locked the key.')
         self.remove_item(unconfirm_button)
         self.add_item(confirm_button)
@@ -381,13 +381,13 @@ def format_dps(dps_players=None):
   if dps_players is None:
     dps_players = []
   if len(dps_players) == 3:
-    dps1 = dps_players[0].nick if not isinstance(dps_players[0],str) else dps_players[0]
-    dps2 = dps_players[1].nick if not isinstance(dps_players[1],str) else dps_players[1]
-    dps3 = dps_players[2].nick if not isinstance(dps_players[2],str) else dps_players[2]
+    dps1 = dps_players[0] if isinstance(dps_players[0],str) else dps_players[0].nick if not dps_players[0].nick==None else dps_players[0].name
+    dps2 = dps_players[1] if isinstance(dps_players[1],str) else dps_players[1].nick if not dps_players[1].nick==None else dps_players[1].name
+    dps3 = dps_players[2] if isinstance(dps_players[2],str) else dps_players[2].nick if not dps_players[2].nick==None else dps_players[2].name
     return f"❌ # 1: {dps1}\n❌ # 2: {dps2}\n❌ # 3: {dps3}\n"
   elif len(dps_players) == 2:
-    dps1 = dps_players[0].nick if not isinstance(dps_players[0],str) else dps_players[0]
-    dps2 = dps_players[1].nick if not isinstance(dps_players[1],str) else dps_players[1]
+    dps1 = dps_players[0] if isinstance(dps_players[0],str) else dps_players[0].nick if not dps_players[0].nick==None else dps_players[0].name
+    dps2 = dps_players[1] if isinstance(dps_players[1],str) else dps_players[1].nick if not dps_players[1].nick==None else dps_players[1].name
     return f"❌ # 1: {dps1}\n❌ # 2: {dps2}\n⚔️ # 3: *Open*\n"
   elif len(dps_players) == 1:
     dps1 = dps_players[0] if isinstance(dps_players[0],str) else dps_players[0].nick if not dps_players[0].nick==None else dps_players[0].name
@@ -435,7 +435,7 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
   :return two variables: the content_var (message content) & embed_var (content of the embed)
   """
   embed_var = discord.Embed(
-    title=f"{interaction.user.nick if not None else interaction.user.name} want to run a {dungeon_name} +{key_level if key_level<99 else '*any*'}{' at ' + time if not time is None else ''}!",
+    title=f"{interaction.user.nick if not interaction.user.nick==None else interaction.user.name} want to run a {dungeon_name} +{key_level if key_level<99 else '*any*'}{' at ' + time if not time is None else ''}!",
     description=random_desc(), color=0x00ff00 if 0 <= key_level < 5 else 0xffff00 if 5 <= key_level <= 7 else 0xff0000)
   embed_var.add_field(name="TANK",
                       value=f"{'❌ *Reserved*' if tank == 0 else {tank_player.nick} if not tank_player is None else '🛡 Tank open'}",
