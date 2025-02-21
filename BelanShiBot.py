@@ -335,7 +335,7 @@ async def key(
   :param key_level: Level of the key - >99 means any key level
   :param tank: Missing tank?
   :param healer: Missing healer?
-  :param dps: How many dps is missing?
+  :param dps: How many dps needed?
   :param time: At a specific time?
   """
   print(f'Checking if roles must be added to newly joined guild: {interaction.guild.name}')
@@ -356,7 +356,7 @@ async def key(
     await interaction.response.send_message(content="Wrong channel, Maya...", ephemeral=True, delete_after=DELETE_TIME)
     return
 
-  print(f"{datetime.datetime.now()} - NEW KEY: {interaction.user.nick} created a new key with parameters:\n"
+  print(f"{datetime.datetime.now()} - TEST - NEW KEY: {interaction.user.nick} created a new key with parameters:\n"
     f"  dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n"
     f"-------") # Primitive logging
 
