@@ -356,7 +356,7 @@ async def key(
     return
 
   log(f"NEW KEY: {interaction.user.nick} created a new key with parameters:\n"
-    f"            dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n") # Primitive logging
+    f"                        dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n") # Primitive logging
 
   if dps <= -1:  # Disallow negative number of DPS players
     await interaction.response.send_message(content="Illegal argument: `dps` must be a non-negative integer",
@@ -495,13 +495,11 @@ When you write `/key`, Discord will help filling in the things you need with a h
 
 @client.event
 async def on_guild_remove(guild):
-  time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
   log(f'I was removed from guild {guild.name}')
 
 @client.event
 async def on_guild_role_delete(role):
   if role.name == 'Tank' or role.name == 'Healer' or role.name == 'DPS':
-    time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     log(f'{role.guild.name} deleted the {role.name} role. Recreating it, informing server.')
     await role.guild.create_role(name=role.name)
       
