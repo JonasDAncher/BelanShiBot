@@ -65,7 +65,7 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to tank!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
-        log(f'{time} - KEY: {self.id} - {username} swapped from HEALER to TANK')
+        log(f'KEY: {self.id} - {username} swapped from HEALER to TANK')
         return
 
       if len(self.players[2]) > 0 and interaction.user in self.players[2]: # If the user is already signed up as dps
@@ -204,8 +204,7 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've swapped role to DPS!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
-        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        log(f'{time} - KEY: {self.id} - {username} swapped from HEALER to DPS')
+        log(f'KEY: {self.id} - {username} swapped from HEALER to DPS')
         return
 
       # If a dps spot is open
@@ -283,7 +282,6 @@ class RoleButtons(ui.View):
         await interaction.message.edit(view=self)
         username = interaction.user.nick if not None else interaction.user.name
         
-        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         log(f'KEY: {self.id} - {username} locked the key.')
         return
       else:
@@ -308,7 +306,7 @@ class RoleButtons(ui.View):
         await interaction.response.send_message(content="Run un-locked!\nRole buttons activated.", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         username = interaction.user.nick if not None else interaction.user.name
-        log(f'{time} - KEY: {self.id} - {username} un-locked the key.')
+        log(f'KEY: {self.id} - {username} un-locked the key.')
         self.remove_item(unconfirm_button)
         self.add_item(confirm_button)
         await interaction.message.edit(view=self)
