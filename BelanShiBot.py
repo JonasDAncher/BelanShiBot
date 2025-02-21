@@ -475,7 +475,7 @@ async def on_guild_join(guild):
     await channel.send(f"""
 Hello! You've added the __Belan Shi Bot__ to your server. Here's how it works.
 
-`/key` is the slash command. It has two things you have to say, and 4 optional ones.
+`/key` is the slash command. It has two things you must to decide, and 4 optional ones.
 **REQUIRED** `dungeon-name` - which is the name of the dungeon you wanna run. You can type in `any` if you don't have a specific in mind.
 **REQUIRED** `key-level` - which is just what level the keystone is. You can type any number greater than `99` if you don't care which level.
 *OPTIONAL* `tank` - How many tanks do you need? Basically `0` if you already have a tank or `1` is you need one.
@@ -483,7 +483,7 @@ Hello! You've added the __Belan Shi Bot__ to your server. Here's how it works.
 *OPTIONAL* `missing-dps` - how many dps are you missing. `0` - `3`
 *OPTIONAL* `time` - If there's a specific time you'd like to run the key.
 
-Leaving the optional ones empty, creates a group that needs all roles.
+Leaving the optional ones empty, creates a group that needs all roles. 
 
 When you write `/key`, Discord will help filling in the things you need with a handy little UI on your chatbox. If you've done all the things right, the bot will post a sign-up post, kinda like we know it from our raid and m+ sign up. As the creator, you can :x: `CANCEL` and :white_check_mark: `LOCK RUN` a run. Cancelling it will delete the sign up post. Locking it will lock the sign up buttons, and post the team in a new message.
       """)
