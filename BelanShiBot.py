@@ -475,6 +475,8 @@ async def on_guild_join(guild):
     await channel.send(f"""
 Hello! You've added the __Belan Shi Bot__ to your server. Here's how it works.
 
+It has added 3 roles to your server `Tank`, `Healer`, & `DPS`. These are the roles it will ping. They're intended to be assigned based on player preference. Added them manually, or let another bot do it.
+
 `/key` is the slash command. It has two things you must to decide, and 4 optional ones.
 **REQUIRED** `dungeon-name` - which is the name of the dungeon you wanna run. You can type in `any` if you don't have a specific in mind.
 **REQUIRED** `key-level` - which is just what level the keystone is. You can type any number greater than `99` if you don't care which level.
