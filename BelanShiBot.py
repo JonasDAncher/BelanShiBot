@@ -536,7 +536,7 @@ def main() -> None:
   logging.basicConfig(
     filename="bot.log",
     encoding="utf-8",
-    filemode="a"
+    filemode="a",
     format="{asctime} - {levelname} - {message}",
     style="{",
     datefmt="%Y-%m-%d %H:%M:%S",
