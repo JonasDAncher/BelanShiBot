@@ -338,6 +338,8 @@ async def key(
   :param dps: How many dps needed?
   :param time: At a specific time?
   """
+  await check_roles(interaction) # Check if the roles exists, and create them if they don't.
+  
   if interaction.guild_id == 489890364090744892 and interaction.channel.id != 786705743336046593:
     await interaction.response.send_message(content="Wrong channel, Gala...", ephemeral=True, delete_after=DELETE_TIME)
     return
@@ -409,6 +411,18 @@ def random_desc():
   ]
   return random.choice(descs)
 
+async def check_roles(interaction):
+  print(f'Checking if roles must be added to server: {interaction.guild.name}')
+  if discord.utils.get(interaction.guild.roles, name = 'Tank') == None: 
+    print(f'Creating missing role Tank on server {interaction.guild.name}')
+    await interaction.guild.create_role(name='Tank')
+  if discord.utils.get(interaction.guild.roles, name = 'Healer') == None: 
+    print(f'Creating missing role Healer on server {interaction.guild.name}')
+    await interaction.guild.create_role(name='Healer')
+  if discord.utils.get(interaction.guild.roles, name = 'DPS') == None: 
+    print(f'Creating missing role DPS on server {interaction.guild.name}')
+    await interaction.guild.create_role(name='DPS')
+
 async def format_message(interaction, dungeon_name, key_level, tank, healer, dps, time, dps_players, tank_player=None,
                          healer_player=None):
   """Formats the embed and the content of the message
@@ -440,7 +454,7 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
 # ---------- Bot setup ----------
 @client.event
 async def on_guild_join(guild):
-  print(f'Checking if roles must be added to newly joined guild: {guild.name}')
+  print(f'Checking if roles must be added to newly joined server: {guild.name}')
   if discord.utils.get(guild.roles, name = 'Tank') == None: 
     print(f'Creating missing role Tank on server {guild.name}')
     await guild.create_role(name='Tank')
@@ -450,8 +464,13 @@ async def on_guild_join(guild):
   if discord.utils.get(guild.roles, name = 'DPS') == None: 
     print(f'Creating missing role DPS on server {guild.name}')
     await guild.create_role(name='DPS')
-      
 
+@client.event
+async def on_guild_role_delete(role):
+  if role.name == 'Tank' or role.name == 'Healer' or role.name == 'DPS':
+    print(f'{role.guild.name} deleted the {role.name}. Recreating it, informing server.')
+    await role.guild.create_role(name=role.name)
+      
 @client.event
 async def on_ready() -> None:
   # tree.clear_commands(guild=None) # Should clear all phantom commands globally
