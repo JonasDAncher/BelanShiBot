@@ -527,10 +527,12 @@ async def on_ready() -> None:
   # tree.clear_commands(guild=None) # Should clear all phantom commands globally
   # await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
   await tree.sync()                                 # Syncs command tree globally
-  time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-  log_message = f'{client.user} successfully logged in with ID: {client.user.id}'
+  log(f'{client.user} successfully logged in with ID: {client.user.id}')
+
+def log(log_message):
   logging.info(f'{log_message}')
-  print(f'{time} - {client.user} successfully logged in with ID: {client.user.id}')
+  time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  print(f'{time} - {log_message}')
 
 
 def main() -> None:
