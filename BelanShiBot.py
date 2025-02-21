@@ -51,7 +51,8 @@ class RoleButtons(ui.View):
           await interaction.response.send_message("You've removed yourself as tank!", ephemeral=True,
                                                   delete_after=DELETE_TIME)
           username = interaction.user.nick if not None else interaction.user.name
-          print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} un-joined as TANK")
+          time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+          print(f"{time} - KEY: {self.id} - {username} un-joined as TANK")
           return
 
       if len(self.players[1]) > 0 and interaction.user in self.players[1]: # If user is already signed up as healer
@@ -64,7 +65,8 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to tank!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} swapped from HEALER to TANK")
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} swapped from HEALER to TANK")
         return
 
       if len(self.players[2]) > 0 and interaction.user in self.players[2]: # If the user is already signed up as dps
@@ -77,12 +79,14 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've swapped role to tank!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} swapped from DPS to TANK")
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} swapped from DPS to TANK")
         return
 
       # If the tank spot is open
       username = interaction.user.nick if not None else interaction.user.name
-      print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} joined as TANK")
+      time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+      print(f"{time} - KEY: {self.id} - {username} joined as TANK")
       self.players[0].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
       for field in embed_dict["fields"]:
@@ -114,7 +118,8 @@ class RoleButtons(ui.View):
           await interaction.response.send_message("You've removed yourself as healer!", ephemeral=True,
                                                   delete_after=DELETE_TIME)
           username = interaction.user.nick if not 'None' else interaction.user.name
-          print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} un-joined as HEALER")
+          time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+          print(f"{time} - KEY: {self.id} - {username} un-joined as HEALER")
           return
 
       if len(self.players[0]) > 0 and interaction.user in self.players[0]:  # If user is already signed up as tank
@@ -127,7 +132,8 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to healer!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} swapped from TANK to HEALER")
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} swapped from TANK to HEALER")
         return
 
       if len(self.players[2]) > 0 and interaction.user in self.players[2]:  # If the user is already signed up as dps
@@ -140,12 +146,14 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've swapped role to healer!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} swapped from DPS to HEALER")
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} swapped from DPS to HEALER")
         return
 
       # If the healer spot is open
       username = interaction.user.nick if not 'None' else interaction.user.name
-      print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} joined as HEALER")
+      time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+      print(f"{time} - KEY: {self.id} - {username} joined as HEALER")
       self.players[1].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
       for field in embed_dict["fields"]:
@@ -177,7 +185,8 @@ class RoleButtons(ui.View):
         await interaction.response.send_message("You've removed yourself as DPS!", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} un-joined as DPS")
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} un-joined as DPS")
         return
 
       if len(self.players[0]) > 0 and interaction.user in self.players[0]:  # If user is already signed up as tank
@@ -190,7 +199,8 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to DPS!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} swapped from TANK to DPS")
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} swapped from TANK to DPS")
         return
 
       if len(self.players[1]) > 0 and interaction.user in self.players[1]:  # If the user is already signed up as healer
@@ -203,14 +213,16 @@ class RoleButtons(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've swapped role to DPS!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} swapped from HEALER to DPS")
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} swapped from HEALER to DPS")
         return
 
       # If a dps spot is open
       await interaction.response.send_message("You've marked you want to join as DPS!", ephemeral=True,
                                               delete_after=DELETE_TIME)
       username = interaction.user.nick if not 'None' else interaction.user.name
-      print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} joined as DPS")
+      time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+      print(f"{time} - KEY: {self.id} - {username} joined as DPS")
       self.players[2].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
       for field in embed_dict["fields"]:
@@ -231,7 +243,8 @@ class RoleButtons(ui.View):
         await interaction.message.delete()
         await interaction.response.send_message(content="Run cancelled!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not None else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} cancelled the key.")
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} cancelled the key.")
         # TODO Should also delete any run confirmed messages.
         return
       else:
@@ -280,7 +293,9 @@ class RoleButtons(ui.View):
         self.add_item(unconfirm_button)
         await interaction.message.edit(view=self)
         username = interaction.user.nick if not None else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} locked the key.")
+        
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} locked the key.")
         return
       else:
         await interaction.response.send_message(content="You cannot lock a run you did not start!", ephemeral=True,
@@ -304,7 +319,8 @@ class RoleButtons(ui.View):
         await interaction.response.send_message(content="Run un-locked!\nRole buttons activated.", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         username = interaction.user.nick if not None else interaction.user.name
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - KEY: {self.id} - {username} un-locked the key.")
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{time} - KEY: {self.id} - {username} un-locked the key.")
         self.remove_item(unconfirm_button)
         self.add_item(confirm_button)
         await interaction.message.edit(view=self)
@@ -351,7 +367,8 @@ async def key(
     await interaction.response.send_message(content="Wrong channel, Maya...", ephemeral=True, delete_after=DELETE_TIME)
     return
 
-  print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - NEW KEY: {interaction.user.nick} created a new key with parameters:\n"
+  time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  print(f"{time} - NEW KEY: {interaction.user.nick} created a new key with parameters:\n"
     f"  dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n"
     f"-------") # Primitive logging
 
@@ -416,7 +433,8 @@ def random_desc():
   return random.choice(descs)
 
 async def check_roles(interaction):
-  print(f'{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Checking if roles must be added to server: {interaction.guild.name}')
+  time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  print(f'{time} - Checking if roles must be added to server: {interaction.guild.name}')
   if discord.utils.get(interaction.guild.roles, name = 'Tank') == None: 
     print(f'  Creating missing role Tank on server {interaction.guild.name}')
     await interaction.guild.create_role(name='Tank')
@@ -458,7 +476,8 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
 # ---------- Bot setup ----------
 @client.event
 async def on_guild_join(guild):
-  print(f'{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Checking if roles must be added to newly joined server: {guild.name}')
+  time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  print(f'{time} - Checking if roles must be added to newly joined server: {guild.name}')
   if discord.utils.get(guild.roles, name = 'Tank') == None: 
     print(f'  Creating missing role Tank on server {guild.name}')
     await guild.create_role(name='Tank')
@@ -469,7 +488,7 @@ async def on_guild_join(guild):
     print(f'  Creating missing role DPS on server {guild.name}')
     await guild.create_role(name='DPS')
 
-  print(f'{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Sending welcome message in {guild.name}')
+  print(f'{time} - Sending welcome message in {guild.name}')
   channel = guild.system_channel
   if channel.permissions_for(guild.me).send_messages:
     await channel.send(f"""
@@ -492,12 +511,14 @@ When you write `/key`, Discord will help filling in the things you need with a h
 
 @client.event
 async def on_guild_remove(guild):
-  print(f'{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - I was removed from guild {guild.name}')
+  time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  print(f'{time} - I was removed from guild {guild.name}')
 
 @client.event
 async def on_guild_role_delete(role):
   if role.name == 'Tank' or role.name == 'Healer' or role.name == 'DPS':
-    print(f'{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {role.guild.name} deleted the {role.name}. Recreating it, informing server.')
+    time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f'{time} - {role.guild.name} deleted the {role.name}. Recreating it, informing server.')
     await role.guild.create_role(name=role.name)
       
 @client.event
@@ -505,7 +526,8 @@ async def on_ready() -> None:
   # tree.clear_commands(guild=None) # Should clear all phantom commands globally
   # await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
   await tree.sync()                                 # Syncs command tree globally
-  print(f'{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {client.user} successfully logged in with ID: {client.user.id}')
+  time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  print(f'{time} - {client.user} successfully logged in with ID: {client.user.id}')
 
 
 def main() -> None:
