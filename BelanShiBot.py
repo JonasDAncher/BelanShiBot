@@ -61,7 +61,7 @@ class RoleButtons(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "HEALER": field["value"] = f"💚 Healer open"
-          if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name if not self.players[0][0].name==None else '*Reserved*'}"
+          if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to tank!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
