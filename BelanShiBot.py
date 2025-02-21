@@ -340,10 +340,14 @@ async def key(
   """
   await check_roles(interaction) # Check if the roles exists, and create them if they don't.
   
-  if interaction.guild_id == 489890364090744892 and interaction.channel.id != 786705743336046593:
+  if interaction.guild_id == 570190869609709569 and interaction.channel.id != 1342184148156284938: # Quack's guild server
+    await interaction.response.send_message(content="Wrong channel", ephemeral=True, delete_after=DELETE_TIME)
+    return
+
+  if interaction.guild_id == 489890364090744892 and interaction.channel.id != 786705743336046593: # Test server
     await interaction.response.send_message(content="Wrong channel, Gala...", ephemeral=True, delete_after=DELETE_TIME)
     return
-  if interaction.guild_id == 368116240276914176 and interaction.channel.id != 374937731744268289:
+  if interaction.guild_id == 368116240276914176 and interaction.channel.id != 374937731744268289: # Belan Shi
     await interaction.response.send_message(content="Wrong channel, Maya...", ephemeral=True, delete_after=DELETE_TIME)
     return
 
@@ -464,6 +468,25 @@ async def on_guild_join(guild):
   if discord.utils.get(guild.roles, name = 'DPS') == None: 
     print(f'Creating missing role DPS on server {guild.name}')
     await guild.create_role(name='DPS')
+
+  print(f'Sending welcome message in {guild.name}')
+  channel = guild.system_channel
+  if channel.permissions_for(guild.me).send_messages:
+    await channel.send(f"""
+Hello! You've added the __Belan Shi Bot__ to your server. Here's how it works.
+
+`/key` is the slash command. It has two things you have to say, and 4 optional ones.
+**REQUIRED** `dungeon-name` - which is the name of the dungeon you wanna run. You can type in `any` if you don't have a specific in mind.
+**REQUIRED** `key-level` - which is just what level the keystone is. You can type any number greater than `99` if you don't care which level.
+*OPTIONAL* `tank` - How many tanks do you need? Basically `0` if you already have a tank or `1` is you need one.
+*OPTIONAL* `healer` - Same as tanks, how many healers do you need, `0` or `1`
+*OPTIONAL* `missing-dps` - how many dps are you missing. `0` - `3`
+*OPTIONAL* `time` - If there's a specific time you'd like to run the key.
+
+Leaving the optional ones empty, creates a group that needs all roles.
+
+When you write `/key`, Discord will help filling in the things you need with a handy little UI on your chatbox. If you've done all the things right, the bot will post a sign-up post, kinda like we know it from our raid and m+ sign up. As the creator, you can :x: `CANCEL` and :white_check_mark: `LOCK RUN` a run. Cancelling it will delete the sign up post. Locking it will lock the sign up buttons, and post the team in a new message.
+      """)
 
 @client.event
 async def on_guild_role_delete(role):
