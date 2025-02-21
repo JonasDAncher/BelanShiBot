@@ -74,7 +74,7 @@ class RoleButtons(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "DPS": field["value"] = format_dps(self.players[2])
-          if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not None else '*Reserved*'}"
+          if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've swapped role to tank!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
@@ -88,7 +88,7 @@ class RoleButtons(ui.View):
       embed_dict = interaction.message.embeds[0].to_dict()
       for field in embed_dict["fields"]:
         if field["name"] == "TANK":
-          field["value"] = f"❌ {self.players[0][0].nick if not None else '*Reserved*'}"
+          field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
       await interaction.message.edit(embed=Embed.from_dict(embed_dict))
       await interaction.response.send_message("You've marked you want to join as tank!", ephemeral=True, delete_after=DELETE_TIME)
 
@@ -124,7 +124,7 @@ class RoleButtons(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TANK": field["value"] = f"🛡 Tank open"
-          if field["name"] == "HEALER": field["value"] = f"❌ {self.players[1][0].nick if not None else '*Reserved*'}"
+          if field["name"] == "HEALER": field["value"] = f"❌ {self.players[1][0].nick if not self.players[1][0].nick==None else self.players[1][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to healer!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
@@ -137,7 +137,7 @@ class RoleButtons(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "DPS": field["value"] = format_dps(self.players[2])
-          if field["name"] == "HEALER": field["value"] = f"❌ {self.players[1][0].nick if not None else '*Reserved*'}"
+          if field["name"] == "HEALER": field["value"] = f"❌ {self.players[1][0].nick if not self.players[1][0].nick==None else self.players[1][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You've swapped role to healer!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
@@ -151,7 +151,7 @@ class RoleButtons(ui.View):
       embed_dict = interaction.message.embeds[0].to_dict()
       for field in embed_dict["fields"]:
         if field["name"] == "HEALER":
-          field["value"] = f"❌ {self.players[1][0].nick if not None else '*Reserved*'}"
+          field["value"] = f"❌ {self.players[1][0].nick if not self.players[1][0].nick==None else self.players[1][0].name}"
       await interaction.message.edit(embed=Embed.from_dict(embed_dict))
       await interaction.response.send_message("You've marked you want to join as healer!", ephemeral=True, delete_after=DELETE_TIME)
 
@@ -390,7 +390,7 @@ def format_dps(dps_players=None):
     dps2 = dps_players[1].nick if not isinstance(dps_players[1],str) else dps_players[1]
     return f"❌ # 1: {dps1}\n❌ # 2: {dps2}\n⚔️ # 3: *Open*\n"
   elif len(dps_players) == 1:
-    dps1 = dps_players[0].nick if not isinstance(dps_players[0],str) else dps_players[0]
+    dps1 = dps_players[0] if isinstance(dps_players[0],str) else dps_players[0].nick if not dps_players[0].nick==None else dps_players[0].name
     return f"❌ # 1: {dps1}\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
   elif len(dps_players) == 0:
     return f"⚔️ # 1: *Open*\n⚔️ # 2: *Open*\n⚔️ # 3: *Open*\n"
