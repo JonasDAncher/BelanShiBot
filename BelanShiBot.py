@@ -276,7 +276,8 @@ class RoleButtons(ui.View):
                                                  f"\n💚: {healer}"
                                                  f"\n⚔️ # 1: {dps1}"
                                                  f"\n⚔️ # 2: {dps2}"
-                                                 f"\n⚔️ # 3: {dps3}")
+                                                 f"\n⚔️ # 3: {dps3}",
+                                                 delete_after=14000)
         self.remove_item(confirm_button)
         self.add_item(unconfirm_button)
         await interaction.message.edit(view=self)
