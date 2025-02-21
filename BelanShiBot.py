@@ -61,7 +61,7 @@ class RoleButtons(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "HEALER": field["value"] = f"💚 Healer open"
-          if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not None else '*Reserved*'}"
+          if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name if not self.players[0][0].name==None else '*Reserved*'}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         await interaction.response.send_message("You swapped role to tank!", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not 'None' else interaction.user.name
@@ -82,7 +82,7 @@ class RoleButtons(ui.View):
         return
 
       # If the tank spot is open
-      username = interaction.user.nick if not None else interaction.user.name
+      username = interaction.user.nick if not 'None' else interaction.user.name
       log(f'KEY: {self.id} - {username} joined as TANK')
       self.players[0].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
@@ -355,7 +355,7 @@ async def key(
     return
 
   log(f"NEW KEY on server {interaction.guild.name}: {interaction.user.nick} created a new key with parameters:\n"
-    f"                                dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}\n") # Primitive logging
+    f"                                dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}") # Primitive logging
 
   if dps <= -1:  # Disallow negative number of DPS players
     await interaction.response.send_message(content="Illegal argument: `dps` must be a non-negative integer",
