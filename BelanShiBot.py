@@ -519,7 +519,7 @@ async def roles(interaction: discord.Interaction):
   content_var = """**You can self-assign roles using the buttons below**
   Click the buttons corrosponding to the role, you wish to receive pings for, when a `/key` run is started!
   Press any role you __already__ have, to disable pings again.\n
-  *`This message disappears in 2 minutes`*"""  
+  -# *This message disappears in 2 minutes*"""  
   await interaction.response.send_message(content=content_var, 
                                           view=AssignRoles(interaction), 
                                           ephemeral=True, 
