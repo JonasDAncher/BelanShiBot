@@ -467,7 +467,7 @@ class AssignRoles(ui.View):
 
   def assign_roles(self):
     # ---------- Helper function ----------
-    async def add_remove_role(self, interaction: discord.Interaction, role):
+    async def add_remove_role(interaction: discord.Interaction, role):
       if role in interaction.user.roles:
         await interaction.user.remove_roles(role)
         await interaction.response.send_message(content=f"You've been removed to the {role} role", ephemeral=True, delete_after=DELETE_TIME)
@@ -510,7 +510,7 @@ async def roles(interaction: discord.Interaction):
   await interaction.response.send_message(content=content_var, 
                                           view=AssignRoles(interaction), 
                                           ephemeral=True, 
-                                          delete_after=DELETE_TIME)
+                                          delete_after=120)
 
 # ---------- Bot setup ----------
 @client.event
