@@ -505,8 +505,10 @@ class AssignRoles(ui.View):
 @tree.command(guild=discord.Object(id=TEST_ID)) # Adds command to test server
 # @tree.command()                                 # Adds command globally
 async def roles(interaction: discord.Interaction):
-  """Creates a message with buttons to assign roles"""
-  content_var = """You can self assign roles using the buttons below\n Click the buttons corrosponding to the role, you wish to recieve pings for, when a `/key` run is started!"""
+  """Creates a message with buttons to self-assign roles"""
+  content_var = """*You can self-assign roles using the buttons below*\n
+  Click the buttons corrosponding to the role, you wish to receive pings for, when a `/key` run is started!\n
+  Press any role you __already__ have, to disable pings again."""
   await interaction.response.send_message(content=content_var, 
                                           view=AssignRoles(interaction), 
                                           ephemeral=True, 
@@ -532,7 +534,8 @@ async def on_guild_join(guild):
     await channel.send(f"""
 Hello! You've added the __Belan Shi Bot__ to your server. Here's how it works.
 
-It has added 3 roles to your server `Tank`, `Healer`, & `DPS`. These are the roles it will ping. They're intended to be assigned based on player preference. Added them manually, or let another bot do it.
+It has added 3 roles to your server `Tank`, `Healer`, & `DPS`. These are the roles it will ping. They're intended to be assigned based on player preference.
+Anyone can call the `/roles` command, and select the roles they wish to receive pings from. Clicking the roles buttons when you already have the role, removes the role, disabling pings again.
 
 `/key` is the slash command. It has two things you must to decide, and 4 optional ones.
 **REQUIRED** `dungeon-name` - which is the name of the dungeon you wanna run. You can type in `any` if you don't have a specific in mind.
