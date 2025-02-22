@@ -40,7 +40,7 @@ class RoleButtons(ui.View):
 
       if len(self.players[0]) > 0:
         if not interaction.user == self.players[0][0]: # If tank spot is already taken
-          await interaction.response.send_message("Tank spot taken, sorry.\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+          await interaction.response.send_message("Tank spot taken, sorry.\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
           return
         if interaction.user == self.players[0][0]: # If user is the signed tank
           self.players[0].remove(interaction.user)
@@ -49,7 +49,7 @@ class RoleButtons(ui.View):
             if field["name"] == "TANK":
               field["value"] = f"🛡 Tank open"
           await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-          await interaction.response.send_message("You've removed yourself as tank!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
+          await interaction.response.send_message("You've removed yourself as tank!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
                                                   delete_after=DELETE_TIME)
           username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
           log(f'KEY: {self.id} - {username} un-joined as TANK')
@@ -63,7 +63,7 @@ class RoleButtons(ui.View):
           if field["name"] == "HEALER": field["value"] = f"💚 Healer open"
           if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        await interaction.response.send_message("You swapped role to tank!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+        await interaction.response.send_message("You swapped role to tank!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from HEALER to TANK')
         return
@@ -76,7 +76,7 @@ class RoleButtons(ui.View):
           if field["name"] == "DPS": field["value"] = format_dps(self.players[2])
           if field["name"] == "TANK": field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        await interaction.response.send_message("You've swapped role to tank!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+        await interaction.response.send_message("You've swapped role to tank!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from DPS to TANK')
         return
@@ -90,7 +90,7 @@ class RoleButtons(ui.View):
         if field["name"] == "TANK":
           field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
       await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-      await interaction.response.send_message("You've marked you want to join as tank!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+      await interaction.response.send_message("You've marked you want to join as tank!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
 
     tank_button.callback = tankbutton  # Add functionality to the button object.
     self.add_item(tank_button)  # Add the button to the view.
@@ -103,7 +103,7 @@ class RoleButtons(ui.View):
 
       if len(self.players[1]) > 0:
         if not interaction.user == self.players[1][0]: # If healer spot is already taken
-          await interaction.response.send_message("Healer spot taken, sorry.\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+          await interaction.response.send_message("Healer spot taken, sorry.\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
           return
         if interaction.user == self.players[1][0]: # If the user is the signed healer
           self.players[1].remove(interaction.user)
@@ -112,7 +112,7 @@ class RoleButtons(ui.View):
             if field["name"] == "HEALER":
               field["value"] = f"💚 Healer open"
           await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-          await interaction.response.send_message("You've removed yourself as healer!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
+          await interaction.response.send_message("You've removed yourself as healer!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
                                                   delete_after=DELETE_TIME)
           username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
           log(f'KEY: {self.id} - {username} un-joined as HEALER')
@@ -126,7 +126,7 @@ class RoleButtons(ui.View):
           if field["name"] == "TANK": field["value"] = f"🛡 Tank open"
           if field["name"] == "HEALER": field["value"] = f"❌ {self.players[1][0].nick if not self.players[1][0].nick==None else self.players[1][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        await interaction.response.send_message("You swapped role to healer!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+        await interaction.response.send_message("You swapped role to healer!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from TANK to HEALER')
         return
@@ -139,7 +139,7 @@ class RoleButtons(ui.View):
           if field["name"] == "DPS": field["value"] = format_dps(self.players[2])
           if field["name"] == "HEALER": field["value"] = f"❌ {self.players[1][0].nick if not self.players[1][0].nick==None else self.players[1][0].name}"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        await interaction.response.send_message("You've swapped role to healer!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+        await interaction.response.send_message("You've swapped role to healer!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from DPS to HEALER')
         return
@@ -153,7 +153,7 @@ class RoleButtons(ui.View):
         if field["name"] == "HEALER":
           field["value"] = f"❌ {self.players[1][0].nick if not self.players[1][0].nick==None else self.players[1][0].name}"
       await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-      await interaction.response.send_message("You've marked you want to join as healer!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+      await interaction.response.send_message("You've marked you want to join as healer!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
 
     healer_button.callback = healerbutton  # Add functionality to the button object.
     self.add_item(healer_button)  # Add the button to the view.
@@ -165,7 +165,7 @@ class RoleButtons(ui.View):
       """Creates the functionality of the DPS button"""
 
       if len(self.players[2]) == 3 and not interaction.user in self.players[2]: # If dps spots are already taken
-        await interaction.response.send_message("DPS spots taken, sorry.\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+        await interaction.response.send_message("DPS spots taken, sorry.\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
         return
 
       if len(self.players[2]) > 0 and interaction.user in self.players[2]: # If the user is signed as dps
@@ -175,7 +175,7 @@ class RoleButtons(ui.View):
           if field["name"] == "DPS":
             field["value"] = format_dps(self.players[2])
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        await interaction.response.send_message("You've removed yourself as DPS!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
+        await interaction.response.send_message("You've removed yourself as DPS!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} un-joined as DPS')
@@ -189,7 +189,7 @@ class RoleButtons(ui.View):
           if field["name"] == "TANK": field["value"] = f"🛡 Tank open"
           if field["name"] == "DPS": field["value"] = format_dps(self.players[2])
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        await interaction.response.send_message("You swapped role to DPS!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+        await interaction.response.send_message("You swapped role to DPS!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from TANK to DPS')
         return
@@ -202,13 +202,13 @@ class RoleButtons(ui.View):
           if field["name"] == "HEALER": field["value"] = f"💚 Healer open"
           if field["name"] == "DPS": field["value"] = format_dps(self.players[2])
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        await interaction.response.send_message("You've swapped role to DPS!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+        await interaction.response.send_message("You've swapped role to DPS!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from HEALER to DPS')
         return
 
       # If a dps spot is open
-      await interaction.response.send_message("You've marked you want to join as DPS!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
+      await interaction.response.send_message("You've marked you want to join as DPS!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
                                               delete_after=DELETE_TIME)
       username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
       log(f'KEY: {self.id} - {username} joined as DPS')
@@ -230,13 +230,13 @@ class RoleButtons(ui.View):
 
       if interaction.user == self.user:
         await interaction.message.delete()
-        await interaction.response.send_message(content="Run cancelled!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+        await interaction.response.send_message(content="Run cancelled!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} cancelled the key.')
         # TODO Should also delete any run confirmed messages.
         return
       else:
-        await interaction.response.send_message(content="You cannot cancel a run you did not start!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
+        await interaction.response.send_message(content="You cannot cancel a run you did not start!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
                                                 delete_after=DELETE_TIME)
       return
 
@@ -286,7 +286,7 @@ class RoleButtons(ui.View):
         log(f'KEY: {self.id} - {username} locked the key.')
         return
       else:
-        await interaction.response.send_message(content="You cannot lock a run you did not start!\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
+        await interaction.response.send_message(content="You cannot lock a run you did not start!\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
                                                 delete_after=DELETE_TIME)
       return
 
@@ -304,7 +304,7 @@ class RoleButtons(ui.View):
             if child.label == "TANK" and not "*Reserved*" in self.players[0]: child.disabled = False
             if child.label == "HEALER" and not "*Reserved*" in self.players[1]: child.disabled = False
             if child.label == "DPS" and (len(self.players[2]) - self.players[2].count("*Reserved*")) < 3: child.disabled = False
-        await interaction.response.send_message(content="Run un-locked!\nRole buttons activated.\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
+        await interaction.response.send_message(content="Run un-locked!\nRole buttons activated.\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True,
                                                 delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} un-locked the key.')
@@ -313,7 +313,7 @@ class RoleButtons(ui.View):
         await interaction.message.edit(view=self)
         return
       else:
-        await interaction.response.send_message(content="You cannot un-lock a run you did not start!\n -# *This message disappears in {DELETE_TIME} seconds",
+        await interaction.response.send_message(content="You cannot un-lock a run you did not start!\n-# *This message disappears in {DELETE_TIME} seconds",
                                                 ephemeral=True, delete_after=DELETE_TIME)
       return
 
@@ -344,21 +344,21 @@ async def key(
   await check_roles(interaction) # Check if the roles exists, and create them if they don't.
   
   if interaction.guild_id == 570190869609709569 and interaction.channel.id != 1342184148156284938: # Quack's guild server
-    await interaction.response.send_message(content="Wrong channel\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+    await interaction.response.send_message(content="Wrong channel\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
     return
 
   if interaction.guild_id == 489890364090744892 and interaction.channel.id != 786705743336046593: # Test server
-    await interaction.response.send_message(content="Wrong channel, Gala...\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+    await interaction.response.send_message(content="Wrong channel, Gala...\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
     return
   if interaction.guild_id == 368116240276914176 and interaction.channel.id != 374937731744268289: # Belan Shi
-    await interaction.response.send_message(content="Wrong channel, Maya...\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+    await interaction.response.send_message(content="Wrong channel, Maya...\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
     return
 
   log(f"NEW KEY on server {interaction.guild.name}: {interaction.user.nick} created a new key with parameters:\n"
     f"                                dungeon_name={dungeon_name}, key_level={key_level}, tank={tank}, healer={healer}, dps={dps}") # Primitive logging
 
   if dps <= -1:  # Disallow negative number of DPS players
-    await interaction.response.send_message(content="Illegal argument: `dps` must be a non-negative integer\n -# *This message disappears in {DELETE_TIME} seconds",
+    await interaction.response.send_message(content="Illegal argument: `dps` must be a non-negative integer\n-# *This message disappears in {DELETE_TIME} seconds",
                                             ephemeral=True)
     return
   else:
@@ -471,12 +471,12 @@ class AssignRoles(ui.View):
       try:
         if role in interaction.user.roles: # If user has role, remove role
           await interaction.user.remove_roles(role)
-          await interaction.response.send_message(content=f"You've enabled pings for the {role} role\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+          await interaction.response.send_message(content=f"You've enabled pings for the {role} role\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
           log(f'User {interaction.user.name} in server {interaction.guild.name} enabled pings for {role}')
           return
         else: # If user is missing role, add it
           await interaction.user.add_roles(role)
-          await interaction.response.send_message(content=f"You've disabled pings for the {role} role\n -# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
+          await interaction.response.send_message(content=f"You've disabled pings for the {role} role\n-# *This message disappears in {DELETE_TIME} seconds", ephemeral=True, delete_after=DELETE_TIME)
           log(f'User {interaction.user.name} in server {interaction.guild.name} disabled pings for {role}')
           return
       except:
