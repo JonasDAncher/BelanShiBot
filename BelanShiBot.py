@@ -471,12 +471,12 @@ class AssignRoles(ui.View):
       try:
         if role in interaction.user.roles: # If user has role, remove role
           await interaction.user.remove_roles(role)
-          await interaction.response.send_message(content=f"You've enabled pings for the {role} role\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
+          await interaction.response.send_message(content=f"You've disabled pings for the {role} role\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
           log(f'User {interaction.user.name} in server {interaction.guild.name} enabled pings for {role}')
           return
         else: # If user is missing role, add it
           await interaction.user.add_roles(role)
-          await interaction.response.send_message(content=f"You've disabled pings for the {role} role\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
+          await interaction.response.send_message(content=f"You've enabled pings for the {role} role\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
           log(f'User {interaction.user.name} in server {interaction.guild.name} disabled pings for {role}')
           return
       except:
