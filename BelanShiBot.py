@@ -470,10 +470,10 @@ class AssignRoles(ui.View):
     async def tankrolebutton(interaction: discord.Interaction):
       role = discord.utils.get(interaction.guild.roles, name = "Tank")
       if role in interaction.user.roles:
-        interaction.user.remove_roles(role)
+        await interaction.user.remove_roles(role)
         return
       else:
-        interaction.user.add_roles(role)
+        await interaction.user.add_roles(role)
         return
     tank_role_button.callback = tankrolebutton
     # ---------- Healer Role Assign ----------
@@ -481,10 +481,10 @@ class AssignRoles(ui.View):
     async def healerrolebutton(interaction: discord.Interaction):
       role = discord.utils.get(interaction.guild.roles, name = "Healer")
       if role in interaction.user.roles:
-        interaction.user.remove_roles(role)
+        await interaction.user.remove_roles(role)
         return
       else:
-        interaction.user.add_roles(role)
+        await interaction.user.add_roles(role)
         return
     healer_role_button.callback = healerrolebutton
 
@@ -493,10 +493,10 @@ class AssignRoles(ui.View):
     async def dpsrolebutton(interaction: discord.Interaction):
       role = discord.utils.get(interaction.guild.roles, name = "DPS")
       if role in interaction.user.roles:
-        interaction.user.remove_roles(role)
+        await interaction.user.remove_roles(role)
         return
       else:
-        interaction.user.add_roles(role)
+        await interaction.user.add_roles(role)
         return
     dps_role_button.callback = dpsrolebutton
 
