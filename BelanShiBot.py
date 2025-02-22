@@ -472,12 +472,12 @@ class AssignRoles(ui.View):
         if role in interaction.user.roles: # If user has role, remove role
           await interaction.user.remove_roles(role)
           await interaction.response.send_message(content=f"You've disabled pings for the {role} role\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
-          log(f'User {interaction.user.name} in server {interaction.guild.name} enabled pings for {role}')
+          log(f'User {interaction.user.name} in server {interaction.guild.name} disabled pings for {role}')
           return
         else: # If user is missing role, add it
           await interaction.user.add_roles(role)
           await interaction.response.send_message(content=f"You've enabled pings for the {role} role\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
-          log(f'User {interaction.user.name} in server {interaction.guild.name} disabled pings for {role}')
+          log(f'User {interaction.user.name} in server {interaction.guild.name} enabled pings for {role}')
           return
       except:
         await interaction.response.send_message(ephemeral=True,
@@ -513,8 +513,8 @@ If you are __not__ a server admin, you should inform one of the issue.\n
     self.add_item(healer_role_button)
     self.add_item(dps_role_button)
 
-@tree.command(guild=discord.Object(id=TEST_ID)) # Adds command to test server
-# @tree.command()                                 # Adds command globally
+# @tree.command(guild=discord.Object(id=TEST_ID)) # Adds command to test server
+@tree.command()                                 # Adds command globally
 async def roles(interaction: discord.Interaction):
   """Creates a message with buttons to self-assign roles"""
   content_var = """**You can self-assign roles using the buttons below, enabling their pings**
@@ -576,8 +576,8 @@ async def on_guild_role_delete(role):
 @client.event
 async def on_ready() -> None:
   # tree.clear_commands(guild=None) # Should clear all phantom commands globally
-  await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
-  # await tree.sync()                                 # Syncs command tree globally
+  # await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
+  await tree.sync()                                 # Syncs command tree globally
   log(f'{client.user} successfully logged in with ID: {client.user.id}')
 
 def log(log_message):
