@@ -491,7 +491,6 @@ class AssignRoles(ui.View):
       role = discord.utils.get(interaction.guild.roles, name = "Healer")
       await add_remove_role(interaction, role)
     healer_role_button.callback = healerrolebutton
-
     # ---------- DPS Role Assign ----------
     dps_role_button = ui.Button(label="DPS", emoji='⚔️', custom_id='dps_role_button')
     async def dpsrolebutton(interaction: discord.Interaction):
@@ -510,7 +509,17 @@ async def roles(interaction: discord.Interaction):
   """Creates a message with buttons to self-assign roles"""
   content_var = """*You can self-assign roles using the buttons below*\n
   Click the buttons corrosponding to the role, you wish to receive pings for, when a `/key` run is started!\n
-  Press any role you __already__ have, to disable pings again."""
+  Press any role you __already__ have, to disable pings again."""  
+
+  # ---------- Ensuring roles are manageable by bot ----------
+  tank = discord.utils.get(interaction.guild.roles, name = "Tank")
+  healer = discord.utils.get(interaction.guild.roles, name = "Healer")
+  dps = discord.utils.get(interaction.guild.roles, name = "DPS")
+  bsb = discord.utils.get(interaction.guild.roles, name = "Belan Shi Bot")
+  if bsb < tank: tank.edit(position=bsb.position-1)
+  if bsb < healer: healer.edit(position=bsb.position-1)
+  if bsb < dps: dps.edit(position=bsb.position-1)
+  
   await interaction.response.send_message(content=content_var, 
                                           view=AssignRoles(interaction), 
                                           ephemeral=True, 
