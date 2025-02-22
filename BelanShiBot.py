@@ -456,6 +456,61 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
     f"{'nothing...?' if (not tank and not healer and not dps) else ''}")
   return content_var, embed_var
 
+# --------- Assign Roles ---------
+
+class AssignRoles(ui.View):
+  def __init__(self, interaction):
+    super().__init__(timeout=None)
+    self.interaction = interaction
+    self.assign_roles()
+
+  def assign_roles(self):
+    # ---------- Tank Role Assign ----------
+    tank_role_button = ui.Button(label="TANK", emoji='🛡', custom_id='tank_role_button')
+    async def tankrolebutton(interaction: discord.Interaction):
+      role = discord.utils.get(interaction.guild.roles, name = "Tank")
+      if role in interaction.user.roles:
+        interaction.user.remove_roles(role)
+        return
+      else:
+        interaction.user.add_roles(role)
+        return
+    tank_role_button.callback = tankrolebutton
+    # ---------- Healer Role Assign ----------
+    healer_role_button = ui.Button(label="HEALER", emoji='💚', custom_id='healer_role_button')
+    async def healerrolebutton(interaction: discord.Interaction):
+      role = discord.utils.get(interaction.guild.roles, name = "Healer")
+      if role in interaction.user.roles:
+        interaction.user.remove_roles(role)
+        return
+      else:
+        interaction.user.add_roles(role)
+        return
+    healer_role_button.callback = healerrolebutton
+
+    # ---------- DPS Role Assign ----------
+    dps_role_button = ui.Button(label="DPS", emoji='⚔️', custom_id='dps_role_button')
+    async def dpsrolebutton(interaction: discord.Interaction):
+      role = discord.utils.get(interaction.guild.roles, name = "DPS")
+      if role in interaction.user.roles:
+        interaction.user.remove_roles(role)
+        return
+      else:
+        interaction.user.add_roles(role)
+        return
+    dps_role_button.callback = dpsrolebutton
+
+    # Assign buttons to view
+    self.add_item(tank_role_button)
+    self.add_item(healer_role_button)
+    self.add_item(dps_role_button)
+
+@tree.command(guild=discord.Object(id=TEST_ID)) # Adds command to test server
+# @tree.command()                                 # Adds command globally
+async def roles(interaction: discord.Interaction):
+  """Creates a message with buttons to assign roles"""
+  content_var = """You can self assign roles using the buttons below\n Click the buttons corrosponding to the role, you wish to recieve pings for, when a `/key` run is started!"""
+  await interaction.response.send_message(content=content_var, view=AssignRoles(interaction))
 
 # ---------- Bot setup ----------
 @client.event
@@ -505,8 +560,8 @@ async def on_guild_role_delete(role):
 @client.event
 async def on_ready() -> None:
   # tree.clear_commands(guild=None) # Should clear all phantom commands globally
-  # await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
-  await tree.sync()                                 # Syncs command tree globally
+  await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
+  # await tree.sync()                                 # Syncs command tree globally
   log(f'{client.user} successfully logged in with ID: {client.user.id}')
 
 def log(log_message):
