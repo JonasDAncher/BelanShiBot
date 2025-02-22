@@ -516,9 +516,9 @@ async def roles(interaction: discord.Interaction):
   healer = discord.utils.get(interaction.guild.roles, name = "Healer")
   dps = discord.utils.get(interaction.guild.roles, name = "DPS")
   bsb = discord.utils.get(interaction.guild.roles, name = "Belan Shi Bot")
-  if bsb < tank: tank.edit(position=bsb.position-1)
-  if bsb < healer: healer.edit(position=bsb.position-1)
-  if bsb < dps: dps.edit(position=bsb.position-1)
+  if bsb < tank: await tank.edit(position=bsb.position-1)
+  if bsb < healer: await healer.edit(position=bsb.position-1)
+  if bsb < dps: await dps.edit(position=bsb.position-1)
   
   await interaction.response.send_message(content=content_var, 
                                           view=AssignRoles(interaction), 
