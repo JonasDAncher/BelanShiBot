@@ -464,40 +464,37 @@ class AssignRoles(ui.View):
     self.interaction = interaction
     self.assign_roles()
 
+
   def assign_roles(self):
+    # ---------- Helper function ----------
+    async def add_remove_role(self, interaction: discord.Interaction, role):
+      if role in interaction.user.roles:
+        await interaction.user.remove_roles(role)
+        await interaction.response.send_message(content=f"You've been removed to the {role} role", ephemeral=True, delete_after=DELETE_TIME)
+        return
+      else:
+        await interaction.user.add_roles(role)
+        await interaction.response.send_message(content=f"You've been added to the {role} role", ephemeral=True, delete_after=DELETE_TIME)
+        return
+
     # ---------- Tank Role Assign ----------
     tank_role_button = ui.Button(label="TANK", emoji='🛡', custom_id='tank_role_button')
     async def tankrolebutton(interaction: discord.Interaction):
       role = discord.utils.get(interaction.guild.roles, name = "Tank")
-      if role in interaction.user.roles:
-        await interaction.user.remove_roles(role)
-        return
-      else:
-        await interaction.user.add_roles(role)
-        return
+      await add_remove_role(interaction, role)
     tank_role_button.callback = tankrolebutton
     # ---------- Healer Role Assign ----------
     healer_role_button = ui.Button(label="HEALER", emoji='💚', custom_id='healer_role_button')
     async def healerrolebutton(interaction: discord.Interaction):
       role = discord.utils.get(interaction.guild.roles, name = "Healer")
-      if role in interaction.user.roles:
-        await interaction.user.remove_roles(role)
-        return
-      else:
-        await interaction.user.add_roles(role)
-        return
+      await add_remove_role(interaction, role)
     healer_role_button.callback = healerrolebutton
 
     # ---------- DPS Role Assign ----------
     dps_role_button = ui.Button(label="DPS", emoji='⚔️', custom_id='dps_role_button')
     async def dpsrolebutton(interaction: discord.Interaction):
       role = discord.utils.get(interaction.guild.roles, name = "DPS")
-      if role in interaction.user.roles:
-        await interaction.user.remove_roles(role)
-        return
-      else:
-        await interaction.user.add_roles(role)
-        return
+      await add_remove_role(interaction, role)
     dps_role_button.callback = dpsrolebutton
 
     # Assign buttons to view
