@@ -510,7 +510,10 @@ class AssignRoles(ui.View):
 async def roles(interaction: discord.Interaction):
   """Creates a message with buttons to assign roles"""
   content_var = """You can self assign roles using the buttons below\n Click the buttons corrosponding to the role, you wish to recieve pings for, when a `/key` run is started!"""
-  await interaction.response.send_message(content=content_var, view=AssignRoles(interaction))
+  await interaction.response.send_message(content=content_var, 
+                                          view=AssignRoles(interaction), 
+                                          ephemeral=True, 
+                                          delete_after=DELETE_TIME)
 
 # ---------- Bot setup ----------
 @client.event
