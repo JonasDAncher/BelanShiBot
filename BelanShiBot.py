@@ -482,9 +482,10 @@ class AssignRoles(ui.View):
       except:
         await interaction.response.send_message(ephemeral=True,
                                                 delete_after=60,
-                                                content=f"""Error: I cannot manipulate the {role} role. Likely because it's higher than the `Belan Shi Bot` role.\n
-                                                All three of the `Tank`, `Healer`, & `DPS` roles should be lower in the hierachy then the `Belan Shi Bot` role.\n
-                                                If you are __not__ a server admin, you should inform one of the issue.""")
+                                                content=f"""
+***Error***: I cannot manipulate the `{role}` role. Likely because it's above the `Belan Shi Bot` role.\n
+All three of the `Tank`, `Healer`, & `DPS` roles should be lower in the hierachy than the `Belan Shi Bot` role.\n
+If you are __not__ a server admin, you should inform one of the issue.""")
         log(f'Cannot manipulate the role {role} in server {interaction.guild.name}. Error message has informed caller.')
 
     # ---------- Tank Role Assign ----------
