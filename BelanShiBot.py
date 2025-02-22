@@ -468,16 +468,24 @@ class AssignRoles(ui.View):
   def assign_roles(self):
     # ---------- Helper function ----------
     async def add_remove_role(interaction: discord.Interaction, role):
-      if role in interaction.user.roles:
-        await interaction.user.remove_roles(role)
-        await interaction.response.send_message(content=f"You've been removed to the {role} role", ephemeral=True, delete_after=DELETE_TIME)
-        log(f'User {interaction.user.name} in server {interaction.guild.name} enabled pings for {role}')
-        return
-      else:
-        await interaction.user.add_roles(role)
-        await interaction.response.send_message(content=f"You've been added to the {role} role", ephemeral=True, delete_after=DELETE_TIME)
-        log(f'User {interaction.user.name} in server {interaction.guild.name} disabled pings for {role}')
-        return
+      try:
+        if role in interaction.user.roles:
+          await interaction.user.remove_roles(role)
+          await interaction.response.send_message(content=f"You've been removed to the {role} role", ephemeral=True, delete_after=DELETE_TIME)
+          log(f'User {interaction.user.name} in server {interaction.guild.name} enabled pings for {role}')
+          return
+        else:
+          await interaction.user.add_roles(role)
+          await interaction.response.send_message(content=f"You've been added to the {role} role", ephemeral=True, delete_after=DELETE_TIME)
+          log(f'User {interaction.user.name} in server {interaction.guild.name} disabled pings for {role}')
+          return
+      except:
+        await interaction.response.send_message(ephemeral=True,
+                                                delete_after=60,
+                                                content=f"""Error: I cannot manipulate the {role} role. Likely because it's higher than the `Belan Shi Bot` role.\n
+                                                All three of the `Tank`, `Healer`, & `DPS` roles should be lower in the hierachy then the `Belan Shi Bot` role.\n
+                                                If you are __not__ a server admin, you should inform one of the issue.""")
+        log(f'Cannot manipulate the role {role} in server {interaction.guild.name}. Error message has informed caller.')
 
     # ---------- Tank Role Assign ----------
     tank_role_button = ui.Button(label="TANK", emoji='🛡', custom_id='tank_role_button')
@@ -510,16 +518,6 @@ async def roles(interaction: discord.Interaction):
   content_var = """*You can self-assign roles using the buttons below*\n
   Click the buttons corrosponding to the role, you wish to receive pings for, when a `/key` run is started!\n
   Press any role you __already__ have, to disable pings again."""  
-
-  # ---------- Ensuring roles are manageable by bot ----------
-  tank = discord.utils.get(interaction.guild.roles, name = "Tank")
-  healer = discord.utils.get(interaction.guild.roles, name = "Healer")
-  dps = discord.utils.get(interaction.guild.roles, name = "DPS")
-  bsb = discord.utils.get(interaction.guild.roles, name = "Belan Shi Bot")
-  if bsb < tank: await tank.edit(position=bsb.position-1)
-  if bsb < healer: await healer.edit(position=bsb.position-1)
-  if bsb < dps: await dps.edit(position=bsb.position-1)
-  
   await interaction.response.send_message(content=content_var, 
                                           view=AssignRoles(interaction), 
                                           ephemeral=True, 
