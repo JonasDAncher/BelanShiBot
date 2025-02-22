@@ -471,10 +471,12 @@ class AssignRoles(ui.View):
       if role in interaction.user.roles:
         await interaction.user.remove_roles(role)
         await interaction.response.send_message(content=f"You've been removed to the {role} role", ephemeral=True, delete_after=DELETE_TIME)
+        log(f'User {interaction.user.name} in server {interaction.guild.name} enabled pings for {role}')
         return
       else:
         await interaction.user.add_roles(role)
         await interaction.response.send_message(content=f"You've been added to the {role} role", ephemeral=True, delete_after=DELETE_TIME)
+        log(f'User {interaction.user.name} in server {interaction.guild.name} disabled pings for {role}')
         return
 
     # ---------- Tank Role Assign ----------
@@ -513,6 +515,7 @@ async def roles(interaction: discord.Interaction):
                                           view=AssignRoles(interaction), 
                                           ephemeral=True, 
                                           delete_after=120)
+  log(f'User {interaction.user.name} in server {interaction.guild.name} called the /roles command')
 
 # ---------- Bot setup ----------
 @client.event
@@ -534,10 +537,10 @@ async def on_guild_join(guild):
     await channel.send(f"""
 Hello! You've added the __Belan Shi Bot__ to your server. Here's how it works.
 
-It has added 3 roles to your server `Tank`, `Healer`, & `DPS`. These are the roles it will ping. They're intended to be assigned based on player preference.
+It has added 3 roles to your server `Tank`, `Healer`, & `DPS`. These are the roles it will ping. They're intended to be assigned based on player preference.\n 
 Anyone can call the `/roles` command, and select the roles they wish to receive pings from. Clicking the roles buttons when you already have the role, removes the role, disabling pings again.
 
-`/key` is the slash command. It has two things you must to decide, and 4 optional ones.
+`/key` is the command to start a Mythic Plus run. It has two things you must to decide, and 4 optional ones.
 **REQUIRED** `dungeon-name` - which is the name of the dungeon you wanna run. You can type in `any` if you don't have a specific in mind.
 **REQUIRED** `key-level` - which is just what level the keystone is. You can type any number greater than `99` if you don't care which level.
 *OPTIONAL* `tank` - How many tanks do you need? Basically `0` if you already have a tank or `1` is you need one.
