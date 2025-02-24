@@ -595,7 +595,7 @@ async def on_ready() -> None:
 def log(log_message):
   logging.info(f'{log_message}')
   time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-  print(f'{time} - {log_message}')
+  # print(f'{time} - {log_message}')
 
 
 def main() -> None:
