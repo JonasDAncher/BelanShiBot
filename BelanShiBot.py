@@ -520,12 +520,24 @@ async def roles(interaction: discord.Interaction):
   content_var = """**You can self-assign roles using the buttons below, enabling their pings**
 Click the buttons corrosponding to the role, you wish to receive pings for, when a `/key` run is started!
 Press any role you __already__ have, to disable pings again.\n
--# *This message disappears in 2 minutes*"""  
-  await interaction.response.send_message(content=content_var, 
-                                          view=AssignRoles(interaction), 
-                                          ephemeral=True, 
-                                          delete_after=120)
-  log(f'User {interaction.user.name} in server {interaction.guild.name} called the /roles command')
+-# *This message disappears in 2 minutes*"""
+  bsb_role = discord.utils.get(interaction.guild.roles, name = "Belan Shi Bot")  
+  roles = [discord.utils.get(interaction.guild.roles, name = "Tank"),
+           discord.utils.get(interaction.guild.roles, name = "Healer"),
+           discord.utils.get(interaction.guild.roles, name = "DPS"),
+           bsb_role]
+  if max(roles) == bsb_role:
+    await interaction.response.send_message(content=content_var, 
+                                            view=AssignRoles(interaction), 
+                                            ephemeral=True, 
+                                            delete_after=120)
+    log(f'User {interaction.user.name} in server {interaction.guild.name} called the /roles command')
+  else:
+    await interaction.response.send_message(content=f"""
+***Error***: All three of the `Tank`, `Healer`, & `DPS` roles should be lower in the hierachy than the `Belan Shi Bot` role.\n
+If you are __not__ a server admin, you should inform one of the issue.\n
+-# *This message disappears in 2 minutes*""")
+    logging.error(f'User {interaction.user.name} in server {interaction.guild.name} called the /roles command resulting in an error due to incorrecet role hierachy')
 
 # ---------- Bot setup ----------
 @client.event
