@@ -445,7 +445,7 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
                       value=f"{'❌ *Reserved*' if healer == 0 else {healer_player.nick} if not healer_player is None else '💚 Healer open'}",
                       inline=False)
   embed_var.add_field(name="DPS", value=format_dps(dps_players), inline=False)
-  embed_var.add_field(value="-# Want to receive pings? Use `/roles` and pick which!", inline=False)
+  embed_var.add_field(name='', value="-# Want to receive pings? Use `/roles` and pick which!", inline=False)
   tank_role = discord.utils.get(interaction.guild.roles, name = 'Tank')
   healer_role = discord.utils.get(interaction.guild.roles, name = 'Healer')
   dps_role = discord.utils.get(interaction.guild.roles, name = 'DPS')
