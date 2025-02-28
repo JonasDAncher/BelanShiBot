@@ -88,6 +88,7 @@ class RoleButtons(ui.View):
       log(f'KEY: {self.id} - {username} joined as TANK')
       self.players[0].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
+      print(interaction.message)
       for field in embed_dict["fields"]:
         if field["name"] == "TANK":
           field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
