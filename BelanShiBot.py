@@ -691,12 +691,13 @@ Each correct answer gives {reward} points! If you have the most be the end, you'
     view=view_var
   )
 
-  quizzing()
-
   @tasks.loop(seconds=10.0)
   async def quizzing():
     print(participants)
     print(a)
+    
+  quizzing()
+
 
 # ---------- Bot setup ----------
 @client.event
