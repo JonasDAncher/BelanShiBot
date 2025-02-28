@@ -599,10 +599,10 @@ class Quiz(ui.View):
       await interaction.message.edit(embed=embed_var)
 
       timer = 5
-      embed_var.add_field(name="TIMER", value=f"{timer} seconds left to answer!")
+      embed_var.add_field(name="TIMER", value=f"{timer} seconds left to answer!", inline=False)
       await interaction.message.edit(embed=embed_var)
       while timer > 0:
-        await asyncio.sleep(1)
+        await asyncio.sleep(1.0)
         timer -= 1
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
