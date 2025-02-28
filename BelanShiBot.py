@@ -606,7 +606,7 @@ class Quiz(ui.View):
         print(f"timer active, there's {self.timer_time} left!")
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
+          if field["name"] == "TIMER": field["value"] = f"{60} seconds left to answer!"
       
       timer_time = 5
       embed_var.add_field(name="TIMER", value=f"{timer_time} seconds left to answer!", inline=False)
