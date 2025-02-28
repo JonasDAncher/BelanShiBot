@@ -589,30 +589,27 @@ class Quiz(ui.View):
       print(interaction.message.embeds[0])
       embed_var = interaction.message.embeds[0]
       embed_var.add_field(name="",value="``` ```") # Spacer
-      embed_var.add_field(name=f"Question #{question_number+1}",
-                          value=f"{questions[question_number]}", inline=False)
-      embed_var.add_field(name="1", value=f"> {options[question_number][0]}", inline=True)
-      embed_var.add_field(name="2", value=f"> {options[question_number][1]}", inline=True)
+      embed_var.add_field(name=f"Question #*{question_number+1}*",
+                          value=f"**{questions[question_number]}**", inline=False)
+      embed_var.add_field(name="1", value=f"> *{options[question_number][0]}*", inline=True)
+      embed_var.add_field(name="2", value=f"> *{options[question_number][1]}*", inline=True)
       embed_var.add_field(name="",value="",inline=False) # New line
-      embed_var.add_field(name="3", value=f"> {options[question_number][2]}", inline=True)
-      embed_var.add_field(name="4", value=f"> {options[question_number][3]}", inline=True)
+      embed_var.add_field(name="3", value=f"> *{options[question_number][2]}*", inline=True)
+      embed_var.add_field(name="4", value=f"> *{options[question_number][3]}*", inline=True)
       await interaction.message.edit(embed=embed_var)
 
       @tasks.loop(seconds=1.0, count=5)
-      async def timer(timer_time):
+      async def timer(self, timer_time: float):
         self.timer_time = timer_time
-        print(f"timer active, there's {self.timer_time} left!")
-        self.timer_time -= 1
-        print(f"timer active, there's {self.timer_time} left!")
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if field["name"] == "TIMER": field["value"] = f"{60} seconds left to answer!"
+          if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
       
       timer_time = 5
       embed_var.add_field(name="TIMER", value=f"{timer_time} seconds left to answer!", inline=False)
       await interaction.message.edit(embed=embed_var)
-      await timer.start(timer_time)
+      await timer.start(self, timer_time)
 
   # --------- Answer Buttons ---------
     a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
@@ -623,7 +620,7 @@ class Quiz(ui.View):
 
     b_button = ui.Button(label="",emoji='2️⃣', custom_id='answer_b_button')
     async def answerb(interaction: discord.Interaction):
-      if interaction.user not in participant: s.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+      if interaction.user not in participant: participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,1)
       await interaction.response.send_message(content=f"You answered 2️⃣", ephemeral=True, delete_after=3)
       
