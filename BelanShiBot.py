@@ -605,8 +605,8 @@ class Quiz(ui.View):
           if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
       
-      timer_time = 5
-      embed_var.add_field(name="TIMER", value=f"{timer_time} seconds left to answer!", inline=False)
+      self.timer_time = 5
+      embed_var.add_field(name="TIMER", value=f"{self.timer_time} seconds left to answer!", inline=False)
       await interaction.message.edit(embed=embed_var)
       await timer.start(self)
 
