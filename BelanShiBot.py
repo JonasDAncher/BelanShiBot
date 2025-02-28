@@ -545,11 +545,10 @@ If you are __not__ a server admin, you should inform one of the issue.\n
 
 # ---------- Quiz Command ----------
 class Quiz(ui.View):
-  def __init__(self, interaction: discord.Interaction, quizmaster, answer_time):
+  def __init__(self, interaction: discord.Interaction, quizmaster):
     super().__init__(timeout=None)
     self.quiz()
     self.quizmaster = quizmaster
-    self.answer_time = answer_time
 
   def quiz(self):   
     participant = dict()
@@ -558,7 +557,7 @@ class Quiz(ui.View):
     c = []
     d = []
 
-    async def start_quizzing(interaction: discord.Interaction, answer_time):
+    async def start_quizzing(interaction: discord.Interaction):
       # --------- Questions & Answers ---------
       questions = [
         "What langauge is this?",
@@ -599,9 +598,10 @@ class Quiz(ui.View):
       embed_var.add_field(name="4", value=f"> {options[question_number][3]}", inline=True)
       await interaction.message.edit(embed=embed_var)
 
-      while answer_time > 0:
-        answer_time = 5
-        embed_var.add_field(name="TIMER", value=f"{answer_time} seconds left to answer!")
+      timer = 5
+      while timer > 0:
+        embed_var.add_field(name="TIMER", value=f"{timer} seconds left to answer!")
+        await interaction.message.edit(embed=embed_var)
         await asyncio.sleep(1)
 
   # --------- Answer Buttons ---------
@@ -640,7 +640,7 @@ class Quiz(ui.View):
         self.add_item(b_button)
         self.add_item(c_button)
         self.add_item(d_button)
-        await start_quizzing(interaction, self.answer_time)
+        await start_quizzing(interaction)
         await interaction.message.edit(view=self)
         await interaction.response.send_message(content=f"You've started the quiz.\n-# *This message disappears in {5} seconds*", ephemeral=True, delete_after=5)
     
