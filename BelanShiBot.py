@@ -3,6 +3,7 @@ import random
 from typing import Final, Optional
 import os
 import logging
+import asyncio
 
 import discord
 from dotenv import load_dotenv
@@ -544,46 +545,80 @@ If you are __not__ a server admin, you should inform one of the issue.\n
 
 # ---------- Quiz Command ----------
 class Quiz(ui.View):
-  def __init__(self, interaction, quizmaster, p:dict, a:list, b:list, c:list, d:list):
+  def __init__(self, interaction: discord.Interaction, quizmaster):
     super().__init__(timeout=None)
     self.interaction = interaction
     self.quiz()
     self.quizmaster = quizmaster
-    self.participant = p
-    self.a = a
-    self.b = b
-    self.c = c
-    self.d = d
 
   def quiz(self):   
+    participant = dict()
+    a = []
+    b = []
+    c = []
+    d = []
+
+    def start_quizzing():
+      # --------- Questions & Answers ---------
+      questions = [
+        "What langauge is this?",
+        "What is the guild called?",
+        "This is a test question, the correct answer is 4",
+        "Who sucks?"
+      ]
+      # The options for each question. Using array index to access
+      options = [
+        ["Java", "Python", "C#", "C++"],
+        ["Belan Shi", "Echo", "Liquid", "Method"],
+        ["4","movies", "potatoe", "WoW"],
+        ["Maya sucks", "Gala's great", "1", "2"]
+      ]
+      # In the form question_number : correct_option
+      # Used to access the correct options index, based on question_number
+      answers = {
+        0: 1,
+        1: 0,
+        2: 4,
+        3: 0
+      }
+
+      # --------- Manipulating the embed ---------
+      
+      # The int tracking which question the quiz is on.
+      question_number = 0
+
+      embed_var = self.interaction.message.embeds[0]
+      embed_var.add_field(name="",value="``` ```") # Spacer
+      embed_var.add_field(name=f"Question #{question_number+1}",
+                          value=f"{questions[question_number]}", inline=False)
+      embed_var.add_field(name="1", value=f"> {options[question_number][0]}", inline=True)
+      embed_var.add_field(name="2", value=f"> {options[question_number][1]}", inline=True)
+      embed_var.add_field(name="",value="",inline=False) # New line
+      embed_var.add_field(name="3", value=f"> {options[question_number][2]}", inline=True)
+      embed_var.add_field(name="4", value=f"> {options[question_number][3]}", inline=True)
+
   # --------- Answer Buttons ---------
     a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
     async def answera(interaction: discord.Interaction):
-      if interaction.user not in self.participant: 
-        self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
-        embed_dict = interaction.message.embeds[0]
-        participants = self.participant.values()
-        print(participants)
-        embed_dict.insert_field_at(0,name="Participants", value=f"{[val.nick for val in participants]}")
-        await interaction.message.edit(embed=embed_dict)
+      if interaction.user not in participant: participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,0)
       await interaction.response.send_message(content=f"You answered 1️⃣", ephemeral=True, delete_after=3)
 
     b_button = ui.Button(label="",emoji='2️⃣', custom_id='answer_b_button')
     async def answerb(interaction: discord.Interaction):
-      if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+      if interaction.user not in participant: s.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,1)
       await interaction.response.send_message(content=f"You answered 2️⃣", ephemeral=True, delete_after=3)
       
     c_button = ui.Button(label="",emoji='3️⃣', custom_id='answer_c_button')
     async def answerc(interaction: discord.Interaction):
-      if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+      if interaction.user not in participant: participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,2)
       await interaction.response.send_message(content=f"You answered 3️⃣", ephemeral=True, delete_after=3)
 
     d_button = ui.Button(label="",emoji='4️⃣', custom_id='answer_d_button')
     async def answerd(interaction: discord.Interaction):
-      if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+      if interaction.user not in participant: participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,3)
       await interaction.response.send_message(content=f"You answered 4️⃣", ephemeral=True, delete_after=3)
 
@@ -598,6 +633,7 @@ class Quiz(ui.View):
         self.add_item(b_button)
         self.add_item(c_button)
         self.add_item(d_button)
+        start_quizzing()
         await interaction.message.edit(view=self)
         await interaction.response.send_message(content=f"You've started the quiz.\n-# *This message disappears in {5} seconds*", ephemeral=True, delete_after=5)
     
@@ -611,70 +647,33 @@ class Quiz(ui.View):
     # --------- Helpers ---------
     def answer(user, guess):
       if guess == 0:
-          if user in self.b: self.b.remove(user)
-          if user in self.c: self.c.remove(user)
-          if user in self.d: self.d.remove(user)
-          self.a.append(user)
+          if user in b: b.remove(user)
+          if user in c: c.remove(user)
+          if user in d: d.remove(user)
+          a.append(user)
       elif guess == 1:
-          if user in self.a: self.a.remove(user)
-          if user in self.c: self.c.remove(user)
-          if user in self.d: self.d.remove(user)
-          self.b.append(user)
+          if user in a: a.remove(user)
+          if user in c: c.remove(user)
+          if user in d: d.remove(user)
+          b.append(user)
       elif guess == 2:
-          if user in self.a: self.a.remove(user)
-          if user in self.b: self.b.remove(user)
-          if user in self.d: self.d.remove(user)
-          self.c.append(user)
+          if user in a: a.remove(user)
+          if user in b: b.remove(user)
+          if user in d: d.remove(user)
+          c.append(user)
       elif guess == 3:
-          if user in self.a: self.a.remove(user)
-          if user in self.b: self.b.remove(user)
-          if user in self.c: self.c.remove(user)
-          self.d.append(user)
-
-
+          if user in a: a.remove(user)
+          if user in b: b.remove(user)
+          if user in c: c.remove(user)
+          d.append(user)
+  
 @tree.command(guild=discord.Object(id=TEST_ID)) # Adds command to test server
 # @tree.command()                                 # Adds command globally
 async def quiz(interaction: discord.Interaction):
   """Starts a round of quiz!"""
   quizmaster_name = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
-  
-  participants = dict()
-  a = []
-  b = []
-  c = []
-  d = []
-  
   answer_time = 5
   reward = 1
-  
-  # The questions
-  questions = [
-    "What langauge is this?",
-    "What is the guild called?",
-    "This is a test question, the correct answer is 4",
-    "Who sucks?"
-  ]
-
-  # The options for each question. Using array index to access
-  options = [
-    ["Java", "Python", "C#", "C++"],
-    ["Belan Shi", "Echo", "Liquid", "Method"],
-    ["4","movies", "potatoe", "WoW"],
-    ["Maya sucks", "Gala's great", "1", "2"]
-  ]
-
-  # In the form question_number : correct_option
-  # Used to access the correct options index, based on question_number
-  answers = {
-    0: 1,
-    1: 0,
-    2: 4,
-    3: 0
-  }
-
-  # The int tracking which question the quiz is on.
-  question_number = 0
-
   content_var = f"""A quiz has started! Your Quizmaster is... {quizmaster_name}"""
   embed_var = discord.Embed(
     title=f"""{quizmaster_name} has started a quiz!""",
@@ -684,30 +683,14 @@ You'll have {answer_time} second(s) to answer each question. If you change your 
 Each correct answer gives {reward} point(s)! If you have the most be the end, you're the winner!
 """
   )
-  embed_var.add_field(name="",value="``` ```") # Spacer
-  embed_var.add_field(name=f"Question #{question_number+1}",
-                      value=f"{questions[question_number]}", inline=False)
-  embed_var.add_field(name="1", value=f"> {options[question_number][0]}", inline=True)
-  embed_var.add_field(name="2", value=f"> {options[question_number][1]}", inline=True)
-  embed_var.add_field(name="",value="",inline=False) # New line
-  embed_var.add_field(name="3", value=f"> {options[question_number][2]}", inline=True)
-  embed_var.add_field(name="4", value=f"> {options[question_number][3]}", inline=True)
 
-  view_var = Quiz(interaction, interaction.user, participants, a, b, c, d)
+  view_var = Quiz(interaction, interaction.user)
 
   await interaction.response.send_message(
     content=content_var,
     embed=embed_var,
     view=view_var
   )
-
-  @tasks.loop(seconds=10.0, count=5)
-  async def quizzing():
-    print(participants)
-    print(a)
-
-  await quizzing()
-
 
 # ---------- Bot setup ----------
 @client.event
