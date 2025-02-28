@@ -598,15 +598,17 @@ class Quiz(ui.View):
       embed_var.add_field(name="4", value=f"> {options[question_number][3]}", inline=True)
       await interaction.message.edit(embed=embed_var)
 
-      timer = 5
-      embed_var.add_field(name="TIMER", value=f"{timer} seconds left to answer!", inline=False)
-      await interaction.message.edit(embed=embed_var)
-      while timer > 0:
-        await asyncio.sleep(1.0)
-        timer -= 1
+      @tasks.loop(1.0, count=5)
+      async def timer(timer_time):
+        timer_time -= 1
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if field["name"] == "TIMER": field["value"] = f"{timer} seconds left to answer!"
+          if field["name"] == "TIMER": field["value"] = f"{timer_time} seconds left to answer!"
+      
+      timer_time = 5
+      embed_var.add_field(name="TIMER", value=f"{timer_time} seconds left to answer!", inline=False)
+      await interaction.message.edit(embed=embed_var)
+      timer(timer_time)
 
   # --------- Answer Buttons ---------
     a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
