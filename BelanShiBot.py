@@ -598,23 +598,22 @@ class Quiz(ui.View):
 
     # --------- Helpers ---------
     def answer(user, guess):
-      match guess:
-        case 0:
+      if guess == 0:
           if user in self.b: self.b.remove(user)
           if user in self.c: self.c.remove(user)
           if user in self.d: self.d.remove(user)
           self.a.append(user)
-        case 1:
+      elif guess == 1:
           if user in self.a: self.a.remove(user)
           if user in self.c: self.c.remove(user)
           if user in self.d: self.d.remove(user)
           self.b.append(user)
-        case 2:
+      elif guess == 2:
           if user in self.a: self.a.remove(user)
           if user in self.b: self.b.remove(user)
           if user in self.d: self.d.remove(user)
           self.c.append(user)
-        case 3:
+      elif guess == 3:
           if user in self.a: self.a.remove(user)
           if user in self.b: self.b.remove(user)
           if user in self.c: self.c.remove(user)
