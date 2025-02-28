@@ -585,6 +585,7 @@ class Quiz(ui.View):
       
       # The int tracking which question the quiz is on.
       question_number = 0
+      self.timer_time = 5
       print(interaction.message.embeds)
       print(interaction.message.embeds[0])
       embed_var = interaction.message.embeds[0]
@@ -615,7 +616,6 @@ class Quiz(ui.View):
         await interaction.message.edit(view=self)
 
       await asyncio.sleep(1)
-      self.timer_time = 5
       await interaction.message.edit(embed=embed_var)
       await timer.start(self)
 
