@@ -549,6 +549,7 @@ class Quiz(ui.View):
     super().__init__(timeout=None)
     self.quiz()
     self.quizmaster = quizmaster
+    self.answer_time = answer_time
 
   def quiz(self):   
     participant = dict()
@@ -557,7 +558,7 @@ class Quiz(ui.View):
     c = []
     d = []
 
-    async def start_quizzing(interaction: discord.Interaction):
+    async def start_quizzing(self, interaction: discord.Interaction):
       # --------- Questions & Answers ---------
       questions = [
         "What langauge is this?",
@@ -639,7 +640,7 @@ class Quiz(ui.View):
         self.add_item(b_button)
         self.add_item(c_button)
         self.add_item(d_button)
-        await start_quizzing(interaction)
+        await start_quizzing(self, interaction)
         await interaction.message.edit(view=self)
         await interaction.response.send_message(content=f"You've started the quiz.\n-# *This message disappears in {5} seconds*", ephemeral=True, delete_after=5)
     
