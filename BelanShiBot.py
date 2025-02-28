@@ -615,6 +615,19 @@ class Quiz(ui.View):
         for button in self.children:
           if type(button) == ui.Button: button.disabled= True
         await interaction.message.edit(view=self)
+        next_question(self)
+
+      async def next_question(self):
+        embed_dict = interaction.message.embeds[0].to_dict()
+        for field in embed_dict["fields"]:
+          if field["name"] == f"Question #*{question_number+1}*": field["value"] = f"Question #*{question_number+1}*"
+          if field["name"] == "1": field["value"] = f"> *{options[question_number][0]}*"
+          if field["name"] == "2": field["value"] = f"> *{options[question_number][1]}*"
+          if field["name"] == "3": field["value"] = f"> *{options[question_number][2]}*"
+          if field["name"] == "4": field["value"] = f"> *{options[question_number][3]}*"
+        self.timer_time = 5
+        await asyncio.sleep(1)
+        await timer.start(self)
 
       await asyncio.sleep(1)
       await interaction.message.edit(embed=embed_var)
