@@ -558,22 +558,22 @@ class Quiz(ui.View):
   def quiz(self):   
   # --------- Answer Buttons ---------
     a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
-    def answera(interaction: discord.Interaction):
+    async def answera(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,0)
 
     b_button = ui.Button(label="",emoji='2️⃣', custom_id='answer_b_button')
-    def answerb(interaction: discord.Interaction):
+    async def answerb(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,1)
       
     c_button = ui.Button(label="",emoji='3️⃣', custom_id='answer_c_button')
-    def answerc(interaction: discord.Interaction):
+    async def answerc(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,2)
 
     d_button = ui.Button(label="",emoji='4️⃣', custom_id='answer_d_button')
-    def answerd(interaction: discord.Interaction):
+    async def answerd(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,3)
 
