@@ -609,7 +609,7 @@ class Quiz(ui.View):
       timer_time = 5
       embed_var.add_field(name="TIMER", value=f"{timer_time} seconds left to answer!", inline=False)
       await interaction.message.edit(embed=embed_var)
-      await timer(timer_time)
+      await timer(timer_time).start()
 
   # --------- Answer Buttons ---------
     a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
