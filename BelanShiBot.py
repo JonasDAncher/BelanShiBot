@@ -7,6 +7,7 @@ import logging
 import discord
 from dotenv import load_dotenv
 from discord import Intents, Client, Message, app_commands, ui, Interaction, Embed
+from discord.ext import tasks
 
 load_dotenv()
 TOKEN: Final[str] = os.getenv('DISCORD_TOKEN')  # Discord bot token, SECRET
@@ -556,22 +557,22 @@ class Quiz(ui.View):
 
   def quiz(self):   
   # --------- Answer Buttons ---------
-    a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button', disabled=True)
+    a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
     def answera(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,0)
 
-    b_button = ui.Button(label="",emoji='2️⃣', custom_id='answer_b_button', disabled=True)
+    b_button = ui.Button(label="",emoji='2️⃣', custom_id='answer_b_button')
     def answerb(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,1)
       
-    c_button = ui.Button(label="",emoji='3️⃣', custom_id='answer_c_button', disabled=True)
+    c_button = ui.Button(label="",emoji='3️⃣', custom_id='answer_c_button')
     def answerc(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,2)
 
-    d_button = ui.Button(label="",emoji='4️⃣', custom_id='answer_d_button', disabled=True)
+    d_button = ui.Button(label="",emoji='4️⃣', custom_id='answer_d_button')
     def answerd(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,3)
@@ -675,7 +676,7 @@ Each correct answer gives {reward} points! If you have the most be the end, you'
   )
   embed_var.add_field(name="",value="``` ```") # Spacer
   embed_var.add_field(name=f"Question #{question_number+1}",
-                      value=f"# {questions[question_number]}", inline=False)
+                      value=f"{questions[question_number]}", inline=False)
   embed_var.add_field(name="1", value=f"> {options[question_number][0]}", inline=True)
   embed_var.add_field(name="2", value=f"> {options[question_number][1]}", inline=True)
   embed_var.add_field(name="",value="",inline=False) # New line
@@ -690,6 +691,12 @@ Each correct answer gives {reward} points! If you have the most be the end, you'
     view=view_var
   )
 
+  quizzing()
+
+  @tasks.loop(seconds=10.0)
+  async def quizzing():
+    print(participants)
+    print(a)
 
 # ---------- Bot setup ----------
 @client.event
