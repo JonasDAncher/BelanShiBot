@@ -602,7 +602,7 @@ class Quiz(ui.View):
       while answer_time > 0:
         answer_time = 5
         embed_var.add_field(name="TIMER", value=f"{answer_time} seconds left to answer!")
-        asyncio.sleep(1)
+        await asyncio.sleep(1)
 
   # --------- Answer Buttons ---------
     a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
