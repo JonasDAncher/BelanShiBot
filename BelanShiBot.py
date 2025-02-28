@@ -609,7 +609,7 @@ class Quiz(ui.View):
           if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
       
-      @timer.after_loop()
+      @timer.after_loop
       async def times_up():
         for button in self.children:
           if type(button) == ui.Button: button.disabled= True
