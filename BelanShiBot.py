@@ -638,20 +638,26 @@ async def quiz(interaction: discord.Interaction):
   # The questions
   questions = [
     "What langauge is this?",
-    "What is the guild called?"
+    "What is the guild called?",
+    "This is a test question, the correct answer is 4",
+    "Who sucks?"
   ]
 
   # The options for each question. Using array index to access
   options = [
     ["Java", "Python"],
-    ["Belan Shi", "Echo"]
+    ["Belan Shi", "Echo"],
+    ["4","movies", "potatoe"],
+    ["Maya sucks", "Gala's great"]
   ]
 
   # In the form question_number : correct_option
   # Used to access the correct options index, based on question_number
   answers = {
     0: 1,
-    1: 0
+    1: 0,
+    2: 4,
+    3: 0
   }
 
   # The int tracking which question the quiz is on.
