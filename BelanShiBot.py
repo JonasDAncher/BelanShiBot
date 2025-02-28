@@ -545,7 +545,7 @@ If you are __not__ a server admin, you should inform one of the issue.\n
 
 # ---------- Quiz Command ----------
 class Quiz(ui.View):
-  def __init__(self, interaction: discord.Interaction, quizmaster):
+  def __init__(self, interaction: discord.Interaction, quizmaster, answer_time):
     super().__init__(timeout=None)
     self.quiz()
     self.quizmaster = quizmaster
@@ -597,6 +597,11 @@ class Quiz(ui.View):
       embed_var.add_field(name="3", value=f"> {options[question_number][2]}", inline=True)
       embed_var.add_field(name="4", value=f"> {options[question_number][3]}", inline=True)
       await interaction.message.edit(embed=embed_var)
+
+      while answer_time > 0:
+        answer_time = 5
+        embed_var.add_field(name="TIMER", value=f"{answer_time} seconds left to answer!")
+        asyncio.sleep(1)
 
   # --------- Answer Buttons ---------
     a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
@@ -685,7 +690,7 @@ Each correct answer gives {reward} point(s)! If you have the most be the end, yo
 """
   )
 
-  view_var = Quiz(interaction, interaction.user)
+  view_var = Quiz(interaction, interaction.user, answer_time)
 
   await interaction.response.send_message(
     content=content_var,
