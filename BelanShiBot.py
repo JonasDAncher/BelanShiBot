@@ -597,8 +597,8 @@ class Quiz(ui.View):
     self.add_item(start_button)
 
     # --------- Helpers ---------
-    def answer(user, answer):
-      match answer:
+    def answer(user, guess):
+      match guess:
         case 0:
           if user in self.b: self.b.remove(user)
           if user in self.c: self.c.remove(user)
