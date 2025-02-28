@@ -673,15 +673,14 @@ You'll have {answer_time} seconds to answer each question. If you change your mi
 Each correct answer gives {reward} points! If you have the most be the end, you're the winner!
 """
   )
-
+  embed_var.add_field(name="",value="``` ```") # Spacer
   embed_var.add_field(name=f"Question #{question_number+1}",
                       value=f"# {questions[question_number]}", inline=False)
-  embed_var.add_field(name="1", value=f"{options[question_number][0]}", inline=True)
-  embed_var.add_field(name="2", value=f"{options[question_number][1]}", inline=True)
-  embed_var.add_field(name="",value="",inline=False)
-  embed_var.add_field(name="3", value=f"{options[question_number][2]}", inline=True)
-  embed_var.add_field(name="4", value=f"{options[question_number][3]}", inline=True)
-  embed_var.add_field(name="IM A TEST", value="DELETE ME IF I WORK, DELETE IF I DON'T", inline=False)
+  embed_var.add_field(name="1", value=f"> {options[question_number][0]}", inline=True)
+  embed_var.add_field(name="2", value=f"> {options[question_number][1]}", inline=True)
+  embed_var.add_field(name="",value="",inline=False) # New line
+  embed_var.add_field(name="3", value=f"> {options[question_number][2]}", inline=True)
+  embed_var.add_field(name="4", value=f"> {options[question_number][3]}", inline=True)
 
   view_var = Quiz(interaction, interaction.user, participants, a, b, c, d)
 
