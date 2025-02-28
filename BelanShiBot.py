@@ -601,6 +601,7 @@ class Quiz(ui.View):
       @tasks.loop(seconds=1.0, count=5)
       async def timer(self):
         embed_dict = interaction.message.embeds[0].to_dict()
+        print(self.timer_time)
         for field in embed_dict["fields"]:
           if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
