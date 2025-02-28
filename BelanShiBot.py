@@ -600,6 +600,7 @@ class Quiz(ui.View):
 
       @tasks.loop(seconds=1.0, count=5)
       async def timer(timer_time):
+        print(f"timer active, there's {timer_time} left!")
         timer_time -= 1
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
