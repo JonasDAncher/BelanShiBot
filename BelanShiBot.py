@@ -563,6 +563,7 @@ class Quiz(ui.View):
         self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
         embed_dict = interaction.message.embeds[0]
         participants = self.participant.values()
+        print(participants)
         embed_dict.insert_field_at(0,name="Participants", value=f"{[val.nick for val in participants]}")
         await interaction.message.edit(embed=embed_dict)
       answer(interaction.user,0)
