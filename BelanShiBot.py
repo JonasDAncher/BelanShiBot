@@ -17,7 +17,7 @@ DELETE_TIME: Final[int] = 10  # How long after sending an ephemeral message is d
 intents = Intents.default()
 intents.message_content = True  # Allow the bot to see message content
 intents.members = True  # Allow the bot to see message content
-intents.guilds = True # Allow the bot to create necessary roles on join
+intents.guilds = True # Allow the bot to create necessary roles
 client = Client(intents=intents, allowed_mentions = discord.AllowedMentions(roles=True, users=True))
 tree = app_commands.CommandTree(client)
 
@@ -320,7 +320,7 @@ class RoleButtons(ui.View):
     unconfirm_button.callback = unconfirmbutton  # Add functionality to the button object.
     # self.add_item(unconfirm_button) # Notably not added to the view, as that is part of the confirm button functionality
 
-
+# --------- Key Command ---------
 # @tree.command(guild=discord.Object(id=TEST_ID)) # Adds command to test server
 @tree.command()                                 # Adds command globally
 @app_commands.rename(dungeon_name='dungeon-name', key_level='key-level', tank='tank', healer='healer',
@@ -458,7 +458,7 @@ async def format_message(interaction, dungeon_name, key_level, tank, healer, dps
     f"{'nothing...?' if (not tank and not healer and not dps) else ''}")
   return content_var, embed_var
 
-# --------- Assign Roles ---------
+# --------- Roles Command ---------
 
 class AssignRoles(ui.View):
   def __init__(self, interaction):
@@ -540,6 +540,150 @@ Press any role you __already__ have, to disable pings again.\n
 If you are __not__ a server admin, you should inform one of the issue.\n
 -# *This message disappears in 2 minutes*""")
     logging.error(f'User {interaction.user.name} in server {interaction.guild.name} called the /roles command resulting in an error due to incorrecet role hierachy')
+
+# ---------- Quiz Command ----------
+class Quiz(ui.View):
+  def __init__(self, interaction, quizmaster, p:dict, a:list, b:list, c:list, d:list):
+    super().__init__(timeout=None)
+    self.interaction = interaction
+    self.quiz()
+    self.quizmaster = quizmaster
+    self.participant = p
+    self.a = a
+    self.b = b
+    self.c = c
+    self.d = d
+
+  def quiz(self):   
+  # --------- Answer Buttons ---------
+    a_button = ui.Button(label="A",emoji=':regional_indicator_a:', custom_id='answer_a_button', disabled=True)
+    def answera(interaction: discord.Interaction):
+      if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+      answer(interaction.user,0)
+
+    b_button = ui.Button(label="B",emoji=':regional_indicator_b:', custom_id='answer_b_button', disabled=True)
+    def answerb(interaction: discord.Interaction):
+      if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+      answer(interaction.user,1)
+      
+    c_button = ui.Button(label="C",emoji=':regional_indicator_c:', custom_id='answer_c_button', disabled=True)
+    def answerc(interaction: discord.Interaction):
+      if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+      answer(interaction.user,2)
+
+    d_button = ui.Button(label="D",emoji=':regional_indicator_d:', custom_id='answer_d_button', disabled=True)
+    def answerd(interaction: discord.Interaction):
+      if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+      answer(interaction.user,3)
+
+    start_button = ui.Button(label="Start?", emoji='🏁', custom_id='start_button')
+    async def start(interaction: discord.Interaction):
+      if not interaction.user == self.quizmaster:
+        username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
+        await interaction.response.send_message(content=f"You're not the Quizmaster, {username}...", ephemeral=True, delete_after=DELETE_TIME)
+      else:
+        self.remove_item(start_button)
+        self.add_item(a_button)
+        self.add_item(b_button)
+        self.add_item(c_button)
+        self.add_item(d_button)
+        await interaction.response.send_message(content=f"You've started the quiz.\n-# *This message disappears in {5} seconds*", ephemeral=True, delete_after=5)
+    
+    start_button.callback = start
+    a_button.callback = answera
+    b_button.callback = answerb
+    c_button.callback = answerc
+    d_button.callback = answerd
+    self.add_item(start_button)
+
+    # --------- Helpers ---------
+    def answer(user, answer):
+      match answer:
+        case 0:
+          if user in self.b: self.b.remove(user)
+          if user in self.c: self.c.remove(user)
+          if user in self.d: self.d.remove(user)
+          self.a.append(user)
+        case 1:
+          if user in self.a: self.a.remove(user)
+          if user in self.c: self.c.remove(user)
+          if user in self.d: self.d.remove(user)
+          self.b.append(user)
+        case 2:
+          if user in self.a: self.a.remove(user)
+          if user in self.b: self.b.remove(user)
+          if user in self.d: self.d.remove(user)
+          self.c.append(user)
+        case 3:
+          if user in self.a: self.a.remove(user)
+          if user in self.b: self.b.remove(user)
+          if user in self.c: self.c.remove(user)
+          self.d.append(user)
+
+
+@tree.command(guild=discord.Object(id=TEST_ID)) # Adds command to test server
+# @tree.command()                                 # Adds command globally
+async def quiz(interaction: discord.Interaction):
+  """Starts a round of quiz!"""
+  quizmaster_name = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
+  
+  participants = dict()
+  a = []
+  b = []
+  c = []
+  d = []
+  
+  answer_time = 5
+  reward = 1
+  
+  # The questions
+  questions = [
+    "What langauge is this?",
+    "What is the guild called?"
+  ]
+
+  # The options for each question. Using array index to access
+  options = [
+    ["Java", "Python"],
+    ["Belan Shi", "Echo"]
+  ]
+
+  # In the form question_number : correct_option
+  # Used to access the correct options index, based on question_number
+  answers = {
+    0: 1,
+    1: 0
+  }
+
+  # The int tracking which question the quiz is on.
+  question_number = 0
+
+  content_var = f"""A quiz has started! Your Quizmaster is... {quizmaster_name}"""
+  embed_var = discord.Embed(
+    title=f"""{quizmaster_name} has started a quiz!""",
+    description=f"""
+Everyone can join in, you just have to press the buttons for each question.
+You'll have {answer_time} seconds to answer each question. If you change your mind, just press a new answer!
+Each correct answer gives {reward} points! If you have the most be the end, you're the winner!
+"""
+  )
+
+  embed_var.add_field(name="Question",
+                      value=f"Question number {question_number}:\n{questions[question_number]}")
+  embed_var.add_field(name="A", value=f"{options[question_number][0]}", inline=True)
+  embed_var.add_field(name="B", value=f"{options[question_number][1]}", inline=True)
+  embed_var.add_field(name="C", value=f"{options[question_number][2]}", inline=False)
+  embed_var.add_field(name="D", value=f"{options[question_number][3]}", inline=True)
+  embed_var.add_field(name="IM A TEST", value="DELETE ME IF I WORK, DELETE IF I DON'T")
+
+  view_var = Quiz(interaction, interaction.user, participants, a, b, c, d)
+
+  await interaction.response.send_message(
+    content=content_var,
+    embed=embed_var,
+    view=view_var
+  )
+
 
 # ---------- Bot setup ----------
 @client.event
