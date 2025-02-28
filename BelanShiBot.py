@@ -556,22 +556,22 @@ class Quiz(ui.View):
 
   def quiz(self):   
   # --------- Answer Buttons ---------
-    a_button = ui.Button(label="A",emoji=':regional_indicator_a:', custom_id='answer_a_button', disabled=True)
+    a_button = ui.Button(label="A",emoji='1️⃣', custom_id='answer_a_button', disabled=True)
     def answera(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,0)
 
-    b_button = ui.Button(label="B",emoji=':regional_indicator_b:', custom_id='answer_b_button', disabled=True)
+    b_button = ui.Button(label="B",emoji='2️⃣', custom_id='answer_b_button', disabled=True)
     def answerb(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,1)
       
-    c_button = ui.Button(label="C",emoji=':regional_indicator_c:', custom_id='answer_c_button', disabled=True)
+    c_button = ui.Button(label="C",emoji='3️⃣', custom_id='answer_c_button', disabled=True)
     def answerc(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,2)
 
-    d_button = ui.Button(label="D",emoji=':regional_indicator_d:', custom_id='answer_d_button', disabled=True)
+    d_button = ui.Button(label="D",emoji='4️⃣', custom_id='answer_d_button', disabled=True)
     def answerd(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,3)
