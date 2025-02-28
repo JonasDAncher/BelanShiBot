@@ -88,7 +88,6 @@ class RoleButtons(ui.View):
       log(f'KEY: {self.id} - {username} joined as TANK')
       self.players[0].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
-      print(interaction.message)
       for field in embed_dict["fields"]:
         if field["name"] == "TANK":
           field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
@@ -548,7 +547,6 @@ If you are __not__ a server admin, you should inform one of the issue.\n
 class Quiz(ui.View):
   def __init__(self, interaction: discord.Interaction, quizmaster):
     super().__init__(timeout=None)
-    self.interaction = interaction
     self.quiz()
     self.quizmaster = quizmaster
 
@@ -559,7 +557,7 @@ class Quiz(ui.View):
     c = []
     d = []
 
-    def start_quizzing():
+    def start_quizzing(interaction: discord.Interaction):
       # --------- Questions & Answers ---------
       questions = [
         "What langauge is this?",
@@ -587,9 +585,9 @@ class Quiz(ui.View):
       
       # The int tracking which question the quiz is on.
       question_number = 0
-      print(self.interaction.message)
-      print(self.interaction.message.embeds[0])
-      embed_var = self.interaction.message.embeds[0]
+      print(interaction.message.embeds)
+      print(interaction.message.embeds[0])
+      embed_var = interaction.message.embeds[0]
       embed_var.add_field(name="",value="``` ```") # Spacer
       embed_var.add_field(name=f"Question #{question_number+1}",
                           value=f"{questions[question_number]}", inline=False)
@@ -635,7 +633,7 @@ class Quiz(ui.View):
         self.add_item(b_button)
         self.add_item(c_button)
         self.add_item(d_button)
-        start_quizzing()
+        start_quizzing(interaction)
         await interaction.message.edit(view=self)
         await interaction.response.send_message(content=f"You've started the quiz.\n-# *This message disappears in {5} seconds*", ephemeral=True, delete_after=5)
     
