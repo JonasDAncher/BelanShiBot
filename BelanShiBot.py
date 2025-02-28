@@ -733,7 +733,7 @@ async def on_guild_role_delete(role):
 @client.event
 async def on_ready() -> None:
   # tree.clear_commands(guild=None) # Should clear all phantom commands globally
-  # await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
+  await tree.sync(guild=discord.Object(id=TEST_ID)) # Syncs command tree to test server
   await tree.sync()                                 # Syncs command tree globally
   log(f'{client.user} successfully logged in with ID: {client.user.id}')
 
