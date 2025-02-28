@@ -557,7 +557,7 @@ class Quiz(ui.View):
     c = []
     d = []
 
-    def start_quizzing(interaction: discord.Interaction):
+    async def start_quizzing(interaction: discord.Interaction):
       # --------- Questions & Answers ---------
       questions = [
         "What langauge is this?",
@@ -596,6 +596,7 @@ class Quiz(ui.View):
       embed_var.add_field(name="",value="",inline=False) # New line
       embed_var.add_field(name="3", value=f"> {options[question_number][2]}", inline=True)
       embed_var.add_field(name="4", value=f"> {options[question_number][3]}", inline=True)
+      await interaction.message.edit(embed=embed_var)
 
   # --------- Answer Buttons ---------
     a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
@@ -633,7 +634,7 @@ class Quiz(ui.View):
         self.add_item(b_button)
         self.add_item(c_button)
         self.add_item(d_button)
-        start_quizzing(interaction)
+        await start_quizzing(interaction)
         await interaction.message.edit(view=self)
         await interaction.response.send_message(content=f"You've started the quiz.\n-# *This message disappears in {5} seconds*", ephemeral=True, delete_after=5)
     
