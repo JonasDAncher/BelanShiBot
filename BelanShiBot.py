@@ -691,7 +691,7 @@ Each correct answer gives {reward} point(s)! If you have the most be the end, yo
 """
   )
 
-  view_var = Quiz(interaction, interaction.user, answer_time)
+  view_var = Quiz(interaction, interaction.user)
 
   await interaction.response.send_message(
     content=content_var,
