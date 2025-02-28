@@ -596,21 +596,26 @@ class Quiz(ui.View):
       embed_var.add_field(name="",value="",inline=False) # New line
       embed_var.add_field(name="3", value=f"> *{options[question_number][2]}*", inline=True)
       embed_var.add_field(name="4", value=f"> *{options[question_number][3]}*", inline=True)
+      embed_var.add_field(name="TIMER", value=f"{self.timer_time} seconds left to answer!", inline=False)
       await interaction.message.edit(embed=embed_var)
 
-      @tasks.loop(count=5)
+      @tasks.loop(count=self.timer_time)
       async def timer(self):
         await asyncio.sleep(1)
-        embed_dict = interaction.message.embeds[0].to_dict()
         self.timer_time -= 1
-        print(self.timer_time)
+        embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+      
+      @timer.after_loop()
+      async def times_up():
+        for button in self.children:
+          if type(button) == ui.Button: button.disabled= True
+        await interaction.message.edit(view=self)
 
       await asyncio.sleep(1)
       self.timer_time = 5
-      embed_var.add_field(name="TIMER", value=f"{self.timer_time} seconds left to answer!", inline=False)
       await interaction.message.edit(embed=embed_var)
       await timer.start(self)
 
@@ -764,7 +769,7 @@ async def on_ready() -> None:
 
 def log(log_message):
   logging.info(f'{log_message}')
-  time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+  # time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
   # print(f'{time} - {log_message}')
 
 
