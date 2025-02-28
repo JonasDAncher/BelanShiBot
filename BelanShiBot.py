@@ -586,7 +586,7 @@ class Quiz(ui.View):
       
       # The int tracking which question the quiz is on.
       question_number = 0
-      print(self.interaction.message.embeds)
+      print(self.interaction.message)
       print(self.interaction.message.embeds[0])
       embed_var = self.interaction.message.embeds[0]
       embed_var.add_field(name="",value="``` ```") # Spacer
