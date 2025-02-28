@@ -674,9 +674,9 @@ Each correct answer gives {reward} points! If you have the most be the end, you'
 """
   )
 
-  embed_var.add_field(name=f"## Question {question_number+1}",
+  embed_var.add_field(name=f"Question #{question_number+1}",
                       value=f"{questions[question_number]}\n")
-  embed_var.add_field(name="A", value=f"{options[question_number][0]}", inline=True)
+  embed_var.add_field(name="A", value=f"{options[question_number][0]}", inline=False)
   embed_var.add_field(name="B", value=f"{options[question_number][1]}", inline=True)
   embed_var.add_field(name="C", value=f"{options[question_number][2]}\n", inline=True)
   embed_var.add_field(name="D", value=f"{options[question_number][3]}", inline=True)
