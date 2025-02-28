@@ -610,8 +610,8 @@ class Quiz(ui.View):
       
       @timer.before_loop
       async def before_timer():
-        asyncio.sleep(1)
-        
+        await asyncio.sleep(1)
+
       self.timer_time = 5
       embed_var.add_field(name="TIMER", value=f"{self.timer_time} seconds left to answer!", inline=False)
       await interaction.message.edit(embed=embed_var)
