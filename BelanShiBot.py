@@ -598,6 +598,10 @@ class Quiz(ui.View):
       embed_var.add_field(name="4", value=f"> *{options[question_number][3]}*", inline=True)
       await interaction.message.edit(embed=embed_var)
 
+      @timer.before_loop
+      async def before_timer():
+        asyncio.sleep(1)
+
       @tasks.loop(seconds=1.0, count=5)
       async def timer(self):
         embed_dict = interaction.message.embeds[0].to_dict()
