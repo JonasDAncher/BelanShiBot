@@ -614,6 +614,7 @@ class Quiz(ui.View):
         await asyncio.sleep(1)
         for button in self.children:
           if type(button) == ui.Button: button.disabled= True
+        self.question_number += 1
         await interaction.message.edit(view=self)
         await next_question(self)
 
