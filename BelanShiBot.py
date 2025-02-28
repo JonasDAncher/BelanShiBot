@@ -645,10 +645,10 @@ async def quiz(interaction: discord.Interaction):
 
   # The options for each question. Using array index to access
   options = [
-    ["Java", "Python"],
-    ["Belan Shi", "Echo"],
-    ["4","movies", "potatoe"],
-    ["Maya sucks", "Gala's great"]
+    ["Java", "Python", "C#", "C++"],
+    ["Belan Shi", "Echo", "Liquid", "Method"],
+    ["4","movies", "potatoe", "WoW"],
+    ["Maya sucks", "Gala's great", "1", "2"]
   ]
 
   # In the form question_number : correct_option
