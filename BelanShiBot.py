@@ -4,7 +4,6 @@ from typing import Final, Optional
 import os
 import logging
 import asyncio
-import asyncio
 
 import discord
 from dotenv import load_dotenv
