@@ -627,7 +627,7 @@ class Quiz(ui.View):
           if field["name"] == "4": field["value"] = f"> *{options[self.question_number][3]}*"
         self.timer_time = 5
         await asyncio.sleep(1)
-        await timer.restart(self)
+        timer.restart(self)
 
       await asyncio.sleep(1)
       await interaction.message.edit(embed=embed_var)
