@@ -561,21 +561,25 @@ class Quiz(ui.View):
     async def answera(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,0)
+      await interaction.response.send_message(content=f"You answered 1️⃣", ephemeral=True, delete_after=3)
 
     b_button = ui.Button(label="",emoji='2️⃣', custom_id='answer_b_button')
     async def answerb(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,1)
+      await interaction.response.send_message(content=f"You answered 2️⃣", ephemeral=True, delete_after=3)
       
     c_button = ui.Button(label="",emoji='3️⃣', custom_id='answer_c_button')
     async def answerc(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,2)
+      await interaction.response.send_message(content=f"You answered 3️⃣", ephemeral=True, delete_after=3)
 
     d_button = ui.Button(label="",emoji='4️⃣', custom_id='answer_d_button')
     async def answerd(interaction: discord.Interaction):
       if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
       answer(interaction.user,3)
+      await interaction.response.send_message(content=f"You answered 4️⃣", ephemeral=True, delete_after=3)
 
     start_button = ui.Button(label="Start?", emoji='🏁', custom_id='start_button')
     async def start(interaction: discord.Interaction):
