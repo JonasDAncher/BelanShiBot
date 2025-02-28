@@ -584,7 +584,7 @@ class Quiz(ui.View):
       # --------- Manipulating the embed ---------
       
       # The int tracking which question the quiz is on.
-      question_number = 0
+      question_number = 1
       self.timer_time = 5
       print(interaction.message.embeds)
       print(interaction.message.embeds[0])
@@ -611,6 +611,7 @@ class Quiz(ui.View):
       
       @timer.after_loop
       async def times_up():
+        await asyncio.sleep(1)
         for button in self.children:
           if type(button) == ui.Button: button.disabled= True
         await interaction.message.edit(view=self)
