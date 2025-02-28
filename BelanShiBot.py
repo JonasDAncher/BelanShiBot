@@ -559,7 +559,10 @@ class Quiz(ui.View):
   # --------- Answer Buttons ---------
     a_button = ui.Button(label="",emoji='1️⃣', custom_id='answer_a_button')
     async def answera(interaction: discord.Interaction):
-      if interaction.user not in self.participant: self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+      if interaction.user not in self.participant: 
+        self.participant[interaction.user] = 0 # If participant is new, add to participants with zero points
+        embed_dict = interaction.message.embeds[0]
+        embed_dict.insert_field_at(0,name="Participants", value=f"{self.participant}")
       answer(interaction.user,0)
       await interaction.response.send_message(content=f"You answered 1️⃣", ephemeral=True, delete_after=3)
 
@@ -674,8 +677,8 @@ async def quiz(interaction: discord.Interaction):
     title=f"""{quizmaster_name} has started a quiz!""",
     description=f"""
 Everyone can join in, you just have to press the buttons for each question.
-You'll have {answer_time} seconds to answer each question. If you change your mind, just press a new answer!
-Each correct answer gives {reward} points! If you have the most be the end, you're the winner!
+You'll have {answer_time} second(s) to answer each question. If you change your mind, just press a new answer!
+Each correct answer gives {reward} point(s)! If you have the most be the end, you're the winner!
 """
   )
   embed_var.add_field(name="",value="``` ```") # Spacer
