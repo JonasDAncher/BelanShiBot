@@ -583,7 +583,7 @@ class Quiz(ui.View):
       # The int tracking which question the quiz is on.
       self.question_number = 0
       self.timer_time = 5
-      self.pause_time = 25
+      self.pause_time = 5
       print(interaction.message.embeds)
       print(interaction.message.embeds[0])
       embed_var = interaction.message.embeds[0]
@@ -666,7 +666,7 @@ class Quiz(ui.View):
             if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number-1][2]}*~~"
             if field["name"] == "4": field["value"] = f"> **>>{options[self.question_number-1][3]}<<**"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        self.pause_time = 25
+        # self.pause_time = 25
         try:
           await pause_timer.start(self)
         except:
