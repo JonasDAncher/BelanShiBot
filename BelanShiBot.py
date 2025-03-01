@@ -631,6 +631,11 @@ class Quiz(ui.View):
         points = participant[winner]
         embed_dict = interaction.message.embeds[0].to_dict()
         embed_dict["fields"] = []
+        embed_var=Embed.from_dict(embed_dict)
+        # Rebuilding the embed cuz removing specific fields is a pain
+        embed_var.add_field(name="",value="``` ```") # Spacer
+        embed_var.add_field(name="THE WINNER IS...",
+                            value=f"# 🎉The winner is {winner.nick if not winner.nick==None else winner.name} with {points} points! 🎉")
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         print(f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} points!")
         return
