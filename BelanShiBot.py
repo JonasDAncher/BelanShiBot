@@ -614,6 +614,7 @@ class Quiz(ui.View):
       
       @tasks.loop(count=self.timer_time+1)
       async def timer(self):
+        print(self.timer_time)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
@@ -635,7 +636,7 @@ class Quiz(ui.View):
         print(len(questions))
         print(self.question_number <= len(questions))
         if self.question_number <= len(questions)-1:
-          print("next question...")
+          print("revealing answer...")
           await reveal_answer(self)
         else:
           print("ending quiz...")
