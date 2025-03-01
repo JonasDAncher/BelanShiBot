@@ -627,7 +627,7 @@ class Quiz(ui.View):
           await finish_quiz()
 
       async def finish_quiz():
-        self.children.clear()
+        self.remove_item(a_button); self.remove_item(b_button); self.remove_item(c_button); self.remove_item(d_button); 
         # await interaction.message.edit(view=self)
         if len(participant) > 0:
           winner = max(participant, key=participant.get)
