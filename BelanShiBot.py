@@ -618,7 +618,7 @@ class Quiz(ui.View):
         await interaction.message.edit(view=self)
 
         # award points
-        correct_answer = answers[self.question.number]
+        correct_answer = answers[self.question_number]
         if correct_answer == 0:
           for player in a:
             participant[player] = participant[player]+1
