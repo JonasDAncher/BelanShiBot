@@ -603,14 +603,14 @@ class Quiz(ui.View):
       async def pause_timer(self):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if field["name"] == "TIMER": field["value"] = f"Next question in {self} seconds..."
+          if field["name"] == "TIMER": field["value"] = f"Next question in {self.pause_time} seconds..."
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        self -= 1
+        self.pause_time -= 1
         await asyncio.sleep(1)
 
       @pause_timer.after_loop
       async def progress():
-        next_question(self)
+        await next_question(self)
       
       @tasks.loop(count=self.timer_time+1)
       async def timer(self):
@@ -667,7 +667,7 @@ class Quiz(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         self.pause_time = 25
         pause_timer.stop()
-        await pause_timer.start(self.pause_time)
+        await pause_timer.start(self)
             
 
       async def finish_quiz():
