@@ -618,24 +618,27 @@ class Quiz(ui.View):
         await interaction.message.edit(view=self)
 
         # award points
-        correct_answer = answers[self.question_number]
-        if correct_answer == 0:
-          for player in a:
-            participant[player] = participant[player]+1
-        if correct_answer == 1:
-          for player in b:
-            participant[player] = participant[player]+1
-        if correct_answer == 2:
-          for player in c:
-            participant[player] = participant[player]+1
-        if correct_answer == 3:
-          for player in d:
-            participant[player] = participant[player]+1
-        print(a)
-        print(b)
-        print(c)
-        print(d)
+        award_points()
         await next_question(self)
+
+      def award_points():
+          correct_answer = answers[self.question_number]
+          if correct_answer == 0:
+            for player in a:
+              participant[player] = participant[player]+1
+          if correct_answer == 1:
+            for player in b:
+              participant[player] = participant[player]+1
+          if correct_answer == 2:
+            for player in c:
+              participant[player] = participant[player]+1
+          if correct_answer == 3:
+            for player in d:
+              participant[player] = participant[player]+1
+          a = []
+          b = []
+          c = []
+          d = []
 
       async def next_question(self):
         embed_dict = interaction.message.embeds[0].to_dict()
