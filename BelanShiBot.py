@@ -558,7 +558,7 @@ class Quiz(ui.View):
     async def start_quizzing(interaction: discord.Interaction):
       # --------- Questions & Answers ---------
       questions = [
-        "What langauge is this bot written in??",
+        "What langauge is this bot written in?",
         "What is the guild called?",
         "This is a test question, the correct answer is wow",
         "Who sucks?"
@@ -721,6 +721,7 @@ class Quiz(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         print(f"Question # **{self.question_number} / {len(questions)}**")
         for field in embed_dict["fields"]:
+          print(field["name"])
           if field["name"] == f"Question # **{self.question_number} / {len(questions)}**": 
             field["name"] = f"Question # **{self.question_number+1} / {len(questions)}**"
             field["value"] = f"**{questions[self.question_number]}**"
