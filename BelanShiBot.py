@@ -616,12 +616,31 @@ class Quiz(ui.View):
           if type(button) == ui.Button: button.disabled= True
         self.question_number += 1
         await interaction.message.edit(view=self)
+
+        # award points
+        correct_answer = answers[self.question.number]
+        if correct_answer == 0:
+          for player in a:
+            participant[player] = participant[player]+1
+        if correct_answer == 1:
+          for player in b:
+            participant[player] = participant[player]+1
+        if correct_answer == 2:
+          for player in c:
+            participant[player] = participant[player]+1
+        if correct_answer == 3:
+          for player in d:
+            participant[player] = participant[player]+1
+        print(a)
+        print(b)
+        print(c)
+        print(d)
         await next_question(self)
 
       async def next_question(self):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if field["name"] == f"Question #*{self.question_number}*": field["value"] = f"Question #*{self.question_number+1}*"
+          if field["name"] == f"Question #*{self.question_number}*": field["name"] = f"Question #*{self.question_number+1}*"
           if field["name"] == "1": field["value"] = f"> *{options[self.question_number][0]}*"
           if field["name"] == "2": field["value"] = f"> *{options[self.question_number][1]}*"
           if field["name"] == "3": field["value"] = f"> *{options[self.question_number][2]}*"
