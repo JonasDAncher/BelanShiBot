@@ -636,10 +636,10 @@ class Quiz(ui.View):
             for player in d:
               participant[player] = participant[player]+1
           print(a)
-          a = []
-          b = []
-          c = []
-          d = []
+          a.clear()
+          b.clear()
+          c.clear()
+          d.clear()
           print(a)
 
       async def next_question(self):
