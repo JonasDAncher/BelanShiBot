@@ -618,7 +618,7 @@ class Quiz(ui.View):
         self.question_number += 1
         print(self.question_number)
         print(len(questions))
-        print(self.question_number < len(questions))
+        print(self.question_number <= len(questions))
         if self.question_number <= len(questions):
           await next_question(self)
           print("next question...")
