@@ -719,9 +719,7 @@ class Quiz(ui.View):
       async def next_question(self):
         """Changes the question and options to a new question, re-enables the buttons, and begins the timer."""
         embed_dict = interaction.message.embeds[0].to_dict()
-        print(f"Question # **{self.question_number} / {len(questions)}**")
         for field in embed_dict["fields"]:
-          print(field["name"])
           if field["name"] == f"Question # **{self.question_number} / {len(questions)}**": 
             field["name"] = f"Question # **{self.question_number+1} / {len(questions)}**"
             field["value"] = f"**{questions[self.question_number]}**"
