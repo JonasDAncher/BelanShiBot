@@ -598,14 +598,6 @@ class Quiz(ui.View):
       embed_var.add_field(name="TIMER", value=f"{self.timer_time} seconds left to answer!", inline=False)
       await interaction.message.edit(embed=embed_var)
 
-      @tasks.loop(count=self.timer_time+1)
-      async def timer(self):
-        embed_dict = interaction.message.embeds[0].to_dict()
-        for field in embed_dict["fields"]:
-          if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
-        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        self.timer_time -= 1
-        await asyncio.sleep(1)
 
       @tasks.loop(count=self.pause_time)
       async def pause_timer(self):
@@ -615,7 +607,20 @@ class Quiz(ui.View):
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         self.timer_time -= 1
         await asyncio.sleep(1)
+
+      @pause_timer.after_loop
+      async def progress():
+        next_question(self)
       
+      @tasks.loop(count=self.timer_time+1)
+      async def timer(self):
+        embed_dict = interaction.message.embeds[0].to_dict()
+        for field in embed_dict["fields"]:
+          if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
+        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+        self.timer_time -= 1
+        await asyncio.sleep(1)
+
       @timer.after_loop
       async def times_up():
         await asyncio.sleep(1)
@@ -639,28 +644,29 @@ class Quiz(ui.View):
       async def reveal_answer(self):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if answers[self.question_number]==0:
-            if field["name"] == "1": field["value"] = f"> **>>{options[self.question_number][0]}<<**"
-            if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number][1]}*~~"
-            if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number][2]}*~~"
-            if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number][3]}*~~"
-          elif answers[self.question_number]==1:
-            if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number][0]}*~~"
-            if field["name"] == "2": field["value"] = f"> **>>{options[self.question_number][1]}<<**"
-            if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number][2]}*~~"
-            if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number][3]}*~~"
-          elif answers[self.question_number]==2:
-            if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number][0]}*~~"
-            if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number][1]}*~~"
-            if field["name"] == "3": field["value"] = f"> **>>{options[self.question_number][2]}<<**"
-            if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number][3]}*~~"
-          elif answers[self.question_number]==3:
-            if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number][0]}*~~"
-            if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number][1]}*~~ "
-            if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number][2]}*~~"
-            if field["name"] == "4": field["value"] = f"> **>>{options[self.question_number][3]}<<**"
+          if answers[self.question_number-1]==0:
+            if field["name"] == "1": field["value"] = f"> **>>{options[self.question_number-1][0]}<<**"
+            if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number-1][1]}*~~"
+            if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number-1][2]}*~~"
+            if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number-1][3]}*~~"
+          elif answers[self.question_number-1]==1:
+            if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number-1][0]}*~~"
+            if field["name"] == "2": field["value"] = f"> **>>{options[self.question_number-1][1]}<<**"
+            if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number-1][2]}*~~"
+            if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number-1][3]}*~~"
+          elif answers[self.question_number-1]==2:
+            if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number-1][0]}*~~"
+            if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number-1][1]}*~~"
+            if field["name"] == "3": field["value"] = f"> **>>{options[self.question_number-1][2]}<<**"
+            if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number-1][3]}*~~"
+          elif answers[self.question_number-1]==3:
+            if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number-1][0]}*~~"
+            if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number-1][1]}*~~ "
+            if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number-1][2]}*~~"
+            if field["name"] == "4": field["value"] = f"> **>>{options[self.question_number-1][3]}<<**"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        pause_timer.restart(self.pause_time)
+        pause_timer.stop()
+        await pause_timer.start(self.pause_time)
             
 
       async def finish_quiz():
