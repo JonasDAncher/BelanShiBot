@@ -552,10 +552,7 @@ class Quiz(ui.View):
 
   def quiz(self):   
     participant = dict()
-    a = []
-    b = []
-    c = []
-    d = []
+    a = []; b = []; c = []; d = []
 
     async def start_quizzing(interaction: discord.Interaction):
       # --------- Questions & Answers ---------
@@ -619,7 +616,15 @@ class Quiz(ui.View):
 
         # award points
         award_points()
-        await next_question(self)
+        if self.question_number <= len(questions):
+          await next_question(self)
+        else:
+          finish_quiz()
+
+      def finish_quiz():
+        winner,points = max(participant.items)
+        print(f"The winner is {winner} with {points} points!")
+        return
 
       def award_points():
           correct_answer = answers[self.question_number]
@@ -635,12 +640,7 @@ class Quiz(ui.View):
           if correct_answer == 3:
             for player in d:
               participant[player] = participant[player]+1
-          print(a)
-          a.clear()
-          b.clear()
-          c.clear()
-          d.clear()
-          print(a)
+          a.clear();b.clear();c.clear();d.clear()
 
       async def next_question(self):
         embed_dict = interaction.message.embeds[0].to_dict()
