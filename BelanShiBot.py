@@ -619,7 +619,7 @@ class Quiz(ui.View):
         print(self.question_number)
         print(len(questions))
         print(self.question_number < len(questions))
-        if self.question_number == len(questions)-1:
+        if self.question_number <= len(questions):
           await next_question(self)
           print("next question...")
         else:
@@ -664,7 +664,7 @@ class Quiz(ui.View):
       async def next_question(self):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if field["name"] == f"Question #*{self.question_number}*": field["name"] = f"Question #*{self.question_number+1}*"
+          if field["name"] == f"Question #*{self.question_number-1}*": field["name"] = f"Question #*{self.question_number}*"
           if field["name"] == "1": field["value"] = f"> *{options[self.question_number][0]}*"
           if field["name"] == "2": field["value"] = f"> *{options[self.question_number][1]}*"
           if field["name"] == "3": field["value"] = f"> *{options[self.question_number][2]}*"
