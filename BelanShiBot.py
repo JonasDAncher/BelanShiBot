@@ -615,16 +615,16 @@ class Quiz(ui.View):
 
         # award points
         award_points()
+        self.question_number += 1
         print(self.question_number)
-        print(len(questions)-1)
-        print(self.question_number < len(questions)-1)
-        if self.question_number < len(questions)-1:
+        print(len(questions))
+        print(self.question_number < len(questions))
+        if self.question_number == len(questions)-1:
           await next_question(self)
           print("next question...")
         else:
           print("ending quiz...")
           await finish_quiz()
-        self.question_number += 1
 
       async def finish_quiz():
         if len(participant) > 0:
