@@ -635,10 +635,12 @@ class Quiz(ui.View):
           if correct_answer == 3:
             for player in d:
               participant[player] = participant[player]+1
+          print(a)
           a = []
           b = []
           c = []
           d = []
+          print(a)
 
       async def next_question(self):
         embed_dict = interaction.message.embeds[0].to_dict()
