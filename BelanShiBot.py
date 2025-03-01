@@ -627,6 +627,7 @@ class Quiz(ui.View):
           finish_quiz()
 
       def finish_quiz():
+        print("winner is.....")
         winner,points = max(participant.items)
         print(f"The winner is {winner} with {points} points!")
         return
