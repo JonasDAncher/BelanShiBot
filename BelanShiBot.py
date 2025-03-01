@@ -692,11 +692,14 @@ class Quiz(ui.View):
         embed_var.add_field(name=f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}! 🎉", value="", inline=False)
 
 
-        embed_var.add_field(name="",value="``` ```") # Spacer
+        embed_var.add_field(name="",value="Want to see how did the worst?", inline=False) # Spacer
         result = ""
         for key, value in sorted(participant.items(), key=lambda x: x[1]): 
-          result = result + "{} : {}\n".format(key, value)
-
+          result = result + "{} : {}\n".format(key.nick if not key.nick==None else key.name, value)
+        participant["test3"] = 3
+        participant["test2"] = 2
+        participant["test5"] = 5
+        participant["test8"] = 8
         embed_var.add_field(name="*Leaderboad*", value=f"{result}")
         await interaction.message.edit(view=self, embed=Embed.from_dict(embed_dict))
         print(f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}!")
@@ -732,6 +735,7 @@ class Quiz(ui.View):
           if type(button) == ui.Button: button.disabled=False
         await interaction.message.edit(view=self)
         self.timer_time = 5
+        self.pause_time = 5
         await asyncio.sleep(1)
         try:
           await timer.start(self)
