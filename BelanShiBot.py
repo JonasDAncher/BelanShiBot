@@ -599,7 +599,7 @@ class Quiz(ui.View):
       await interaction.message.edit(embed=embed_var)
 
 
-      @tasks.loop(count=self.pause_time+0)
+      @tasks.loop(count=self.pause_time+1)
       async def pause_timer(self):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
@@ -667,8 +667,10 @@ class Quiz(ui.View):
             if field["name"] == "4": field["value"] = f"> **>>{options[self.question_number-1][3]}<<**"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         self.pause_time = 25
-        pause_timer.stop()
-        await pause_timer.start(self)
+        try:
+          await pause_timer.start(self)
+        except:
+          pause_timer.restart(self)
             
 
       async def finish_quiz():
@@ -723,8 +725,10 @@ class Quiz(ui.View):
         await interaction.message.edit(view=self)
         self.timer_time = 5
         await asyncio.sleep(1)
-        timer.cancel()
-        await timer.start(self)
+        try:
+          await timer.start(self)
+        except:
+          timer.restart(self)
 
       await asyncio.sleep(1)
       await interaction.message.edit(embed=embed_var)
