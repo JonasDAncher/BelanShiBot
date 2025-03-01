@@ -723,7 +723,8 @@ class Quiz(ui.View):
         await interaction.message.edit(view=self)
         self.timer_time = 5
         await asyncio.sleep(1)
-        timer.restart(self)
+        timer.stop()
+        await timer.start(self)
 
       await asyncio.sleep(1)
       await interaction.message.edit(embed=embed_var)
