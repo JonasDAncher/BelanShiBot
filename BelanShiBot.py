@@ -587,7 +587,7 @@ class Quiz(ui.View):
       self.pause_time = 5
       embed_var = interaction.message.embeds[0]
       embed_var.add_field(name="",value="``` ```") # Spacer
-      embed_var.add_field(name=f"Question #*{self.question_number+1}* / {len(questions)}",
+      embed_var.add_field(name=f"Question #**{self.question_number+1}** / {len(questions)}",
                           value=f"**{questions[self.question_number]}**", inline=False)
       embed_var.add_field(name="1", value=f"> *{options[self.question_number][0]}*", inline=True)
       embed_var.add_field(name="2", value=f"> *{options[self.question_number][1]}*", inline=True)
@@ -720,8 +720,8 @@ class Quiz(ui.View):
         """Changes the question and options to a new question, re-enables the buttons, and begins the timer."""
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if field["name"] == f"Question #*{self.question_number} / {len(questions)}*": 
-            field["name"] = f"Question #*{self.question_number+1} / {len(questions)}*"
+          if field["name"] == f"Question #**{self.question_number-1} / {len(questions)}**": 
+            field["name"] = f"Question #**{self.question_number+1} / {len(questions)}**"
             field["value"] = f"**{questions[self.question_number]}**"
           if field["name"] == "1": field["value"] = f"> *{options[self.question_number][0]}*"
           if field["name"] == "2": field["value"] = f"> *{options[self.question_number][1]}*"
