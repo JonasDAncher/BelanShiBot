@@ -624,21 +624,15 @@ class Quiz(ui.View):
           print("next question...")
         else:
           print("ending quiz...")
-          finish_quiz()
+          await finish_quiz()
 
-      def finish_quiz():
-        print("winner is")
+      async def finish_quiz():
         winner = max(participant, key=participant.get)
-        print("winner is.")
         points = participant[winner]
-        print("winner is..")
-        # embed_dict = interaction.message.embeds[0].to_dict()
-        print("winner is...")
-        # for field in embed_dict["fields"]:
-        #   if field["name"] == "1": embed_dict.pop(field)
-        print("winner is....")
-        print(f"The winner is {winner} with {points} points!")
-        print("winner is.....")
+        embed_dict = interaction.message.embeds[0].to_dict()
+        embed_dict["fields"] = []
+        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+        print(f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} points!")
         return
 
       def award_points():
