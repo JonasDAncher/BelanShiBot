@@ -627,6 +627,8 @@ class Quiz(ui.View):
           await finish_quiz()
 
       async def finish_quiz():
+        self.children.clear()
+        # await interaction.message.edit(view=self)
         if len(participant) > 0:
           winner = max(participant, key=participant.get)
           points = participant[winner]
@@ -641,7 +643,7 @@ class Quiz(ui.View):
         # Rebuilding the embed cuz removing specific fields is a pain
         embed_var.add_field(name="",value="``` ```", inline=False) # Spacer
         embed_var.add_field(name=f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}! 🎉", value="", inline=False)
-        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+        await interaction.message.edit(view=self, embed=Embed.from_dict(embed_dict))
         print(f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}!")
         return
 
@@ -673,6 +675,7 @@ class Quiz(ui.View):
           if field["name"] == "4": field["value"] = f"> *{options[self.question_number][3]}*"
         for button in self.children:
           if type(button) == ui.Button: button.disabled=True
+        await interaction.message.edit(view=self)
         self.timer_time = 5
         await asyncio.sleep(1)
         timer.restart(self)
