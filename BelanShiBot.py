@@ -611,7 +611,6 @@ class Quiz(ui.View):
         await asyncio.sleep(1)
         for button in self.children:
           if type(button) == ui.Button: button.disabled= True
-        self.question_number += 1
         await interaction.message.edit(view=self)
 
         # award points
@@ -625,6 +624,7 @@ class Quiz(ui.View):
         else:
           print("ending quiz...")
           await finish_quiz()
+        self.question_number += 1
 
       async def finish_quiz():
         if len(participant) > 0:
@@ -633,12 +633,14 @@ class Quiz(ui.View):
         else:
           winner = "No one..."
           points = 0
+        # Destroying all fields, cuz it's easier...
         embed_dict = interaction.message.embeds[0].to_dict()
         embed_dict["fields"] = []
         embed_var=Embed.from_dict(embed_dict)
+
         # Rebuilding the embed cuz removing specific fields is a pain
         embed_var.add_field(name="",value="``` ```", inline=False) # Spacer
-        embed_var.add_field(name=f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}!*** 🎉", value="", inline=False)
+        embed_var.add_field(name=f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}! 🎉", value="", inline=False)
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         print(f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}!")
         return
