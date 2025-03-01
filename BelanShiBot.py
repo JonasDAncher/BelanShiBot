@@ -673,9 +673,9 @@ class Quiz(ui.View):
           if field["name"] == "2": field["value"] = f"> *{options[self.question_number][1]}*"
           if field["name"] == "3": field["value"] = f"> *{options[self.question_number][2]}*"
           if field["name"] == "4": field["value"] = f"> *{options[self.question_number][3]}*"
-        await interaction.message.edit(view=self)
         for button in self.children:
           if type(button) == ui.Button: button.disabled=False
+        await interaction.message.edit(view=self)
         self.timer_time = 5
         await asyncio.sleep(1)
         timer.restart(self)
