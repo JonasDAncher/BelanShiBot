@@ -587,7 +587,7 @@ class Quiz(ui.View):
       self.pause_time = 5
       embed_var = interaction.message.embeds[0]
       embed_var.add_field(name="",value="``` ```") # Spacer
-      embed_var.add_field(name=f"Question # **{self.question_number+1}** / {len(questions)}",
+      embed_var.add_field(name=f"Question # **{self.question_number+1} / {len(questions)}**",
                           value=f"**{questions[self.question_number]}**", inline=False)
       embed_var.add_field(name="1", value=f"> *{options[self.question_number][0]}*", inline=True)
       embed_var.add_field(name="2", value=f"> *{options[self.question_number][1]}*", inline=True)
