@@ -584,8 +584,6 @@ class Quiz(ui.View):
       self.question_number = 0
       self.timer_time = 5
       self.pause_time = 5
-      print(interaction.message.embeds)
-      print(interaction.message.embeds[0])
       embed_var = interaction.message.embeds[0]
       embed_var.add_field(name="",value="``` ```") # Spacer
       embed_var.add_field(name=f"Question #*{self.question_number+1}*",
@@ -614,7 +612,6 @@ class Quiz(ui.View):
       
       @tasks.loop(count=self.timer_time+1)
       async def timer(self):
-        print(self.timer_time)
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
@@ -632,9 +629,6 @@ class Quiz(ui.View):
         # award points
         award_points()
         self.question_number += 1
-        print(self.question_number)
-        print(len(questions))
-        print(self.question_number <= len(questions))
         if self.question_number <= len(questions)-1:
           print("revealing answer...")
           await reveal_answer(self)
@@ -699,7 +693,6 @@ class Quiz(ui.View):
           result = result + "{} : {}\n".format(key.nick if not key.nick==None else key.name, value)
         embed_var.add_field(name="*Leaderboad*", value=f"{result}")
         await interaction.message.edit(view=self, embed=Embed.from_dict(embed_dict))
-        print(f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}!")
         return
 
       def award_points():
@@ -728,6 +721,7 @@ class Quiz(ui.View):
           if field["name"] == "2": field["value"] = f"> *{options[self.question_number][1]}*"
           if field["name"] == "3": field["value"] = f"> *{options[self.question_number][2]}*"
           if field["name"] == "4": field["value"] = f"> *{options[self.question_number][3]}*"
+        await asyncio.sleep(1)
         for button in self.children:
           if type(button) == ui.Button: button.disabled=False
         await interaction.message.edit(view=self)
