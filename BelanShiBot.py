@@ -627,13 +627,18 @@ class Quiz(ui.View):
           finish_quiz()
 
       def finish_quiz():
-        print("winner is.....")
+        print("winner is")
         winner = max(participant, key=participant.get)
+        print("winner is.")
         points = participant[winner]
+        print("winner is..")
         embed_dict = interaction.message.embeds[0].to_dict()
+        print("winner is...")
         for field in embed_dict["fields"]:
           if field["name"] == "1": embed_dict.pop(field)
+        print("winner is....")
         print(f"The winner is {winner} with {points} points!")
+        print("winner is.....")
         return
 
       def award_points():
