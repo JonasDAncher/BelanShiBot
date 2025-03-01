@@ -610,7 +610,7 @@ class Quiz(ui.View):
       async def times_up():
         await asyncio.sleep(1)
         for button in self.children:
-          if type(button) == ui.Button: button.disabled= True
+          if type(button) == ui.Button: button.disabled=True
         await interaction.message.edit(view=self)
 
         # award points
@@ -619,7 +619,7 @@ class Quiz(ui.View):
         print(self.question_number)
         print(len(questions))
         print(self.question_number <= len(questions))
-        if self.question_number <= len(questions):
+        if self.question_number <= len(questions)-1:
           print("next question...")
           await next_question(self)
         else:
@@ -666,11 +666,13 @@ class Quiz(ui.View):
         for field in embed_dict["fields"]:
           if field["name"] == f"Question #*{self.question_number}*": 
             field["name"] = f"Question #*{self.question_number+1}*"
-            field["value"] = f"Question #*{self.question_number+1}*"
+            field["value"] = f"**{questions[self.question_number]}**"
           if field["name"] == "1": field["value"] = f"> *{options[self.question_number][0]}*"
           if field["name"] == "2": field["value"] = f"> *{options[self.question_number][1]}*"
           if field["name"] == "3": field["value"] = f"> *{options[self.question_number][2]}*"
           if field["name"] == "4": field["value"] = f"> *{options[self.question_number][3]}*"
+        for button in self.children:
+          if type(button) == ui.Button: button.disabled=True
         self.timer_time = 5
         await asyncio.sleep(1)
         timer.restart(self)
