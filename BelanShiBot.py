@@ -559,7 +559,7 @@ class Quiz(ui.View):
       questions = [
         "What langauge is this?",
         "What is the guild called?",
-        "This is a test question, the correct answer is 4",
+        "This is a test question, the correct answer is wow",
         "Who sucks?"
       ]
       # The options for each question. Using array index to access
@@ -567,15 +567,15 @@ class Quiz(ui.View):
         ["Java", "Python", "C#", "C++"],
         ["Belan Shi", "Echo", "Liquid", "Method"],
         ["4","movies", "potatoe", "WoW"],
-        ["Maya sucks", "Gala's great", "1", "2"]
+        ["1", "Gala's great", "Maya sucks", "2"]
       ]
       # In the form question_number : correct_option
       # Used to access the correct options index, based on question_number
       answers = {
         0: 1,
         1: 0,
-        2: 4,
-        3: 0
+        2: 3,
+        3: 2
       }
 
       # --------- Manipulating the embed ---------
@@ -597,11 +597,20 @@ class Quiz(ui.View):
       embed_var.add_field(name="TIMER", value=f"{self.timer_time} seconds left to answer!", inline=False)
       await interaction.message.edit(embed=embed_var)
 
-      @tasks.loop(count=self.timer_time)
+      @tasks.loop(count=self.timer_time+1)
       async def timer(self):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
+        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+        self.timer_time -= 1
+        await asyncio.sleep(1)
+
+      @tasks.loop(count=self.pause_time)
+      async def pause_timer(self):
+        embed_dict = interaction.message.embeds[0].to_dict()
+        for field in embed_dict["fields"]:
+          if field["name"] == "TIMER": field["value"] = f"{self.pause_time} seconds left to answer!"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         self.timer_time -= 1
         await asyncio.sleep(1)
@@ -621,10 +630,38 @@ class Quiz(ui.View):
         print(self.question_number <= len(questions))
         if self.question_number <= len(questions)-1:
           print("next question...")
-          await next_question(self)
+          await reveal_answer(self)
         else:
           print("ending quiz...")
           await finish_quiz()
+
+      async def reveal_answer():
+        embed_dict = interaction.message.embeds[0].to_dict()
+        for field in embed_dict["fields"]:
+          if answers[self.question_number]==0:
+            if field["name"] == "1": field["value"] = f"> **>>{options[self.question_number][0]}<<**"
+            if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number][1]}*~~"
+            if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number][2]}*~~"
+            if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number][3]}*~~"
+          elif answers[self.question_number]==1:
+            if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number][0]}*~~"
+            if field["name"] == "2": field["value"] = f"> **>>{options[self.question_number][1]}<<**"
+            if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number][2]}*~~"
+            if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number][3]}*~~"
+          elif answers[self.question_number]==2:
+            if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number][0]}*~~"
+            if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number][1]}*~~"
+            if field["name"] == "3": field["value"] = f"> **>>{options[self.question_number][2]}<<**"
+            if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number][3]}*~~"
+          elif answers[self.question_number]==3:
+            if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number][0]}*~~"
+            if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number][1]}*~~ "
+            if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number][2]}*~~"
+            if field["name"] == "4": field["value"] = f"> **>>{options[self.question_number][3]}<<**"
+        await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+        self.pause_time = 25
+        pause_timer.restart(self.pause_time)
+            
 
       async def finish_quiz():
         self.remove_item(a_button); self.remove_item(b_button); self.remove_item(c_button); self.remove_item(d_button); 
