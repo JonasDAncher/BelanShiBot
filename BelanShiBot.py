@@ -636,7 +636,7 @@ class Quiz(ui.View):
           print("ending quiz...")
           await finish_quiz()
 
-      async def reveal_answer():
+      async def reveal_answer(self):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if answers[self.question_number]==0:
