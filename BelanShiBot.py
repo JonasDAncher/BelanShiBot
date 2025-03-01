@@ -587,7 +587,7 @@ class Quiz(ui.View):
       self.pause_time = 5
       embed_var = interaction.message.embeds[0]
       embed_var.add_field(name="",value="``` ```") # Spacer
-      embed_var.add_field(name=f"Question #*{self.question_number+1}*",
+      embed_var.add_field(name=f"Question #*{self.question_number+1}* / {len(questions)}",
                           value=f"**{questions[self.question_number]}**", inline=False)
       embed_var.add_field(name="1", value=f"> *{options[self.question_number][0]}*", inline=True)
       embed_var.add_field(name="2", value=f"> *{options[self.question_number][1]}*", inline=True)
@@ -645,25 +645,25 @@ class Quiz(ui.View):
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]: # No switch, so long if-elif
           if answers[self.question_number-1]==0:
-            if field["name"] == "1": field["value"] = f"> **>>{options[self.question_number-1][0]}<<**"
+            if field["name"] == "1": field["value"] = f"> **>> {options[self.question_number-1][0]} <<**"
             if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number-1][1]}*~~"
             if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number-1][2]}*~~"
             if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number-1][3]}*~~"
           elif answers[self.question_number-1]==1:
             if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number-1][0]}*~~"
-            if field["name"] == "2": field["value"] = f"> **>>{options[self.question_number-1][1]}<<**"
+            if field["name"] == "2": field["value"] = f"> **>> {options[self.question_number-1][1]} <<**"
             if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number-1][2]}*~~"
             if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number-1][3]}*~~"
           elif answers[self.question_number-1]==2:
             if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number-1][0]}*~~"
             if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number-1][1]}*~~"
-            if field["name"] == "3": field["value"] = f"> **>>{options[self.question_number-1][2]}<<**"
+            if field["name"] == "3": field["value"] = f"> **>> {options[self.question_number-1][2]} <<**"
             if field["name"] == "4": field["value"] = f"> ~~*{options[self.question_number-1][3]}*~~"
           elif answers[self.question_number-1]==3:
             if field["name"] == "1": field["value"] = f"> ~~*{options[self.question_number-1][0]}*~~"
             if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number-1][1]}*~~ "
             if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number-1][2]}*~~"
-            if field["name"] == "4": field["value"] = f"> **>>{options[self.question_number-1][3]}<<**"
+            if field["name"] == "4": field["value"] = f"> **>> {options[self.question_number-1][3]} <<**"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         try: # Have to check if timer has already been used. If it has, just restart it
           await pause_timer.start(self)
@@ -720,8 +720,8 @@ class Quiz(ui.View):
         """Changes the question and options to a new question, re-enables the buttons, and begins the timer."""
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if field["name"] == f"Question #*{self.question_number}*": 
-            field["name"] = f"Question #*{self.question_number+1}*"
+          if field["name"] == f"Question #*{self.question_number} / {len(questions)}*": 
+            field["name"] = f"Question #*{self.question_number+1} / {len(questions)}*"
             field["value"] = f"**{questions[self.question_number]}**"
           if field["name"] == "1": field["value"] = f"> *{options[self.question_number][0]}*"
           if field["name"] == "2": field["value"] = f"> *{options[self.question_number][1]}*"
@@ -823,12 +823,12 @@ async def quiz(interaction: discord.Interaction):
   quizmaster_name = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
   answer_time = 5
   reward = 1
-  content_var = f"""A quiz has started! Your Quizmaster is... {quizmaster_name}"""
+  content_var = f"""A quiz has started! Your Quizmaster is... __{quizmaster_name}__"""
   embed_var = discord.Embed(
     title=f"""{quizmaster_name} has started a quiz!""",
     description=f"""
 Everyone can join in, you just have to press the buttons on each question.\n
-You'll have {answer_time} second(s) to answer each question. If you change your mind, just press a new answer!\n
+You'll have __{answer_time}__ second(s) to answer each question. If you change your mind, just press a new answer!\n
 Each correct answer gives {reward} point(s)! If you have the most by the end, you're the winner!
 """
   )
