@@ -618,7 +618,9 @@ class Quiz(ui.View):
         award_points()
         if self.question_number <= len(questions):
           await next_question(self)
+          print("next question...")
         else:
+          print("ending quiz...")
           finish_quiz()
 
       def finish_quiz():
