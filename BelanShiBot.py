@@ -550,7 +550,8 @@ class Quiz(ui.View):
     self.quiz()
     self.quizmaster = quizmaster
 
-  def quiz(self):   
+  def quiz(self):
+    """The main quiz method."""
     participant = dict()
     a = []; b = []; c = []; d = []
 
@@ -599,6 +600,7 @@ class Quiz(ui.View):
 
       @tasks.loop(count=self.pause_time+1)
       async def pause_timer(self):
+        """Pauses the quiz on revealed answers."""
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TIMER": field["value"] = f"Next question in {self.pause_time} seconds..."
@@ -608,26 +610,28 @@ class Quiz(ui.View):
 
       @pause_timer.after_loop
       async def progress():
+        """Simply progresses the quiz to the next question, once the pause timer has ended."""
         await next_question(self)
       
       @tasks.loop(count=self.timer_time+1)
       async def timer(self):
+        """Timer showing how long there's left to answer question."""
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == "TIMER": field["value"] = f"{self.timer_time} seconds left to answer!"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
         self.timer_time -= 1
-        await asyncio.sleep(1)
+        await asyncio.sleep(1)  # Sleep for better flow
 
       @timer.after_loop
       async def times_up():
-        await asyncio.sleep(1)
+        """Disables buttons, and awards points based on correct answers."""
+        await asyncio.sleep(1)  # Sleep for better flow
         for button in self.children:
           if type(button) == ui.Button: button.disabled=True
         await interaction.message.edit(view=self)
-
-        # award points
         award_points()
+        # Determines if the quiz should move to next question, or terminate; revealing the winner.
         self.question_number += 1
         if self.question_number <= len(questions)-1:
           print("revealing answer...")
@@ -637,8 +641,9 @@ class Quiz(ui.View):
           await finish_quiz()
 
       async def reveal_answer(self):
+        """Reveals the answer by striking-out the wrong ones, and bolding the correct"""
         embed_dict = interaction.message.embeds[0].to_dict()
-        for field in embed_dict["fields"]:
+        for field in embed_dict["fields"]: # No switch, so long if-elif
           if answers[self.question_number-1]==0:
             if field["name"] == "1": field["value"] = f"> **>>{options[self.question_number-1][0]}<<**"
             if field["name"] == "2": field["value"] = f"> ~~*{options[self.question_number-1][1]}*~~"
@@ -660,21 +665,20 @@ class Quiz(ui.View):
             if field["name"] == "3": field["value"] = f"> ~~*{options[self.question_number-1][2]}*~~"
             if field["name"] == "4": field["value"] = f"> **>>{options[self.question_number-1][3]}<<**"
         await interaction.message.edit(embed=Embed.from_dict(embed_dict))
-        # self.pause_time = 25
-        try:
+        try: # Have to check if timer has already been used. If it has, just restart it
           await pause_timer.start(self)
         except:
           pause_timer.restart(self)
             
 
       async def finish_quiz():
-        self.remove_item(a_button); self.remove_item(b_button); self.remove_item(c_button); self.remove_item(d_button); 
-        # await interaction.message.edit(view=self)
-        if len(participant) > 0:
+        """Terminates the quiz, clean the embed, and show winner & leaderboard."""
+        self.remove_item(a_button); self.remove_item(b_button); self.remove_item(c_button); self.remove_item(d_button); # Remove all buttons
+        if len(participant) > 0: # If there's any players, get the player with the highest score
           winner = max(participant, key=participant.get)
           points = participant[winner]
         else:
-          winner = "No one..."
+          winner = interaction.user
           points = 0
         # Destroying all fields, cuz it's easier...
         embed_dict = interaction.message.embeds[0].to_dict()
@@ -683,19 +687,20 @@ class Quiz(ui.View):
 
         # Rebuilding the embed cuz removing specific fields is a pain
         embed_var.add_field(name="",value="``` ```", inline=False) # Spacer
-        embed_var.add_field(name=f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}! 🎉", value="", inline=False)
+        embed_var.add_field(name=f"🎉 The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}! 🎉", value="", inline=False)
 
+        embed_var.add_field(name="",value="Want to see how you did?", inline=False) 
 
-        embed_var.add_field(name="",value="Want to see how did the worst?", inline=False) # Spacer
-        participant[winner] = 8
+        # Build leaderboard
         result = ""
         for key, value in sorted(participant.items(), key=lambda x: x[1]): 
           result = result + "{} : {}\n".format(key.nick if not key.nick==None else key.name, value)
-        embed_var.add_field(name="*Leaderboad*", value=f"{result}")
+        embed_var.add_field(name="*Leaderboard:*", value=f"{result}")
         await interaction.message.edit(view=self, embed=Embed.from_dict(embed_dict))
         return
 
-      def award_points():
+      def award_points(): # Can't use match case in discord.py
+          """Awards points to the users who answered correctly, then clears answer arrays."""
           correct_answer = answers[self.question_number]
           if correct_answer == 0:
             for player in a:
@@ -712,6 +717,7 @@ class Quiz(ui.View):
           a.clear();b.clear();c.clear();d.clear()
 
       async def next_question(self):
+        """Changes the question and options to a new question, re-enables the buttons, and begins the timer."""
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
           if field["name"] == f"Question #*{self.question_number}*": 
@@ -721,19 +727,22 @@ class Quiz(ui.View):
           if field["name"] == "2": field["value"] = f"> *{options[self.question_number][1]}*"
           if field["name"] == "3": field["value"] = f"> *{options[self.question_number][2]}*"
           if field["name"] == "4": field["value"] = f"> *{options[self.question_number][3]}*"
-        await asyncio.sleep(1)
+        await interaction.message.edit(view=self)
+        await asyncio.sleep(1) # Sleep for better flow
         for button in self.children:
           if type(button) == ui.Button: button.disabled=False
-        await interaction.message.edit(view=self)
+
+        # Reset the timers
         self.timer_time = 5
         self.pause_time = 5
-        await asyncio.sleep(1)
-        try:
+
+        await asyncio.sleep(1) # Sleep for better flow
+        try: # Have to check if timer has been run before, if it has just restart.
           await timer.start(self)
         except:
           timer.restart(self)
 
-      await asyncio.sleep(1)
+      await asyncio.sleep(1) # Sleep for better flow
       await interaction.message.edit(embed=embed_var)
       await timer.start(self)
 
@@ -818,9 +827,9 @@ async def quiz(interaction: discord.Interaction):
   embed_var = discord.Embed(
     title=f"""{quizmaster_name} has started a quiz!""",
     description=f"""
-Everyone can join in, you just have to press the buttons for each question.
-You'll have {answer_time} second(s) to answer each question. If you change your mind, just press a new answer!
-Each correct answer gives {reward} point(s)! If you have the most be the end, you're the winner!
+Everyone can join in, you just have to press the buttons on each question.\n
+You'll have {answer_time} second(s) to answer each question. If you change your mind, just press a new answer!\n
+Each correct answer gives {reward} point(s)! If you have the most by the end, you're the winner!
 """
   )
 
