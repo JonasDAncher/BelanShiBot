@@ -618,7 +618,7 @@ class Quiz(ui.View):
         award_points()
         print(self.question_number)
         print(len(questions)-1)
-        print(self.question_number <= len(questions)-1)
+        print(self.question_number < len(questions)-1)
         if self.question_number <= len(questions)-1:
           await next_question(self)
           print("next question...")
