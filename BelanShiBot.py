@@ -720,7 +720,7 @@ class Quiz(ui.View):
         """Changes the question and options to a new question, re-enables the buttons, and begins the timer."""
         embed_dict = interaction.message.embeds[0].to_dict()
         for field in embed_dict["fields"]:
-          if field["name"] == f"Question # **{self.question_number+1} / {len(questions)}**": 
+          if field["name"] == f"Question # **{self.question_number} / {len(questions)}**": 
             field["name"] = f"Question # **{self.question_number+1} / {len(questions)}**"
             field["value"] = f"**{questions[self.question_number]}**"
           if field["name"] == "1": field["value"] = f"> *{options[self.question_number][0]}*"
@@ -731,7 +731,7 @@ class Quiz(ui.View):
         await asyncio.sleep(1) # Sleep for better flow
         for button in self.children:
           if type(button) == ui.Button: button.disabled=False
-
+        await interaction.message.edit(view=self)
         # Reset the timers
         self.timer_time = 5
         self.pause_time = 5
