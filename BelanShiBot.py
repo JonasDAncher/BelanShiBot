@@ -690,6 +690,14 @@ class Quiz(ui.View):
         # Rebuilding the embed cuz removing specific fields is a pain
         embed_var.add_field(name="",value="``` ```", inline=False) # Spacer
         embed_var.add_field(name=f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}! 🎉", value="", inline=False)
+
+
+        embed_var.add_field(name="",value="``` ```") # Spacer
+        result = ""
+        for key, value in sorted(participant.items(), key=lambda x: x[1]): 
+          result = result + "{} : {}\n".format(key, value)
+
+        embed_var.add_field(name="*Leaderboad*", value=f"{result}")
         await interaction.message.edit(view=self, embed=Embed.from_dict(embed_dict))
         print(f"The winner is {winner.nick if not winner.nick==None else winner.name} with {points} point{'' if points==1 else 's'}!")
         return
