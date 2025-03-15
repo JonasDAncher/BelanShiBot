@@ -234,6 +234,7 @@ class RoleButtons(ui.View):
         await interaction.message.delete()
         await interaction.response.send_message(content=f"Run cancelled!\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
+        interaction.channel.send("The run was cancelled.")
         log(f'KEY: {self.id} - {username} cancelled the key.')
         # TODO Should also delete any run confirmed messages.
         return
@@ -376,6 +377,18 @@ async def key(
                                             view=RoleButtons(interaction.user, players))
 
 # ---------- Helper functions for the key command ----------
+async def reminder(interaction: discord.Interaction, players: list):
+  if isGroupFull(players):
+    if (datetime.datetime.now()-interaction.created_at).seconds > 300:
+      user = interaction.user
+      message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to go to it!]({interaction.original_response()})"""
+      await client.send_message(user, message)
+  return
+
+def isGroupFull(players: list):
+  if len(players[0]) > 0 and len(players[1]) > 0 and len(players[2]) > 2: return True 
+  return False
+
 def format_dps(dps_players=None):
   """Formats the 3 lines of DPS text for the embed
   :return formatted string containing reserved/open/player names based on signup and creation details.
