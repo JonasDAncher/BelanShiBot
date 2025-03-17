@@ -384,14 +384,14 @@ async def key(
 async def reminder(interaction: discord.Interaction, players: list):
   print("trying to remind")
   print(players)
-  print(type(datetime.datetime.now(datetime.timezone.utc).timestamp()))
-  print(interaction.created_at.timestamp())
-  print((datetime.datetime.now().timestamp()-interaction.created_at.timestamp()))
+  print(datetime.datetime.now(datetime.timezone.utc).timestamp())
+  print(interaction.message.created_at.timestamp())
+  print((datetime.datetime.now().timestamp()-interaction.message.created_at.timestamp()))
   print(len(players[0]) > 0)
   print(len(players[1]) > 0)
   print(len(players[2]) > 2)
   if isGroupFull(players):
-    if (datetime.datetime.now(datetime.timezone.utc).timestamp()-interaction.created_at.timestamp()) > 5:
+    if (datetime.datetime.now(datetime.timezone.utc).timestamp()-interaction.message.created_at.timestamp()) > 5:
       user = interaction.user
       message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to go to it!]({interaction.original_response()})"""
       await client.send_message(user, message)
