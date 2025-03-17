@@ -237,7 +237,7 @@ class RoleButtons(ui.View):
         await interaction.message.delete()
         await interaction.response.send_message(content=f"Run cancelled!\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
-        interaction.channel.send("The run was cancelled.")
+        await interaction.channel.send("The run was cancelled.")
         log(f'KEY: {self.id} - {username} cancelled the key.')
         # TODO Should also delete any run confirmed messages.
         return
@@ -386,6 +386,7 @@ async def reminder(interaction: discord.Interaction, players: list):
     if (datetime.datetime.now(datetime.timezone.utc).timestamp()-interaction.message.created_at.timestamp()) > waitTime:
       message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to see it!]({interaction.message.jump_url}) \n-# This reminder is sent to you, because you made the group more than {waitTime/60} minutes ago."""
       await interaction.message.mentions[0].send(message)
+      log(f'A reminder was sent to {interaction.message.mentions[0]}, that their key group is full')
   return
 
 def isGroupFull(players: list):
