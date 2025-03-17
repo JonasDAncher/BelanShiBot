@@ -95,6 +95,8 @@ class RoleButtons(ui.View):
           field["value"] = f"❌ {self.players[0][0].nick if not self.players[0][0].nick==None else self.players[0][0].name}"
       await interaction.message.edit(embed=Embed.from_dict(embed_dict))
       await interaction.response.send_message(f"You've marked you want to join as tank!\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
+      if interaction.guild_id == 489890364090744892: # Test server
+          reminder(interaction, self.players)
 
     tank_button.callback = tankbutton  # Add functionality to the button object.
     self.add_item(tank_button)  # Add the button to the view.
