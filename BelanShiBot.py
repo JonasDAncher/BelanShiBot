@@ -384,7 +384,7 @@ async def reminder(interaction: discord.Interaction, players: list):
   if isGroupFull(players):
     waitTime = 600
     if (datetime.datetime.now(datetime.timezone.utc).timestamp()-interaction.message.created_at.timestamp()) > waitTime:
-      message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to see it!]({interaction.message.jump_url}\n-# This reminder is sent to you, because you made the group more than {waitTime/60} minutes ago.)"""
+      message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to see it!]({interaction.message.jump_url}) \n-# This reminder is sent to you, because you made the group more than {waitTime/60} minutes ago."""
       await interaction.message.mentions[0].send(message)
   return
 
