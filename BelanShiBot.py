@@ -68,6 +68,8 @@ class RoleButtons(ui.View):
         await interaction.response.send_message(f"You swapped role to tank!\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from HEALER to TANK')
+        if interaction.guild_id == 489890364090744892: # Test server
+          reminder(interaction, self.players)
         return
 
       if len(self.players[2]) > 0 and interaction.user in self.players[2]: # If the user is already signed up as dps
@@ -379,7 +381,7 @@ async def key(
 # ---------- Helper functions for the key command ----------
 async def reminder(interaction: discord.Interaction, players: list):
   if isGroupFull(players):
-    if (datetime.datetime.now()-interaction.created_at).seconds > 300:
+    if (datetime.datetime.now()-interaction.created_at).seconds > 5:
       user = interaction.user
       message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to go to it!]({interaction.original_response()})"""
       await client.send_message(user, message)
