@@ -68,8 +68,6 @@ class RoleButtons(ui.View):
         await interaction.response.send_message(f"You swapped role to tank!\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from HEALER to TANK')
-        if interaction.guild_id == 489890364090744892: # Test server
-          await reminder(interaction, self.players)
         return
 
       if len(self.players[2]) > 0 and interaction.user in self.players[2]: # If the user is already signed up as dps
@@ -160,6 +158,8 @@ class RoleButtons(ui.View):
           field["value"] = f"❌ {self.players[1][0].nick if not self.players[1][0].nick==None else self.players[1][0].name}"
       await interaction.message.edit(embed=Embed.from_dict(embed_dict))
       await interaction.response.send_message(f"You've marked you want to join as healer!\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
+      if interaction.guild_id == 489890364090744892: # Test server
+          await reminder(interaction, self.players)
 
     healer_button.callback = healerbutton  # Add functionality to the button object.
     self.add_item(healer_button)  # Add the button to the view.
@@ -214,16 +214,18 @@ class RoleButtons(ui.View):
         return
 
       # If a dps spot is open
-      await interaction.response.send_message(f"You've marked you want to join as DPS!\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True,
-                                              delete_after=DELETE_TIME)
-      username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
-      log(f'KEY: {self.id} - {username} joined as DPS')
       self.players[2].append(interaction.user)
       embed_dict = interaction.message.embeds[0].to_dict()
       for field in embed_dict["fields"]:
         if field["name"] == "DPS":
           field["value"] = format_dps(self.players[2])
       await interaction.message.edit(embed=Embed.from_dict(embed_dict))
+      await interaction.response.send_message(f"You've marked you want to join as DPS!\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True,
+                                              delete_after=DELETE_TIME)
+      if interaction.guild_id == 489890364090744892: # Test server
+          await reminder(interaction, self.players)
+      username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
+      log(f'KEY: {self.id} - {username} joined as DPS')
 
     dps_button.callback = dpsbutton  # Add functionality to the button object.
     self.add_item(dps_button)  # Add the button to the view.
@@ -382,17 +384,9 @@ async def key(
 
 # ---------- Helper functions for the key command ----------
 async def reminder(interaction: discord.Interaction, players: list):
-  print("trying to remind")
-  print(players)
-  print(datetime.datetime.now(datetime.timezone.utc).timestamp())
-  print(interaction.message.created_at.timestamp())
-  print((datetime.datetime.now().timestamp()-interaction.message.created_at.timestamp()))
-  print(len(players[0]) > 0)
-  print(len(players[1]) > 0)
-  print(len(players[2]) > 2)
   if isGroupFull(players):
     if (datetime.datetime.now(datetime.timezone.utc).timestamp()-interaction.message.created_at.timestamp()) > 5:
-      message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to go to it!]({interaction.message.jump_url})"""
+      message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to see it!]({interaction.message.jump_url})"""
       await interaction.message.mentions[0].send(message)
   return
 
