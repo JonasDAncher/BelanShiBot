@@ -384,6 +384,8 @@ async def key(
 async def reminder(interaction: discord.Interaction, players: list):
   print("trying to remind")
   print(players)
+  print(type(datetime.datetime.now()))
+  print(interaction.created_at)
   print((datetime.datetime.now()-interaction.created_at).seconds)
   print(len(players[0]) > 0)
   print(len(players[1]) > 0)
