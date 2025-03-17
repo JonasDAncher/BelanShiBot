@@ -69,7 +69,7 @@ class RoleButtons(ui.View):
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
         log(f'KEY: {self.id} - {username} swapped from HEALER to TANK')
         if interaction.guild_id == 489890364090744892: # Test server
-          reminder(interaction, self.players)
+          await reminder(interaction, self.players)
         return
 
       if len(self.players[2]) > 0 and interaction.user in self.players[2]: # If the user is already signed up as dps
