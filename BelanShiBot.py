@@ -380,6 +380,12 @@ async def key(
 
 # ---------- Helper functions for the key command ----------
 async def reminder(interaction: discord.Interaction, players: list):
+  print("trying to remind")
+  print(players)
+  print((datetime.datetime.now()-interaction.created_at).seconds)
+  print(len(players[0]) > 0)
+  print(len(players[1]) > 0)
+  print(len(players[2]) > 2)
   if isGroupFull(players):
     if (datetime.datetime.now()-interaction.created_at).seconds > 5:
       user = interaction.user
