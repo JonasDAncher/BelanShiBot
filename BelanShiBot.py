@@ -392,7 +392,7 @@ async def reminder(interaction: discord.Interaction, players: list):
   print(len(players[2]) > 2)
   if isGroupFull(players):
     if (datetime.datetime.now(datetime.timezone.utc).timestamp()-interaction.message.created_at.timestamp()) > 5:
-      message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to go to it!]({interaction.original_response()})"""
+      message = f"""The key group you made in {interaction.guild.name} has been filled!\n# [Click here to go to it!]({interaction.message.jump_url})"""
       await interaction.message.mentions[0].send(message)
   return
 
