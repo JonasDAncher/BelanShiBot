@@ -237,7 +237,7 @@ class RoleButtons(ui.View):
         await interaction.message.delete()
         await interaction.response.send_message(content=f"Run cancelled!\n-# *This message disappears in {DELETE_TIME} seconds*", ephemeral=True, delete_after=DELETE_TIME)
         username = interaction.user.nick if not interaction.user.nick==None else interaction.user.name
-        await interaction.channel.send("The run was cancelled.")
+        #await interaction.channel.send("The run was cancelled.")
         log(f'KEY: {self.id} - {username} cancelled the key.')
         # TODO Should also delete any run confirmed messages.
         return
