@@ -54,7 +54,11 @@ class BelanShiBot(commands.Bot):
             log.info("Loaded extension %s", extension)
 
         if config.SYNC_COMMANDS:
-            await self.tree.sync(guild=discord.Object(id=config.TEST_GUILD_ID))  # guild-only commands
+            guild_ids = {config.TEST_GUILD_ID}  # /quiz
+            if config.DB_ENABLED and config.RAID_GUILD_IDS is not None:
+                guild_ids.update(config.RAID_GUILD_IDS)  # /raid while it is limited to some servers
+            for guild_id in guild_ids:
+                await self.tree.sync(guild=discord.Object(id=guild_id))  # guild-only commands
             await self.tree.sync()                                              # global commands
             log.info("Synced application commands")
 

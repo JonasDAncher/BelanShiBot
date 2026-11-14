@@ -23,7 +23,7 @@ class GuildEvents(commands.Cog):
             await ensure_roles(guild)
         except discord.HTTPException:
             log.exception("Could not create the ping roles in %s", guild.name)
-        if config.DB_ENABLED:  # Raids are only available with a database
+        if config.raids_enabled_in(guild.id):
             try:
                 await ensure_raid_role(guild)
             except discord.HTTPException:
@@ -42,7 +42,7 @@ class GuildEvents(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role: discord.Role) -> None:
-        if role.name == config.RAID_PARTICIPANT_ROLE and config.DB_ENABLED:
+        if role.name == config.RAID_PARTICIPANT_ROLE and config.raids_enabled_in(role.guild.id):
             log.info("%s deleted the %s role. Recreating it.", role.guild.name, role.name)
             try:
                 await ensure_raid_role(role.guild)

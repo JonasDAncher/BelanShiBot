@@ -62,8 +62,9 @@ class Raids(commands.GroupCog, group_name="raid", group_description="Recurring r
     @rollover_loop.before_loop
     async def _before_rollover(self) -> None:
         await self.bot.wait_until_ready()
-        for guild in self.bot.guilds:  # Make sure every server has the RaidParticipant role
-            await self.service.participant_role(guild)
+        for guild in self.bot.guilds:  # Make sure every raid-enabled server has the RaidParticipant role
+            if config.raids_enabled_in(guild.id):
+                await self.service.participant_role(guild)
 
     async def _roll_over(self, event: RaidEvent, now: datetime) -> None:
         start, end = occurrence_at(event.start_minute, event.duration_minutes, event.weekdays, event.timezone, now)
@@ -282,4 +283,7 @@ class Raids(commands.GroupCog, group_name="raid", group_description="Recurring r
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(Raids(bot))
+    if config.RAID_GUILD_IDS is None:
+        await bot.add_cog(Raids(bot))  # Global
+    else:
+        await bot.add_cog(Raids(bot), guilds=[discord.Object(id=g) for g in config.RAID_GUILD_IDS])
