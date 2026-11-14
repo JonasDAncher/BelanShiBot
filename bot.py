@@ -9,6 +9,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+import command_scopes
 import config
 
 log = logging.getLogger("belan_shi")
@@ -53,13 +54,16 @@ class BelanShiBot(commands.Bot):
             await self.load_extension(extension)
             log.info("Loaded extension %s", extension)
 
+        command_scopes.apply(self.tree, config.COMMAND_SCOPES)  # Where each command goes (commands.toml)
+
         if config.SYNC_COMMANDS:
-            guild_ids = {config.TEST_GUILD_ID}  # /quiz
-            if config.DB_ENABLED and config.RAID_GUILD_IDS is not None:
-                guild_ids.update(config.RAID_GUILD_IDS)  # /raid while it is limited to some servers
-            for guild_id in guild_ids:
-                await self.tree.sync(guild=discord.Object(id=guild_id))  # guild-only commands
-            await self.tree.sync()                                              # global commands
+            await self.tree.sync()  # Global commands
+            # Every server in commands.toml is synced, also ones with no commands left, so removed ones disappear
+            for guild_id in sorted(config.COMMAND_SCOPES.known_guild_ids()):
+                try:
+                    await self.tree.sync(guild=discord.Object(id=guild_id))
+                except discord.HTTPException as e:  # e.g. the bot is not in that server
+                    log.warning("Could not sync commands to server %s: %s", guild_id, e)
             log.info("Synced application commands")
 
     async def close(self) -> None:

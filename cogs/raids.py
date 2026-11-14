@@ -283,7 +283,4 @@ class Raids(commands.GroupCog, group_name="raid", group_description="Recurring r
 
 
 async def setup(bot: commands.Bot) -> None:
-    if config.RAID_GUILD_IDS is None:
-        await bot.add_cog(Raids(bot))  # Global
-    else:
-        await bot.add_cog(Raids(bot), guilds=[discord.Object(id=g) for g in config.RAID_GUILD_IDS])
+    await bot.add_cog(Raids(bot))  # Which servers get /raid is decided by commands.toml

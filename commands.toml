@@ -1,0 +1,22 @@
+# Which servers get which slash commands.
+#
+# Edit this file and restart the bot to "push" commands to servers.
+#
+#   "global"            -> every server the bot is in (can take up to an hour to show up on Discord)
+#   ["test", "belan"]   -> only these servers (names from [servers] below, or raw server IDs)
+#   []                  -> nowhere (command is turned off)
+#
+# A command that is not listed here is only put on the "test" server, so new
+# features never go live by accident.
+
+[servers]
+# name = server ID. Keep a server listed even when it has no commands any more:
+# the bot only clears commands from servers it knows about.
+test  = 489890364090744892
+belan = 368116240276914176
+
+[commands]
+key   = "global"
+roles = "global"
+quiz  = ["test"]
+raid  = ["test"]   # Also needs the database (DB_* in .env)

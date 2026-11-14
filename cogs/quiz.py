@@ -1,9 +1,9 @@
-"""The /quiz command (registered on the test guild only)."""
+"""The /quiz command (guild-specific questions; see commands.toml for where it is registered)."""
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from config import QUIZ_ANSWER_TIME, QUIZ_POINTS_PER_ANSWER, TEST_GUILD_ID
+from config import QUIZ_ANSWER_TIME, QUIZ_POINTS_PER_ANSWER
 from content import QUIZ_QUESTIONS
 from views.quiz import QuizView
 
@@ -13,7 +13,6 @@ class Quiz(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="quiz", description="Starts a round of quiz!")
-    @app_commands.guilds(discord.Object(id=TEST_GUILD_ID))
     @app_commands.guild_only()
     async def quiz(self, interaction: discord.Interaction) -> None:
         name = interaction.user.display_name

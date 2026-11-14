@@ -7,11 +7,12 @@ from typing import Final
 
 from dotenv import load_dotenv
 
+import command_scopes
+
 load_dotenv()
 
 # ---------- Secrets / environment ----------
 TOKEN: Final[str | None] = os.getenv("DISCORD_TOKEN")
-TEST_GUILD_ID: Final[int] = int(os.getenv("TEST_GUILD_ID", "489890364090744892"))
 SYNC_COMMANDS: Final[bool] = os.getenv("SYNC_COMMANDS", "true").lower() in {"1", "true", "yes"}
 
 # ---------- UI timings (seconds) ----------
@@ -53,18 +54,15 @@ DB_ENABLED: Final[bool] = all((DB_HOST, DB_USER, DB_NAME))
 
 # ---------- Raids ----------
 DEFAULT_TIMEZONE: Final[str] = os.getenv("DEFAULT_TIMEZONE", "UTC")  # Used until /raid setup is run
-# Servers that get the /raid commands, comma-separated. Defaults to the test server only;
-# set RAID_GUILD_IDS=all to roll raids out to every server.
-_RAID_GUILDS = os.getenv("RAID_GUILD_IDS", str(TEST_GUILD_ID)).strip()
-RAID_GUILD_IDS: Final[tuple[int, ...] | None] = (
-    None if _RAID_GUILDS.lower() == "all" else tuple(int(g) for g in _RAID_GUILDS.split(",") if g.strip())
-)
-
-
-def raids_enabled_in(guild_id: int) -> bool:
-    """Whether the raid feature (commands and RaidParticipant role) is enabled on this server."""
-    return DB_ENABLED and (RAID_GUILD_IDS is None or guild_id in RAID_GUILD_IDS)
 RAID_MAX_TANKS: Final[int] = 2
 RAID_ROLLOVER_INTERVAL: Final[int] = 30  # Seconds between checks for finished/starting raids
 RAID_PARTICIPANT_ROLE: Final[str] = "RaidParticipant"  # Given to everyone signed up; pinged when the raid starts
 RAID_REMINDER_GRACE: Final[int] = 15 * 60  # Skip the start reminder if the bot only notices this many seconds late
+
+# ---------- Which commands go to which servers (commands.toml) ----------
+COMMAND_SCOPES: Final = command_scopes.load()
+
+
+def raids_enabled_in(guild_id: int) -> bool:
+    """Whether the raid feature (/raid and the RaidParticipant role) is enabled on this server."""
+    return DB_ENABLED and COMMAND_SCOPES.scope_for("raid").includes(guild_id)
