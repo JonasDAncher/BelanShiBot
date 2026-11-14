@@ -53,7 +53,7 @@ DB_NAME: Final[str | None] = os.getenv("DB_NAME")
 DB_ENABLED: Final[bool] = all((DB_HOST, DB_USER, DB_NAME))
 
 # ---------- Raids ----------
-DEFAULT_TIMEZONE: Final[str] = os.getenv("DEFAULT_TIMEZONE", "UTC")  # Used until /raid setup is run
+DEFAULT_TIMEZONE: Final[str] = os.getenv("DEFAULT_TIMEZONE", "Europe/Copenhagen")  # Used until /raid setup is run
 RAID_MAX_TANKS: Final[int] = 2
 RAID_ROLLOVER_INTERVAL: Final[int] = 30  # Seconds between checks for finished/starting raids
 RAID_PARTICIPANT_ROLE: Final[str] = "RaidParticipant"  # Given to everyone signed up; pinged when the raid starts
