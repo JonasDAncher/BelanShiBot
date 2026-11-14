@@ -10,9 +10,9 @@ import config
 from models import Role
 from raids.entities import RaidEvent, ToggleResult, ToggleStatus
 from raids.repository import RaidRepository
-from raids.schedule import UTC
+from raids.schedule import UTC, occurrence_at
 from utils import ensure_raid_role
-from views.raid import RaidView, build_raid_embed
+from views.raid import RaidView, build_cancelled_embed, build_raid_embed
 
 log = logging.getLogger(__name__)
 
@@ -75,6 +75,60 @@ class RaidService:
         signups = await self.repo.get_signups(event.id, event.cycle)
         await self.delete_message(event.channel_id, event.message_id)
         await self.repo.delete_event(event.id, event.guild_id)
+        await self.release_participants(event.guild_id, [s.user_id for s in signups])
+
+    # ---------- Officer options: skip / cancel ----------
+    async def _notify_cancelled(self, event: RaidEvent, user_ids: list[int], cancelled_by: str, extra: str) -> None:
+        """Tell the channel (and ping everyone who was signed up) that an occurrence won't happen."""
+        start = int(event.occurrence_start.timestamp())
+        text = (f"❌ **{discord.utils.escape_markdown(event.title)}** on <t:{start}:F> has been cancelled "
+                f"by {discord.utils.escape_markdown(cancelled_by)}. {extra}")
+        if user_ids:
+            text += "\n" + " ".join(f"<@{uid}>" for uid in user_ids)
+        channel = await self._channel(event)
+        await channel.send(text, allowed_mentions=discord.AllowedMentions(
+            everyone=False, roles=False, users=[discord.Object(uid) for uid in user_ids]))
+
+    async def skip_occurrence(self, event: RaidEvent, cancelled_by: str) -> RaidEvent | None:
+        """Cancel the current occurrence and move straight on to the next scheduled one.
+
+        Returns the updated event, or None if the occurrence had already moved on (someone else got there first).
+        """
+        signups = await self.repo.get_signups(event.id, event.cycle)
+        # The first occurrence ending after the current one ends is the next one
+        start, end = occurrence_at(event.start_minute, event.duration_minutes, event.weekdays,
+                                   event.timezone, max(event.occurrence_end, datetime.now(UTC)))
+        rolled = await self.repo.roll_over(event.id, event.cycle, start, end)
+        if rolled is None:
+            return None
+        updated, user_ids = rolled
+        log.info("Raid #%s: occurrence %s skipped by %s", event.id, event.occurrence_start.isoformat(), cancelled_by)
+        try:
+            await self._notify_cancelled(event, [s.user_id for s in signups], cancelled_by,
+                                         "A sign-up for the next one is below.")
+        except discord.HTTPException:
+            log.exception("Could not post the cancellation notice for raid #%s", event.id)
+        await self.repost(updated)  # Fresh sign-up at the bottom; removes the old message
+        await self.release_participants(event.guild_id, user_ids)
+        return updated
+
+    async def cancel_event(self, event: RaidEvent, cancelled_by: str) -> None:
+        """Stop the raid for good. The sign-up message stays, marked as cancelled and without buttons."""
+        signups = await self.repo.get_signups(event.id, event.cycle)
+        await self.repo.deactivate(event.id)
+        log.info("Raid #%s cancelled by %s", event.id, cancelled_by)
+        if event.message_id is not None:
+            try:
+                channel = await self._channel(event)
+                await channel.get_partial_message(event.message_id).edit(
+                    embed=build_cancelled_embed(event, signups, cancelled_by), view=None)
+            except discord.HTTPException:
+                log.warning("Could not mark the sign-up message of raid #%s as cancelled", event.id)
+        try:
+            await self._notify_cancelled(event, [s.user_id for s in signups], cancelled_by,
+                                         "The raid will not repeat.")
+        except discord.HTTPException:
+            log.exception("Could not post the cancellation notice for raid #%s", event.id)
         await self.release_participants(event.guild_id, [s.user_id for s in signups])
 
     async def toggle_signup(self, event_id: int, message_id: int, user: discord.abc.User, role: Role) -> ToggleResult:

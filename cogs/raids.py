@@ -31,15 +31,15 @@ class Raids(commands.GroupCog, group_name="raid", group_description="Recurring r
         self.service = RaidService(bot, self.repo)
 
     async def cog_load(self) -> None:
-        from views.raid import RaidRoleButton
+        from views.raid import RaidOptionsButton, RaidRoleButton
         self.bot.raids = self.service
-        self.bot.add_dynamic_items(RaidRoleButton)  # Makes buttons on existing messages work after a restart
+        self.bot.add_dynamic_items(RaidRoleButton, RaidOptionsButton)  # Buttons on existing messages keep working after a restart
         self.rollover_loop.start()
 
     async def cog_unload(self) -> None:
-        from views.raid import RaidRoleButton
+        from views.raid import RaidOptionsButton, RaidRoleButton
         self.rollover_loop.cancel()
-        self.bot.remove_dynamic_items(RaidRoleButton)
+        self.bot.remove_dynamic_items(RaidRoleButton, RaidOptionsButton)
 
     # ---------- Start reminders & rollover ----------
     @tasks.loop(seconds=config.RAID_ROLLOVER_INTERVAL)

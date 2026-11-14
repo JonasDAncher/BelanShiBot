@@ -54,7 +54,6 @@ DB_ENABLED: Final[bool] = all((DB_HOST, DB_USER, DB_NAME))
 
 # ---------- Raids ----------
 DEFAULT_TIMEZONE: Final[str] = os.getenv("DEFAULT_TIMEZONE", "Europe/Copenhagen")  # Used until /raid setup is run
-RAID_MAX_TANKS: Final[int] = 2
 RAID_ROLLOVER_INTERVAL: Final[int] = 30  # Seconds between checks for finished/starting raids
 RAID_PARTICIPANT_ROLE: Final[str] = "RaidParticipant"  # Given to everyone signed up; pinged when the raid starts
 RAID_REMINDER_GRACE: Final[int] = 15 * 60  # Skip the start reminder if the bot only notices this many seconds late

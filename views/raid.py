@@ -1,17 +1,18 @@
-"""Raid embed, persistent sign-up buttons, the create/edit modal and a confirm dialog."""
+"""Raid embed, persistent sign-up and options buttons, the officer options menu, the create/edit modal and a confirm dialog."""
 from __future__ import annotations
 
 import logging
 import re
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
+from datetime import datetime, timezone
 
 import discord
 from discord import ui
 
-import config
 from models import Role
 from raids.entities import RaidEvent, Signup, ToggleStatus
+from raids.permissions import is_raid_manager
 from raids.schedule import (
     ScheduleError, format_days, format_duration, format_start, parse_days, parse_duration, parse_time,
 )
@@ -63,7 +64,7 @@ def build_raid_embed(event: RaidEvent, signups: list[Signup]) -> discord.Embed:
     )
 
     by_role = {role: [s for s in signups if s.role is role] for role in Role}
-    embed.add_field(name=f"🛡️ Tanks ({len(by_role[Role.TANK])}/{config.RAID_MAX_TANKS})",
+    embed.add_field(name=f"🛡️ Tanks ({len(by_role[Role.TANK])})",
                     value=_column(by_role[Role.TANK]), inline=True)
     embed.add_field(name=f"💚 Healers ({len(by_role[Role.HEALER])})",
                     value=_column(by_role[Role.HEALER]), inline=True)
@@ -71,6 +72,16 @@ def build_raid_embed(event: RaidEvent, signups: list[Signup]) -> discord.Embed:
                     value=_column(by_role[Role.DPS]), inline=True)
 
     embed.set_footer(text=f"Raid #{event.id} • Repeats {format_days(event.weekdays)} • {len(signups)} signed up")
+    return embed
+
+
+def build_cancelled_embed(event: RaidEvent, signups: list[Signup], cancelled_by: str) -> discord.Embed:
+    """The sign-up message of a raid that has been cancelled for good."""
+    embed = build_raid_embed(event, signups)
+    embed.title = f"❌ CANCELLED: {event.title}"[:256]
+    embed.colour = discord.Colour.red()
+    embed.description = f"**This raid has been cancelled by {discord.utils.escape_markdown(cancelled_by)} and will not repeat.**"
+    embed.set_footer(text=f"Raid #{event.id} • Cancelled")
     return embed
 
 
@@ -93,9 +104,7 @@ class RaidRoleButton(ui.DynamicItem[ui.Button], template=r"raid:(?P<event>[0-9]+
         service = interaction.client.raids
         result = await service.toggle_signup(self.event_id, interaction.message.id, interaction.user, self.role)
 
-        if result.status is ToggleStatus.ROLE_FULL:
-            await send_temp(interaction, f"All {config.RAID_MAX_TANKS} tank spots are taken, sorry.")
-        elif result.status is ToggleStatus.ENDED:
+        if result.status is ToggleStatus.ENDED:
             await send_temp(interaction, "This raid has just ended - a fresh sign-up is about to be posted.")
         elif result.status in (ToggleStatus.STALE, ToggleStatus.MISSING):
             await send_temp(interaction, "This sign-up is outdated, so I'm removing it.")
@@ -109,11 +118,133 @@ class RaidRoleButton(ui.DynamicItem[ui.Button], template=r"raid:(?P<event>[0-9]+
                 await service.update_member_role(interaction.user, result)
 
 
+class RaidOptionsButton(ui.DynamicItem[ui.Button], template=r"raid:(?P<event>[0-9]+):options"):
+    """Opens the officer menu (skip / cancel / delete). Everyone sees it; only officers and admins can use it."""
+
+    def __init__(self, event_id: int) -> None:
+        super().__init__(
+            ui.Button(label="Options", emoji="⚙️", style=discord.ButtonStyle.secondary,
+                      custom_id=f"raid:{event_id}:options")
+        )
+        self.event_id = event_id
+
+    @classmethod
+    async def from_custom_id(cls, interaction: discord.Interaction, item: ui.Button, match: re.Match, /):
+        return cls(int(match["event"]))
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        repo = interaction.client.raids.repo
+        if not isinstance(interaction.user, discord.Member) or not await is_raid_manager(repo, interaction.user):
+            await send_temp(interaction, "Only officers and server admins can manage raids.")
+            return
+        event = await repo.get_event(self.event_id, interaction.guild_id)
+        if event is None or event.message_id != interaction.message.id:
+            await send_temp(interaction, "This sign-up is outdated, so I'm removing it.")
+            try:
+                await interaction.message.delete()
+            except discord.HTTPException:
+                pass
+            return
+        await interaction.response.send_message(
+            options_text(event), view=RaidOptionsView(event, interaction.user.id), ephemeral=True
+        )
+
+
 class RaidView(ui.View):
     def __init__(self, event_id: int) -> None:
         super().__init__(timeout=None)
         for role in Role:
             self.add_item(RaidRoleButton(event_id, role))
+        self.add_item(RaidOptionsButton(event_id))
+
+
+# ---------- Officer options menu ----------
+def options_text(event: RaidEvent) -> str:
+    start = int(event.occurrence_start.timestamp())
+    return (f"**{discord.utils.escape_markdown(event.title)}** (#{event.id}), next on <t:{start}:F>\n"
+            "What do you want to do?")
+
+
+class RaidOptionsView(ui.View):
+    """Ephemeral menu for officers. Every action asks for confirmation first."""
+
+    def __init__(self, event: RaidEvent, user_id: int) -> None:
+        super().__init__(timeout=180)
+        self.event = event
+        self.user_id = user_id
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        return interaction.user.id == self.user_id
+
+    async def _confirm(self, interaction: discord.Interaction, question: str, label: str,
+                       action: Callable[[discord.Interaction, RaidEvent], Awaitable[str]]) -> None:
+        async def on_confirm(inter: discord.Interaction) -> None:
+            await inter.response.edit_message(content="Working on it…", view=None)
+            service = inter.client.raids
+            event = await service.repo.get_event(self.event.id, inter.guild_id)  # Re-read: it may have changed
+            if event is None:
+                result = "That raid no longer exists."
+            elif event.cycle != self.event.cycle:
+                result = "That raid has moved on to its next date in the meantime. Nothing was changed."
+            else:
+                result = await action(inter, event)
+            await inter.edit_original_response(content=result)
+
+        async def on_back(inter: discord.Interaction) -> None:
+            await inter.response.edit_message(content=options_text(self.event),
+                                              view=RaidOptionsView(self.event, self.user_id))
+
+        self.stop()
+        await interaction.response.edit_message(
+            content=question, view=ConfirmView(self.user_id, on_confirm, label=label, on_cancel=on_back,
+                                               cancel_label="Back"))
+
+    @ui.button(label="Skip this one", emoji="⏭️", style=discord.ButtonStyle.primary)
+    async def skip(self, interaction: discord.Interaction, button: ui.Button) -> None:
+        start = int(self.event.occurrence_start.timestamp())
+        await self._confirm(
+            interaction,
+            f"Cancel **{discord.utils.escape_markdown(self.event.title)}** on <t:{start}:F> and move on to the next date?\n"
+            "-# Everyone signed up is pinged, and their sign-ups are cleared.",
+            "Skip it", self._do_skip,
+        )
+
+    @ui.button(label="Cancel raid", emoji="❌", style=discord.ButtonStyle.danger)
+    async def cancel_raid(self, interaction: discord.Interaction, button: ui.Button) -> None:
+        await self._confirm(
+            interaction,
+            f"Cancel **{discord.utils.escape_markdown(self.event.title)}** for good?\n"
+            "-# It stops repeating, the sign-up is marked as cancelled, and everyone signed up is pinged.",
+            "Cancel raid", self._do_cancel,
+        )
+
+    @ui.button(label="Delete raid", emoji="🗑️", style=discord.ButtonStyle.danger)
+    async def delete(self, interaction: discord.Interaction, button: ui.Button) -> None:
+        await self._confirm(
+            interaction,
+            f"Delete **{discord.utils.escape_markdown(self.event.title)}** and all of its sign-ups?\n"
+            "-# The sign-up message is removed and nobody is notified.",
+            "Delete", self._do_delete,
+        )
+
+    @staticmethod
+    async def _do_skip(interaction: discord.Interaction, event: RaidEvent) -> str:
+        if event.occurrence_end <= datetime.now(timezone.utc):
+            return "That raid has already ended; a sign-up for the next date is posted automatically."
+        updated = await interaction.client.raids.skip_occurrence(event, interaction.user.display_name)
+        if updated is None:
+            return "That raid has moved on to its next date in the meantime. Nothing was changed."
+        return f"⏭️ Skipped. Next date: <t:{int(updated.occurrence_start.timestamp())}:F>"
+
+    @staticmethod
+    async def _do_cancel(interaction: discord.Interaction, event: RaidEvent) -> str:
+        await interaction.client.raids.cancel_event(event, interaction.user.display_name)
+        return f"❌ Raid #{event.id} cancelled."
+
+    @staticmethod
+    async def _do_delete(interaction: discord.Interaction, event: RaidEvent) -> str:
+        await interaction.client.raids.delete_event(event)
+        return f"🗑️ Raid #{event.id} deleted."
 
 
 # ---------- Create / edit modal ----------
@@ -185,10 +316,15 @@ class RaidFormModal(ui.Modal):
 
 # ---------- Confirm dialog ----------
 class ConfirmView(ui.View):
-    def __init__(self, user_id: int, on_confirm: Callable[[discord.Interaction], Awaitable[None]]) -> None:
+    def __init__(self, user_id: int, on_confirm: Callable[[discord.Interaction], Awaitable[None]], *,
+                 label: str = "Delete", on_cancel: Callable[[discord.Interaction], Awaitable[None]] | None = None,
+                 cancel_label: str = "Keep it") -> None:
         super().__init__(timeout=60)
         self.user_id = user_id
         self.on_confirm = on_confirm
+        self.on_cancel = on_cancel
+        self.confirm.label = label
+        self.cancel.label = cancel_label
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         return interaction.user.id == self.user_id
@@ -201,4 +337,7 @@ class ConfirmView(ui.View):
     @ui.button(label="Keep it", style=discord.ButtonStyle.secondary)
     async def cancel(self, interaction: discord.Interaction, button: ui.Button) -> None:
         self.stop()
-        await interaction.response.edit_message(content="Cancelled - the raid is untouched.", view=None)
+        if self.on_cancel is not None:
+            await self.on_cancel(interaction)
+        else:
+            await interaction.response.edit_message(content="Cancelled - the raid is untouched.", view=None)

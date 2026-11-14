@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
 
-import config
 from models import Role
 
 
@@ -94,7 +93,6 @@ class ToggleStatus(enum.Enum):
     JOINED = enum.auto()
     LEFT = enum.auto()
     SWAPPED = enum.auto()
-    ROLE_FULL = enum.auto()
     ENDED = enum.auto()    # The occurrence ended a moment ago; rollover is about to happen
     STALE = enum.auto()    # The clicked message is no longer the event's current post
     MISSING = enum.auto()  # Event deleted / deactivated
@@ -108,11 +106,8 @@ class ToggleResult:
     previous: Role | None = None
 
 
-def decide_toggle(current: Role | None, clicked: Role, tank_count: int,
-                  max_tanks: int = config.RAID_MAX_TANKS) -> ToggleStatus:
-    """Clicking your own role leaves it; otherwise join (swapping if needed). Only tanks are capped."""
+def decide_toggle(current: Role | None, clicked: Role) -> ToggleStatus:
+    """Clicking your own role leaves it; otherwise join (swapping if needed). No role is capped."""
     if current is clicked:
         return ToggleStatus.LEFT
-    if clicked is Role.TANK and tank_count >= max_tanks:
-        return ToggleStatus.ROLE_FULL
     return ToggleStatus.SWAPPED if current is not None else ToggleStatus.JOINED

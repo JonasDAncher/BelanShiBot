@@ -159,7 +159,7 @@ class RaidRepository:
 
     async def toggle_signup(self, event_id: int, message_id: int, user_id: int, display_name: str,
                             role: Role, now: datetime) -> ToggleResult:
-        """Join/leave/swap atomically. The event row is locked, so the tank cap and rollover can't race."""
+        """Join/leave/swap atomically. The event row is locked, so a click can't race a rollover."""
         async with self.db.transaction() as cur:
             await cur.execute("SELECT * FROM raid_events WHERE id = %s AND active = 1 FOR UPDATE", (event_id,))
             row = await cur.fetchone()
@@ -178,9 +178,8 @@ class RaidRepository:
             )
             signups = [_signup(r) for r in await cur.fetchall()]
             current = next((s.role for s in signups if s.user_id == user_id), None)
-            tank_count = sum(1 for s in signups if s.role is Role.TANK)
 
-            status = decide_toggle(current, role, tank_count)
+            status = decide_toggle(current, role)
             key = (event_id, event.cycle, user_id)
             if status is ToggleStatus.LEFT:
                 await cur.execute("DELETE FROM raid_signups WHERE event_id = %s AND cycle = %s AND user_id = %s", key)
