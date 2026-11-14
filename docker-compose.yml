@@ -1,0 +1,17 @@
+# Local MariaDB for development:  docker compose up -d
+services:
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: change-me-root
+      MARIADB_DATABASE: belan_shi
+      MARIADB_USER: belan_shi
+      MARIADB_PASSWORD: change-me
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
